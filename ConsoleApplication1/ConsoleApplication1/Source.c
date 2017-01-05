@@ -10,7 +10,7 @@ typedef struct
 {
 	char Name[SIZE];
 } WebManager;
-//vfd
+//vfdbhjbbjk
 typedef struct
 {
 	char name[SIZE];
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
 
 
 
-
+	//jksdhjkfkaskjdnx
 
 
 
