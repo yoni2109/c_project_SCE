@@ -10,7 +10,7 @@ struct WebManager
 {
 	char Name[SIZE];
 };
- struct Users
+struct Users
 {
 	char name[SIZE];
 	char password[SIZE];
@@ -35,7 +35,7 @@ struct Status
 	char name[SIZE];
 	struct Tasks** tasks_list;
 	int tasks_amount;
-} Status;
+};
 struct Tasks
 {
 	char name[SIZE];
@@ -55,7 +55,8 @@ void signUp(){
 	//if (name[SIZE - 1] = !'\0') printf("error");
     fprintf(usersdb,"%s", name);
 }
-int main(){
+int main()
+{
 	signUp();
 
 
