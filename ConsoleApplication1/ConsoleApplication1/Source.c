@@ -55,7 +55,51 @@ void signUp(){
 	//if (name[SIZE - 1] = !'\0') printf("error");
     fprintf(usersdb,"*%s\n", name);
 }
+void log_in_manager(){
+	int notvalid = False, count = 0;
+	char temp;
+	char name[SIZE], password[SIZE];
+	do
+	{
+		if (notvalid){
+			temp = NULL;
+			notvalid = False;
+			for (int i = 0; i < SIZE; i++){
+				name[i] = NULL;
+			}
+			count = 0;
+			printf("Invalid Username\n");
+		}
+		printf("enter your users maximum chars [20]: ");
+		while (temp = getchar(), temp != '\n' && !notvalid){
+			name[count] = temp;
+			count++;
+			if (count > SIZE - 1)
+				notvalid = True;
+		}
+	} while (notvalid);
+	do
+	{
+		if (notvalid){
+			temp = NULL;
+			notvalid = False;
+			for (int i = 0; i < SIZE - 1; i++){
+				password[i] = NULL;
+			}
+			count = 0;
+			printf("Invalid Password\n");
+		}
+		printf("enter your Password maximum chars [20]: ");
+		while (temp = getchar(), temp != '\n' && !notvalid){
+			password[count] = temp;
+			count++;
+			if (count > SIZE - 1)
+				notvalid = True;
+		}
+	} while (notvalid);
 
+
+}
 int main(){
 	signUp();
 
