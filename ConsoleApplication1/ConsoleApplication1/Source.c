@@ -43,16 +43,17 @@ struct Tasks
 	bool task_progres;
 	struct Users* assign_to;
 };
-struct Messeges
+struct Messages
 {
 	char sender[SIZE];
 	char* content;
 };
 void signUp(){
+	FILE* usersdb = fopen("users.txt", "w+");
 	char name[20];
-	scanf("%20s", name);
+	fgets(name,SIZE,stdin);
 	//if (name[SIZE - 1] = !'\0') printf("error");
-    printf("%s", name);
+    fprintf(usersdb,"%s", name);
 }
 int main(){
 	signUp();
