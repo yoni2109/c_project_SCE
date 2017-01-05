@@ -81,6 +81,9 @@
     <ClCompile Include="Source.c" />
     <ClCompile Include="Source.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="projects_db.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
