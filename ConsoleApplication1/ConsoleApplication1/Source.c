@@ -6,68 +6,54 @@
 #define SIZE 20
 
 typedef enum{ False = 0, True = 1 } bool;
-typedef struct
+struct WebManager
 {
 	char Name[SIZE];
-} WebManager;
-
-typedef struct
+};
+ struct Users
 {
 	char name[SIZE];
 	char password[SIZE];
-	Projects** project_list;
+	struct Projects** project_list;
 	int projects_amount;
-	Messages** message_list;
+	struct Messages** message_list;
 	int messages_amount;
-} Users;
-
-typedef struct
+};
+struct Projects
 {
 	char name[SIZE];
-	Users** users_list;
+	struct Users** users_list;
 	int users_amount;
-	Status** status_list;
+	struct Status** status_list;
 	int status_amount;
 	char** Manager_list;
 	int manager_amount;
 
-} Projects;
-
-typedef struct
+};
+struct Status
 {
 	char name[SIZE];
-	Tasks** tasks_list;
+	struct Tasks** tasks_list;
 	int tasks_amount;
 } Status;
-
-typedef struct
+struct Tasks
 {
 	char name[SIZE];
 	char* task_details;
 	bool task_progres;
-	Users* assign_to;
-} Tasks;
-
-typedef struct
+	struct Users* assign_to;
+};
+struct Messeges
 {
 	char sender[SIZE];
 	char* content;
-} Messages;
-
-
-
-
-int main(int argc, char** argv)
-{
-
-
-
-
-
-
-
-
-
-
-	return 0;
+};
+void signUp(){
+	char name[20];
+	scanf("%20s", name);
+	//if (name[SIZE - 1] = !'\0') printf("error");
+    printf("%s", name);
+}
+int main(){
+	signUp();
 }
