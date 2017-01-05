@@ -8,9 +8,9 @@
 typedef enum{ False = 0, True = 1 } bool;
 struct WebManager
 {
-	char name[SIZE];
+	char Name[SIZE];
 };
- struct Users
+struct Users
 {
 	char name[SIZE];
 	char password[SIZE];
@@ -53,33 +53,12 @@ void signUp(){
 	char name[20];
 	fgets(name,SIZE,stdin);
 	//if (name[SIZE - 1] = !'\0') printf("error");
-    fprintf(usersdb,"%s", name);
+    fprintf(usersdb,"*%s\n", name);
 }
-void log_in_manager(){
-	int notvalid = 0, count=0;
-	char temp;
-	char name[SIZE], password[SIZE];
-	do
-	{
-		if (notvalid){
-			count = 0;
-		}
-		while (temp = getchar(), temp != '\n' && !notvalid){
-			name[count] = temp;
-			count++;
-			if (count > SIZE)
-				notvalid = True;
-		}
 
-
-
-	} while (notvalid);
-
-
-}
 int main(){
 	signUp();
-	log_in_manager();
+
 
 	return 0;
 }

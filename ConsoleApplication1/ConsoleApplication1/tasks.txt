@@ -1,0 +1,14 @@
+*projectname
+4
+$status1
+2
+taskname
+details
+taskname2
+details2
+$status2
+0
+$status3
+0
+$status4
+0
