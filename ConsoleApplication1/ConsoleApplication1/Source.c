@@ -55,9 +55,9 @@ void signUp(){
 	//if (name[SIZE - 1] = !'\0') printf("error");
     fprintf(usersdb,"%s", name);
 }
+
 int main(){
 	signUp();
-
 
 	return 0;
 }
