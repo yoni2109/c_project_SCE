@@ -10,7 +10,7 @@ typedef struct
 {
 	char Name[SIZE];
 } WebManager;
-//test1d
+//test1dעכגד
 typedef struct
 {
 	char name[SIZE];
