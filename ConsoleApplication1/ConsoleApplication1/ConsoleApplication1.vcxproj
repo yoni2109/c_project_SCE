@@ -80,6 +80,16 @@
   <ItemGroup>
     <ClCompile Include="Source.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="projects.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="messeges.txt" />
+    <Text Include="projects_managers.txt" />
+    <Text Include="tasks.txt" />
+    <Text Include="users.txt" />
+    <Text Include="web_manager.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -19,4 +19,26 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="messeges.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="web_manager.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="projects_managers.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="tasks.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="users.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="projects.txt">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
