@@ -79,10 +79,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source.c" />
-    <ClCompile Include="Source.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="projects_db.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="messeges.txt" />
+    <Text Include="projects_managers.txt" />
+    <Text Include="tasks.txt" />
+    <Text Include="users.txt" />
+    <Text Include="web_manager.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
