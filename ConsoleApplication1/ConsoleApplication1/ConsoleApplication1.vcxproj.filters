@@ -20,11 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="projects_db.txt">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="messeges.txt">
       <Filter>Source Files</Filter>
     </Text>
@@ -40,5 +35,10 @@
     <Text Include="users.txt">
       <Filter>Source Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="projects.txt">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

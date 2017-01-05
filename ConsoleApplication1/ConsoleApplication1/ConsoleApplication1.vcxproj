@@ -81,7 +81,7 @@
     <ClCompile Include="Source.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="projects_db.txt" />
+    <None Include="projects.txt" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="messeges.txt" />
