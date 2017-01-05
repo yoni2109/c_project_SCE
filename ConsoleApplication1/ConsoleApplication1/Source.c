@@ -57,4 +57,7 @@ void signUp(){
 }
 int main(){
 	signUp();
+
+
+	return 0;
 }
