@@ -72,8 +72,8 @@ void cleanBuffer(){//clean the buffer
 	char buffer;
 	while (buffer = getchar(), buffer != '\n');
 }
-void cleanString(char arry[SIZE]){//If there are more letters than the size of the string string reset
-	for (int i = 0; i < SIZE; i++){
+void cleanString(char arry[SIZE]){//If there are more letters than the size of the string-> string reset
+	for (int i = 0; arry[i]!= '\0'; i++){
 		arry[i] = '\0';
 	}
 }
@@ -116,6 +116,6 @@ int String(char arry[SIZE]){//function to get string for user
 		if (count > SIZE - 1)//if the string biger then size of arry exit from func and start again
 			return True;
 	}
-	arry[count] = '\0';//put NULL in the end of string
+	arry[count] = '\0';//put \0-> end of string in the end of string
 	return False;
 }
