@@ -76,8 +76,8 @@ void cleanBuffer(){//clean the buffer
 	char buffer;
 	while (buffer = getchar(), buffer != '\n');
 }
-void cleanString(char arry[SIZE]){//If there are more letters than the size of the string string reset
-	for (int i = 0; i < SIZE; i++){
+void cleanString(char arry[SIZE]){//If there are more letters than the size of the string-> string reset
+	for (int i = 0; arry[i]!= '\0'; i++){
 		arry[i] = '\0';
 	}
 }
@@ -94,7 +94,7 @@ void log_in(){
 				printf("Invalid Username\n");//print error to user
 				Not_Valid_Name = False;//restart the flag
 			}
-			printf("enter your users maximum chars [20]: "); //Writes the user what to do
+			printf("enter your users maximum chars [%d]: ",SIZE -1); //Writes the user what to do
 			Not_Valid_Name = String(name);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Name);//if notvalid = true -> loop
 		do
@@ -105,7 +105,7 @@ void log_in(){
 				printf("Invalid Password\n");//print error to user
 				Not_Valid_Pass = False;//restart the flag
 			}
-			printf("enter your Password maximum chars [20]: ");//Writes the user what to do
+			printf("enter your Password maximum chars [%d]: ",SIZE -1);//Writes the user what to do
 			Not_Valid_Pass = String(password);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Pass);//if notvalid = true -> loop
 
@@ -120,6 +120,6 @@ int String(char arry[SIZE]){//function to get string for user
 		if (count > SIZE - 1)//if the string biger then size of arry exit from func and start again
 			return True;
 	}
-	arry[count] = '\0';//put NULL in the end of string
+	arry[count] = '\0';//put \0-> end of string in the end of string
 	return False;
 }
