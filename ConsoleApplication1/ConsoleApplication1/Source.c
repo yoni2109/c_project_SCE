@@ -56,7 +56,11 @@ void cleanString(char arry[SIZE]);
 
 
 int main(){
-	log_in();
+	//log_in();
+	char yosu[20];
+	scanf("%s", yosu);
+	yosu[20-1] = NULL;
+	printf("%s", yosu);
 
 	return 0;
 }
