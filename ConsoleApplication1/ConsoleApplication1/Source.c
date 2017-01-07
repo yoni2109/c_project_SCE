@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
-#define SIZE 20
+#define SIZE 21
 
 typedef enum{ False = 0, True = 1 } bool;
 struct WebManager
@@ -48,61 +48,74 @@ struct Messages
 	char sender[SIZE];
 	char* content;
 };
+void signUp();
+void cleanBuffer();
+void log_in();
+int String(char arry[SIZE]);
+void cleanString(char arry[SIZE]);
+
+
+int main(){
+	log_in();
+
+	return 0;
+}
+
 void signUp(){
 	FILE* usersdb = fopen("users.txt", "w+");
 	char name[20];
-	fgets(name,SIZE,stdin);
+	fgets(name, SIZE, stdin);
 	//if (name[SIZE - 1] = !'\0') printf("error");
-    fprintf(usersdb,"*%s\n", name);
+	fprintf(usersdb, "*%s\n", name);
 }
-void log_in_manager(){
-	int notvalid = False, count = 0;
-	char temp;
-	char name[SIZE], password[SIZE];
-	do
-	{
-		if (notvalid){
-			temp = NULL;
-			notvalid = False;
-			for (int i = 0; i < SIZE; i++){
-				name[i] = NULL;
-			}
-			count = 0;
-			printf("Invalid Username\n");
-		}
-		printf("enter your users maximum chars [20]: ");
-		while (temp = getchar(), temp != '\n' && !notvalid){
-			name[count] = temp;
-			count++;
-			if (count > SIZE - 1)
-				notvalid = True;
-		}
-	} while (notvalid);
-	do
-	{
-		if (notvalid){
-			temp = NULL;
-			notvalid = False;
-			for (int i = 0; i < SIZE - 1; i++){
-				password[i] = NULL;
-			}
-			count = 0;
-			printf("Invalid Password\n");
-		}
-		printf("enter your Password maximum chars [20]: ");
-		while (temp = getchar(), temp != '\n' && !notvalid){
-			password[count] = temp;
-			count++;
-			if (count > SIZE - 1)
-				notvalid = True;
-		}
-	} while (notvalid);
-
-
+void cleanBuffer(){//clean the buffer
+	char buffer;
+	while (buffer = getchar(), buffer != '\n');
 }
-int main(){
-	signUp();
+void cleanString(char arry[SIZE]){//If there are more letters than the size of the string string reset
+	for (int i = 0; i < SIZE; i++){
+		arry[i] = '\0';
+	}
+}
+void log_in(){
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member=False, count = 0;
+	char temp= '\0';
+	char name[SIZE], password[SIZE];//open string
+	do{
+		do//loop for scan name and password
+		{
+			if (Not_Valid_Pass || Not_Valid_Name){//if we scan over the size we:
+				cleanBuffer();//clean the buffer (temp)
+				cleanString(name);//put null in the string
+				printf("Invalid Username\n");//print error to user
+				Not_Valid_Name = False;//restart the flag
+			}
+			printf("enter your users maximum chars [20]: "); //Writes the user what to do
+			Not_Valid_Name = String(name);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
+		} while (Not_Valid_Name);//if notvalid = true -> loop
+		do
+		{
+			if (Not_Valid_Pass){
+				cleanBuffer();//clean the buffer (temp)
+				cleanString(password);//put null in the string
+				printf("Invalid Password\n");//print error to user
+				Not_Valid_Pass = False;//restart the flag
+			}
+			printf("enter your Password maximum chars [20]: ");//Writes the user what to do
+			Not_Valid_Pass = String(password);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
+		} while (Not_Valid_Pass);//if notvalid = true -> loop
 
-
-	return 0;
+	} while (Not_Member);
+}
+int String(char arry[SIZE]){//function to get string for user
+	char temp = '\0';
+	int count = 0;//flag
+	while (temp = getchar(), temp != '\n'){//loop for get the string
+		arry[count] = temp;
+		count++;
+		if (count > SIZE - 1)//if the string biger then size of arry exit from func and start again
+			return True;
+	}
+	arry[count] = '\0';//put NULL in the end of string
+	return False;
 }
