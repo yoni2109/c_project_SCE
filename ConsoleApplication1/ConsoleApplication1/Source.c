@@ -90,7 +90,7 @@ void log_in(){
 				printf("Invalid Username\n");//print error to user
 				Not_Valid_Name = False;//restart the flag
 			}
-			printf("enter your users maximum chars [20]: "); //Writes the user what to do
+			printf("enter your users maximum chars [%d]: ",SIZE -1); //Writes the user what to do
 			Not_Valid_Name = String(name);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Name);//if notvalid = true -> loop
 		do
@@ -101,7 +101,7 @@ void log_in(){
 				printf("Invalid Password\n");//print error to user
 				Not_Valid_Pass = False;//restart the flag
 			}
-			printf("enter your Password maximum chars [20]: ");//Writes the user what to do
+			printf("enter your Password maximum chars [%d]: ",SIZE -1);//Writes the user what to do
 			Not_Valid_Pass = String(password);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Pass);//if notvalid = true -> loop
 
