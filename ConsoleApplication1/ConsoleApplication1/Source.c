@@ -4,22 +4,24 @@
 #include <malloc.h>
 #include <string.h>
 #define SIZE 21
+#define MODEOUT "w"
+#define  USER_FILE_NAME "users.txt"
 
 typedef enum{ False = 0, True = 1 } bool;
-struct WebManager
+typedef struct
 {
 	char Name[SIZE];
-};
-struct Users
+}WebManager;
+typedef struct
 {
 	char name[SIZE];
 	char password[SIZE];
-	struct Projects** project_list;
+	/*struct Projects** project_list;
 	int projects_amount;
 	struct Messages** message_list;
-	int messages_amount;
-};
-struct Projects
+	int messages_amount;*/
+}Users;
+typedef struct
 {
 	char name[SIZE];
 	struct Users** users_list;
@@ -29,31 +31,31 @@ struct Projects
 	char** Manager_list;
 	int manager_amount;
 
-};
-struct Status
+}Projects;
+typedef struct
 {
 	char name[SIZE];
 	struct Tasks** tasks_list;
 	int tasks_amount;
 } Status;
-struct Tasks
+typedef struct
 {
 	char name[SIZE];
 	char* task_details;
 	bool task_progres;
 	struct Users* assign_to;
-};
-struct Messages
+}Tasks;
+typedef struct
 {
 	char sender[SIZE];
 	char* content;
-};
+}Messages;
 void signUp();
 void cleanBuffer();
 void log_in();
 int String(char arry[SIZE]);
 void cleanString(char arry[SIZE]);
-
+int If_Member_Return_True(char user[SIZE],char password[SIZE]);
 
 int main(){
 	log_in();
@@ -105,6 +107,7 @@ void log_in(){
 			Not_Valid_Pass = String(password);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Pass);//if notvalid = true -> loop
 
+		If_Member_Return_True(name, password);
 	} while (Not_Member);
 }
 int String(char arry[SIZE]){//function to get string for user
@@ -118,4 +121,17 @@ int String(char arry[SIZE]){//function to get string for user
 	}
 	arry[count] = '\0';//put \0-> end of string in the end of string
 	return False;
+}
+int If_Member_Return_True(char user[SIZE], char password[SIZE]){
+	int count = 0;
+	FILE *users;//Declaring files
+	Users *check_user;
+	users = fopen(USER_FILE_NAME, MODEOUT);//open file to read
+	if (users == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
+	fseek(users, 0, SEEK_END);//go to end of file
+	count = ftell(users) / sizeof(Users);//check how match char and And distribute building size to find how many people in text
+
 }
