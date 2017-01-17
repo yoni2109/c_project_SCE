@@ -85,6 +85,7 @@ void fill_arrays();
 void send_message();
 char * func_to_get_message();
 void allocate_messages();
+void send_message_about_new_task();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -532,12 +533,12 @@ void send_message(int index_user_array){
 	get(temp_message);
 	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
 	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	web_messages_amount++;
 	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
 		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
 		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
 		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
 	}
-	web_messages_amount++;
 }
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
@@ -547,7 +548,29 @@ void change_pass(int index_user_array){
 		users_array[index_user_array].password[i] = temp_pass[i];
 	}
 }
-
+void send_message_about_new_task(int index_user_array)
+{
+	int chosen_project;
+	char temp_message[31] = { "There Is New Task - Check It" };
+	print_user_projects(index_user_array);
+	printf("Choose Project :\n");
+	scanf("%d", &chosen_project);
+	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
+	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
+	//printf("Choose user :\n");
+	//scanf("%d", &chosen_user);
+	//printf("Write Your Message :\n");
+	//get(temp_message);
+	realloc(messages_array, projects_array[chosen_project].users_amount * sizeof *messages_array);//realloc 1 place for new message
+	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	web_messages_amount = projects_array[chosen_project].users_amount+web_messages_amount;
+	for (int i = projects_array[chosen_project].users_amount; i < web_users_amount; i++){//loop to fill the name,target name,conntent in the last place of array messages
+		for (int j = 0; j < 31; j++){
+			messages_array[i].sender[j] = users_array[i].name[j];//update sender in the global messages array
+		//messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+		//messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+	}
+}
 
 
 
