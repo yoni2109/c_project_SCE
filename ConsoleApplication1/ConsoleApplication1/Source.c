@@ -14,6 +14,7 @@
 #define TASKS_FILE "tasks.txt"
 #define PROJECT_MANAGERS_FILE "projects_managers.txt"
 
+
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
 {
@@ -77,6 +78,8 @@ void print_projects_task(int index_project_array);
 void print_web_users();
 int check_admin(char * name);
 void confirm_project(int index_user);
+void fill_arrays();
+void send_message();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -87,7 +90,7 @@ Messages* messages_array;// will contain all messages that moves on the web
 int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
-void fill_arrays();
+
 int main(){
 	fill_arrays();
 	char member[] = { "zohar" };
@@ -99,10 +102,8 @@ int main(){
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
 		scanf("%d", &enter);
 		cleanBuffer();
-		if (enter == 1){
-			if (log_in(member))
-				play(member);
-		}
+		if (enter == 1)
+			log_in(member);
 		if (enter == 2){
 			signUp();
 		}
@@ -110,7 +111,6 @@ int main(){
 	} while (True);
 	return 0;
 }
-
 void signUp(){
 	int count = 0, member_Exist = False, temp = '\0';
 	char member[SIZE], password[SIZE];//open arry
@@ -178,9 +178,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(char member[]){
-	int Not_Valid_Pass = False/*boolean var for password confirmation*/;
-	int Not_Valid_Name = False/*boolean var for username confirmation*/;
-	int Not_Member = True/*boolean var for member verivication*/;
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
 	char temp = '\0';
 	char password[SIZE];//open string
 	do{
@@ -264,7 +262,7 @@ int If_Member_Return_True(char user[], char password[]){
 	fclose(users);
 	return False;
 }
-int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings
+int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings // בודק אם שם משתמש קיים במערכת
 	int i;
 	for (i = 0; user_from_list[i] != '\0' && user_from_member[i] != '\0'; i++) {
 		if (user_from_list[i] != user_from_member[i])
@@ -276,7 +274,7 @@ int compareArrays(char user_from_list[], char user_from_member[]) {//Check for i
 	}
 	return True;
 }
-void play(char member[]){
+int ask_if_admin(char member[]){
 	int count = 0, i = 0, Not_admin = True;
 	char temp = '\0';
 	FILE *admin;//Declaring files
@@ -296,12 +294,17 @@ void play(char member[]){
 			if (temp == 'Y' || temp == 'y'){
 				Not_admin = False;
 				printf("%s you now Admin\n", member);
+				fclose(admin);
+				free(check_admin);
+				return True;
 			}
 		}
 	}
 	fclose(admin);
+	free(check_admin);
 	if (Not_admin)
 		printf("welcome %s\n", member);
+	return False;
 }
 int wont_exit(){//function to ask the user if exit to loby/main
 	int temp = False;
@@ -314,21 +317,61 @@ int wont_exit(){//function to ask the user if exit to loby/main
 	cleanBuffer();
 	return False;
 }
-void system_massage(char admin_name[]){
+void system_massage(char sender[]){
+	int count = 0, member_Exist = False;
 	char temp = '\0';
 	FILE *message;//Declaring files
 	Messages system_massage;// Opening indicates the size of the array;
-	message = fopen(MESSAGE_FILE, "a+");//open file to read
+	FILE *users;
+	Users *check_user;// Opening indicates the size of the array;
+	users = fopen(USER_FILE_NAME, "r+");//open file to read
+	if (users == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
+	fscanf(users, "%d", &count);//get the number of users
+	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
+	message = fopen(MESSAGE_FILE, "a");//open file to read
 	if (message == NULL){//if file not open quit from program
 		printf("the file could not be opened\n");
 		exit(1);
 	}
-	printf("helo admin you want to send sysem massage?\nif yes press Y other print any key: ");
+	printf("%s you want to send system massage?\nif yes press Y other print any key: ", sender);
 	scanf("%c", &temp);
+	cleanBuffer();
 	if (temp == 'y' || temp == 'Y'){
-		fgets(system_massage.content, MESSAGE_SIZE, stdin);
-		strcpy(system_massage.sender, admin_name);
-		fprintf(message, "%s%s", system_massage.sender, system_massage.content);
+		if (!(compareArrays(sender, UNIVERSAL_DIRECTOR)))
+			if (ask_if_admin(sender))
+				strcpy(sender, UNIVERSAL_DIRECTOR);
+		do
+		{
+			if (member_Exist){
+				printf("member not Exists");
+				member_Exist = False;
+				if (wont_exit()){//check if the user want to continue
+					free(check_user);//frre the pointer
+					return;
+				}
+			}
+
+			printf("enter content name: ");
+			cleanBuffer();
+			member_Exist = String(system_massage.content);
+			if (!member_Exist){
+				member_Exist = True;
+				for (int i = 0; i < count && member_Exist == True; i++){//loop for check if user name in system
+					fscanf(users, "%s%s", &check_user[i].name, check_user[i].password);//scan from file to pointer
+					if (compareArrays(check_user[i].name, system_massage.content))//return true if the user in system
+						member_Exist = False;
+				}
+			}
+		} while (member_Exist);
+		strcpy(system_massage.sender, sender);
+		printf("enter your mesagge: ");
+		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
+		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
+		fclose(users);
+		fclose(message);
 	}
 }
 void fill_arrays(){
@@ -401,7 +444,7 @@ void fill_arrays(){
 				
 			}
 		}
-		
+
 	}
 
 }
@@ -439,14 +482,16 @@ void print_web_users(){
 		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
 }
-
 void confirm_project(int index_project, char * manager_project){//func to archived the project *only maneger can do that*
 	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
 		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
 			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
-		}
 	}
 }
+}
+
+
+
 
 
 
