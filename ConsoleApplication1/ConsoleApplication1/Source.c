@@ -31,7 +31,6 @@ typedef struct
 	int projects_amount;
 	Messages* message_list;
 	int messages_amount;
-	char ** archive_projects;
 }Users;
 typedef struct
 {
@@ -57,6 +56,7 @@ typedef struct
 	int status_amount;
 	char** Manager_list;
 	int manager_amount;
+	int archived;
 
 }Projects;
 
@@ -73,6 +73,7 @@ void system_massage();
 void print_projects_task(int index_project_array);
 void print_web_users();
 int check_admin(char * name);
+void confirm_project(int index_user);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -383,15 +384,18 @@ void print_projects_task(int index_project_array){
 		
 }
 int check_admin(char * name){
-	int True = 1,False=0;
-	if (strcmp(name, Wmanager->name) != 0) return 1;//check if the name that func get is the same name as web manager
-	else return 0;
+	if (!strcmp(name, Wmanager->name)) return True;//check if the name that func get is the same name as web manager
+	else return False;
 }
 void print_web_users(){
 	printf("Those All Site Members:\n");
 	for (int i = 0; i < web_users_amount; i++){//loop to print all users
 		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
+}
+void confirm_project(int index_project,char * manager_project){
+	if (projects_array[index_project].archived )
+
 }
 
 
