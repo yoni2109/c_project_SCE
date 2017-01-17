@@ -51,7 +51,8 @@ typedef struct
 typedef struct
 {
 	char sender[SIZE];
-	char content[MESSAGE_SIZE];
+	char content[SIZE];
+	char massage[MESSAGE_SIZE];
 }Messages;
 void signUp();
 void cleanBuffer();
@@ -151,7 +152,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(char member[]){
-	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True, count = 0;
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
 	char temp = '\0';
 	char password[SIZE];//open string
 	do{
