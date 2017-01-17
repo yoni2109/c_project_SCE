@@ -76,6 +76,9 @@ Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
 void fill_arrays();
 int main(){
+	fill_arrays();
+
+
 	char member[] = { "zohar" };
 	int enter = 0;
 	system_massage(member);
@@ -319,13 +322,13 @@ void system_massage(char admin_name[]){
 }
 void fill_arrays(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
-	fscanf(users_File, "%d", web_users_amount);
-	users_array = (Users*)malloc(sizeof(Users)*web_users_amountusers_amount);
+	fscanf(users_File, "%d", &web_users_amount);
+	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
-		fscanf(users_File, "%s", users_array[i].name);
-		fscanf(users_File, "%s", users_array[i].password);
+		fscanf(users_File, "%s", &users_array[i].name);
+		users_array[i].name[SIZE - 1] = '/0';
+		fscanf(users_File, "%s", &users_array[i].password);
 	}
-	printf("%s", users_array[0].name);
 }
 void remove_task(Users * user){
 
