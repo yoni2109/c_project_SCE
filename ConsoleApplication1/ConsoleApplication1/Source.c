@@ -491,7 +491,6 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-
 void send_message(int index_user_array){
 	int chosen_project, chosen_user;
 	char temp_message[TEMP_SIZE];
@@ -500,17 +499,19 @@ void send_message(int index_user_array){
 	printf("Choose Project :\n");
 	scanf("%d",&chosen_project);
 	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
-	//הדפסה של כל משתמשי הפרויקט
+	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
 	printf("Choose user :\n");
 	scanf("%d", &chosen_user);
 	printf("Write Your Message :\n");
 	get(temp_message);
-	realloc(messages_array, 1 * sizeof *messages_array);
-	
-	
-	
-
-
+	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
+	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
+		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
+		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+	}
+	web_messages_amount++;
 }
 
 
