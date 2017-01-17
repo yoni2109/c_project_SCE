@@ -13,6 +13,7 @@
 #define MESSAGE_SIZE 200
 #define TASKS_FILE "tasks.txt"
 #define PROJECT_MANAGERS_FILE "projects_managers.txt"
+#define UNIVERSAL_DIRECTOR "ADMIN"
 
 
 typedef enum{ False = 0, True = 1 } bool;
@@ -20,8 +21,8 @@ typedef struct
 {
 	char target[SIZE];
 	char sender[SIZE];
-	char content[MESSAGE_SIZE];
-
+	char content[SIZE];
+	char message[MESSAGE_SIZE]
 }Messages;
 typedef struct
 {
@@ -70,10 +71,10 @@ void sort_tasks_no4();
 void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
-int log_in(char member[]);
+int log_in();
 int String(char arry[]);
 void cleanString(char arry[]);
-int If_Member_Return_True(char user[], char password[]);
+int check_member(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
@@ -103,6 +104,7 @@ int main(){
 	int enter = 0;
 	system_massage(member);
 	
+	
 	do
 	{
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
@@ -118,33 +120,20 @@ int main(){
 	return 0;
 }
 void signUp(){
-	int count = 0, member_Exist = False, temp = '\0';
+	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
-	FILE *users;//Declaring files
-	Users *check_user;// Opening indicates the size of the array;
-	users = fopen(USER_FILE_NAME, "r+");//open file to read
-	if (users == NULL){//if file not open quit from program
-		printf("the file could not be opened\n");
-		exit(1);
-	}
-	fscanf(users, "%d", &count);//get the number of users
-	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
 	do//loop for sign up
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit()){//print to user quiquestion if Continue if not return
-				free(check_user);//free pointer
+			if (wont_exit())//print to user quiquestion if Continue if not return
 				return;
 			}
-		}
 		printf("please enter a new member: ");//print to user Guidelines
-		fseek(users, 0L, SEEK_SET);//go to the start in file
 		member_Exist = String(member);//get the user name from user
 		if (!member_Exist){//if user name is correct get in loop
-			for (int i = 0; i < count && member_Exist == False; i++){//loop for check if user name in system
-				fscanf(users, "%s", &check_user[i].name);//scan from file to pointer
-				if (compareArrays(check_user[i].name, member)){//return true if the user in system
+			for (int i = 0; i < web_projects_amount && member_Exist == False; i++){//loop for check if user name in system
+				if (!strcmp(users_array[i].name, member)){//return true if the user in system
 					printf("this member Exists!\n");
 					member_Exist = True;
 				}
@@ -157,22 +146,15 @@ void signUp(){
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
 			if (wont_exit()){//check if the user want to continue
-				free(check_user);//frre the pointer
 				return;
 			}
 			printf("please enter password again: ");//print to user massage
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
-	fseek(users, 0L, SEEK_SET);//go to head of fie
-	fscanf(users, "%d", &count);//get the number of users in file
-	count++;//after we get name and password we update the number of users
-	fseek(users, 0L, SEEK_SET);//go back to head of  file
-	fprintf(users, "%d", count);//print the new number of memeber to file
-	fseek(users, 0L, SEEK_END);//go to end in file
-	fprintf(users, "\n%s %s", member, password);//print to file to new user
-	fclose(users);//close the file
-	free(check_user);//free the pointer
+	realloc(users_array, web_projects_amount+1);
+	strcpy(users_array[web_projects_amount].name, member);
+	strcpy(users_array[web_projects_amount].password, password);
 }
 void cleanBuffer(){//clean the buffer
 	char buffer;
@@ -183,10 +165,9 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 		arry[i] = '\0';
 	}
 }
-int log_in(char member[]){
+int log_in(){
 	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
-	char temp = '\0';
-	char password[SIZE];//open string
+	char password[SIZE], member[SIZE];//open string
 	do{
 		if (!Not_Member){//if user make mistake 
 			printf("wrong member or password\n");//print error
@@ -214,7 +195,7 @@ int log_in(char member[]){
 			printf("enter your Password maximum chars [%d]: ", SIZE - 1);//Writes the user what to do
 			Not_Valid_Pass = String(password);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Pass);//if notvalid = true -> loop
-		Not_Member = If_Member_Return_True(member, password);//check if appropriate password to use
+		Not_Member = check_member(member, password);//check if appropriate password to use
 	} while (!Not_Member);
 	return True;
 }
@@ -238,37 +219,15 @@ int String(char arry[]){//function to get string for user
 	arry[count] = '\0';//put \0-> end of string in the end of string
 	return False;
 }
-int If_Member_Return_True(char user[], char password[]){
-	int count = 0;
-	FILE *users;//Declaring files
-	Users *check_user; //Open User type structures
-	users = fopen(USER_FILE_NAME, "r");//open file to read
-	if (users == NULL){//if file not open quit from program
-		printf("the file could not be opened\n");
-		exit(1);
-	}
-	fscanf(users, "%d", &count);//get the number of users
-	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array
-	for (int i = 0; i<count; i++){//loop for check if member exist
-		fscanf(users, "%s%s", &check_user[i].name, &check_user[i].password);//scan users from file
-		if (compareArrays(check_user[i].name, user)){//open function if user exsist check password
-			if (compareArrays(check_user[i].password, password)){//If appropriate password to use
-				fclose(users);//close file
-				free(check_user);//free poinet
+int check_member(char user[], char password[]){
+	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
+		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
+			if (!strcmp(users_array[i].password, password))//If appropriate password to use
 				return True;
 			}
-			else{
-				fclose(users);//close file
-				free(check_user);//free pointer
-				return False;
-			}
-		}
-	}
-	free(check_user);
-	fclose(users);
 	return False;
 }
-int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings // בודק אם שם משתמש קיים במערכת
+int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings 
 	int i;
 	for (i = 0; user_from_list[i] != '\0' && user_from_member[i] != '\0'; i++) {
 		if (user_from_list[i] != user_from_member[i])
@@ -280,40 +239,8 @@ int compareArrays(char user_from_list[], char user_from_member[]) {//Check for i
 	}
 	return True;
 }
-int ask_if_admin(char member[]){
-	int count = 0, i = 0, Not_admin = True;
-	char temp = '\0';
-	FILE *admin;//Declaring files
-	WebManager *check_admin;
-	admin = fopen(ADMIN_FILE, "r");//open file to read
-	if (admin == NULL){//if file not open quit from program
-		printf("the file could not be opened\n");
-		exit(1);
-	}
-	fscanf(admin, "%d", &count);
-	check_admin = (WebManager*)malloc((count)*sizeof(WebManager));//Opening indicates the size of the array
-	for (int i = 0; i<count&&Not_admin == True; i++){
-		fscanf(admin, "%s", &check_admin[i].name);//scan from file to pointer
-		if (compareArrays(check_admin[i].name, member)){
-			printf("welcome %s you want to conect to your admin account if so enter Y else enter other any key: ", member);
-			scanf("%c", &temp);
-			if (temp == 'Y' || temp == 'y'){
-				Not_admin = False;
-				printf("%s you now Admin\n", member);
-				fclose(admin);
-				free(check_admin);
-				return True;
-			}
-		}
-	}
-	fclose(admin);
-	free(check_admin);
-	if (Not_admin)
-		printf("welcome %s\n", member);
-	return False;
-}
 int wont_exit(){//function to ask the user if exit to loby/main
-	int temp = False;
+	char temp = '\0';
 	printf("you want enter again if so enter Y else enter othe key: ");//massage to user
 	scanf("%c", &temp);//scan flag
 	if (!(temp == 'y' || temp == 'Y')){//if flag = y(yes) continue
@@ -405,7 +332,7 @@ void scan_no1(){
 		users_array[i].name[SIZE - 1] = '/0';
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
-	fclose(USER_FILE_NAME);
+	fclose(users_File);
 }
 void scan_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
@@ -445,8 +372,9 @@ void scan_no3(){
 		fscanf(tasks_file, "%s %s %s", &tasks_array[i].project_name, &tasks_array[i].status_name, &tasks_array[i].name);
 		char temp[TEMP_SIZE];
 		int j = 0;
+		fgetc(tasks_file);
 		while ((temp[j++] = fgetc(tasks_file)) != '\n');
-		temp[j] = '/0';
+		temp[j-1] = '\0';
 		tasks_array[i].task_details = (char*)malloc(sizeof(char)*strlen(temp));
 		strcpy(tasks_array[i].task_details, temp);
 		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
@@ -456,13 +384,19 @@ void scan_no3(){
 void sort_tasks_no4(){
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
-			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
+			if (strcmp(projects_array[i].name, tasks_array[j].project_name)!=0){
 				for (int k = 0; k < projects_array[i].status_amount; k++){
 					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
 						if (!projects_array[i].status_list[k].tasks_amount){
 							projects_array[i].status_list[k].tasks_amount++;
 							projects_array[i].status_list[k].tasks_list = (Tasks*)malloc(sizeof(Tasks));
-							projects_array[i].status_list[k].tasks_list[0] = tasks_array[j];
+							strcpy(projects_array[i].status_list[k].tasks_list[0].name , tasks_array[j].name);
+							strcpy(projects_array[i].status_list[k].tasks_list[0].assign_to , tasks_array[j].assign_to);
+							strcpy(projects_array[i].status_list[k].tasks_list[0].project_name , tasks_array[j].project_name);
+							strcpy(projects_array[i].status_list[k].tasks_list[0].status_name , tasks_array[j].status_name);
+							projects_array[i].status_list[k].tasks_list[0].task_details = (char*)malloc(sizeof(char)*strlen(tasks_array[j].task_details));
+							strcpy(projects_array[i].status_list[k].tasks_list[0].task_details , tasks_array[j].task_details);
+							projects_array[i].status_list[k].tasks_list[0].task_progres = tasks_array[j].task_progres;
 						}
 						else{
 							projects_array[i].status_list[k].tasks_amount++;
