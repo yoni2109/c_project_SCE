@@ -3,16 +3,25 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+
 #define SIZE 20
 #define MODEOUT "w"
-#define  USER_FILE_NAME "users.txt"
-#define  ADMIN_FILE "web_manager.txt"
+#define USER_FILE_NAME "users.txt"
+#define PROJECTS_FILE_NAME "projects.txt"
+#define ADMIN_FILE "web_manager.txt"
 #define MESSAGE_FILE "messeges.txt"
 #define MESSAGE_SIZE 200
-#define UNIVERSAL_DIRECTOR "ADMIN"
+#define TASKS_FILE "tasks.txt"
+#define PROJECT_MANAGERS_FILE "projects_managers.txt"
 
 
 typedef enum{ False = 0, True = 1 } bool;
+typedef struct
+{
+	char sender[SIZE];
+	char content[MESSAGE_SIZE];
+
+}Messages;
 typedef struct
 {
 	char name[SIZE];
@@ -21,41 +30,40 @@ typedef struct
 {
 	char name[SIZE];
 	char password[SIZE];
-	struct Projects** project_list;
+	char *project_list[SIZE];
 	int projects_amount;
-	struct Messages** message_list;
+	Messages* message_list;
 	int messages_amount;
 }Users;
 typedef struct
 {
+	char project_name[SIZE];
+	char status_name[SIZE];
 	char name[SIZE];
-	struct Users** users_list;
-	int users_amount;
-	struct Status** status_list;
-	int status_amount;
-	char** Manager_list;
-	int manager_amount;
-
-}Projects;
+	char* task_details;
+	bool task_progres;
+	Users* assign_to;
+}Tasks;
 typedef struct
 {
 	char name[SIZE];
-	struct Tasks** tasks_list;
+	Tasks * tasks_list;
 	int tasks_amount;
 } Status;
 typedef struct
 {
 	char name[SIZE];
-	char* task_details;
-	bool task_progres;
-	struct Users* assign_to;
-}Tasks;
-typedef struct
-{
-	char sender[SIZE];
-	char content[SIZE];
-	char massage[MESSAGE_SIZE];
-}Messages;
+	char* users_list[SIZE];
+	int users_amount;
+	Status* status_list;
+	int status_amount;
+	char* Manager_list[SIZE];
+	int manager_amount;
+	int archived;
+
+}Projects;
+
+void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
 int log_in(char member[]);
@@ -65,13 +73,29 @@ int If_Member_Return_True(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
-int ask_if_admin(char member[]);
+void print_projects_task(int index_project_array);
+void print_web_users();
+int check_admin(char * name);
+void confirm_project(int index_user);
+void fill_arrays();
+void send_message();
+
+WebManager* Wmanager;//will contain the web managet user name
+Users* users_array;// will contain all web users
+int web_users_amount = 0;//will contain the amount of users registered to web
+Projects* projects_array;// will contain all web projects
+int web_projects_amount = 0;//will contain the amount of all web projects
+Messages* messages_array;// will contain all messages that moves on the web
+int web_messages_amount = 0;//amount of all messages
+Tasks* tasks_array;//will contain all tasks in web
+int web_tasks_amount=0;//tasks amount
 
 int main(){
+	fill_arrays();
 	char member[] = { "zohar" };
 	int enter = 0;
 	system_massage(member);
-
+	
 	do
 	{
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
@@ -86,7 +110,6 @@ int main(){
 	} while (True);
 	return 0;
 }
-
 void signUp(){
 	int count = 0, member_Exist = False, temp = '\0';
 	char member[SIZE], password[SIZE];//open arry
@@ -134,10 +157,10 @@ void signUp(){
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
-	fseek(users, 0L, SEEK_SET);//go to start in fie
+	fseek(users, 0L, SEEK_SET);//go to head of fie
 	fscanf(users, "%d", &count);//get the number of users in file
 	count++;//after we get name and password we update the number of users
-	fseek(users, 0L, SEEK_SET);//go back to start in file
+	fseek(users, 0L, SEEK_SET);//go back to head of  file
 	fprintf(users, "%d", count);//print the new number of memeber to file
 	fseek(users, 0L, SEEK_END);//go to end in file
 	fprintf(users, "\n%s %s", member, password);//print to file to new user
@@ -350,3 +373,96 @@ void system_massage(char sender[]){
 		fclose(message);
 	}
 }
+void fill_arrays(){
+	/*1. scans user names and passwords into users array*/
+	FILE* users_File = fopen(USER_FILE_NAME, "r");
+	fscanf(users_File, "%d", &web_users_amount);
+	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
+	for (int i = 0; i < web_users_amount; i++){
+		fscanf(users_File, "%s", &users_array[i].name);
+		users_array[i].name[SIZE - 1] = '/0';
+		fscanf(users_File, "%s", &users_array[i].password);
+	}
+	fclose(USER_FILE_NAME);
+	/*end of 1.*/
+	/*2. scan all projects and users that assigned to it from projects file*/
+	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
+	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
+	fscanf(projects_file, "%d", &web_projects_amount);
+	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
+	for (int i = 0; i < web_projects_amount; i++){
+		fscanf(projects_file, "%s", &projects_array[i].name);
+		fscanf(projects_file, "%d", &projects_array[i].users_amount);
+		*projects_array[i].users_list = (char*)malloc(sizeof(char)*projects_array[i].users_amount);
+		for (int j = 0; j < projects_array[i].users_amount; j++){
+			fscanf(projects_file, "%s", &projects_array[i].users_list[j]);
+		}
+		fseek(projects_managers_file,)
+		fscanf(projects_file, "%d", &projects_array[i].manager_amount);
+		*projects_array[i].Manager_list = (char*)malloc(sizeof(char)*projects_array[i].manager_amount);
+		for (int j = 0; j < projects_array[i].manager_amount; j++){
+			fscanf(projects_file, "%s", projects_array[i].Manager_list[j]);
+		}
+		fscanf(projects_file, "%d", &projects_array[i].status_amount);
+		projects_array[i].status_list = (Status*)malloc(sizeof(Status)*projects_array[i].status_amount);
+		for (int j = 0; j < projects_array[i].status_amount; j++){
+			fscanf(projects_file, "%s", &projects_array[i].status_list[j].name);
+		}
+		fscanf(projects_file, "%d", &projects_array[i].archived)
+	}
+	fclose(projects_file);
+	/*end of 2.*/
+	FILE* tasks_file = fopen(TASKS_FILE, "r");
+	fscanf(tasks_file, "%d", &web_tasks_amount);
+	tasks_array = (Tasks*)malloc(sizeof(Tasks))
+
+
+}
+void remove_task(int index_user_array){
+	int proj_to_delete_from;//value for project to delte from the task
+	print_user_projects(index_user_array);
+	printf("Choose Project By Number:\n");
+	scanf("%d", &proj_to_delete_from);//get what user choose
+	print_projects_task(proj_to_delete_from);
+
+
+}
+void print_user_projects(int index_user_array){
+	printf("Those Your projects:\n");
+	for (int i = 0; i < web_users_amount; i++){
+		printf("%d. %s",(i+1), users_array[index_user_array].project_list[i]);
+	}
+	}
+void print_projects_task(int index_project_array){
+	printf("Tasks In Project:\n");
+	for (int i = 0; i < projects_array[index_project_array].status_amount; i++){
+		//for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
+		//printf("1. %s", (projects_array[index_project_array].status_list[0]).);
+	}
+	//projects_array[0].status_list[0]
+		
+}
+int check_admin(char * name){
+	if (!strcmp(name, Wmanager->name)) return True;//check if the name that func get is the same name as web manager
+	else return False;
+}
+void print_web_users(){
+	printf("Those All Site Members:\n");
+	for (int i = 0; i < web_users_amount; i++){//loop to print all users
+		printf("%d,%s\n", (i + 1), users_array[i].name);
+	}
+}
+void confirm_project(int index_project, char * manager_project){//func to archived the project *only maneger can do that*
+	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
+		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
+			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
+		}
+	}
+}
+
+
+
+
+
+
+
