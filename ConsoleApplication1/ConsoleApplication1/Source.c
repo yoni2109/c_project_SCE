@@ -65,11 +65,15 @@ int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
 
-WebManager* Wmanager;
-Users* users_array;
-Projects* projects_array;
-Messages* messages_array;
-Tasks* tasks_array;
+WebManager* Wmanager;//will contain the web managet user name
+Users* users_array;// will contain all web users
+int web_users_amount = 0;//will contain the amount of users registered to web
+Projects* projects_array;// will contain all web projects
+int web_projects_amount = 0;//will contain the amount of all web projects
+Messages* messages_array;// will contain all messages that moves on the web
+int web_messages_amount = 0;//amount of all messages
+Tasks* tasks_array;//will contain all tasks in web
+int web_tasks_amount=0;//tasks amount
 void fill_arrays();
 int main(){
 	char member[] = { "zohar" };
@@ -315,10 +319,9 @@ void system_massage(char admin_name[]){
 }
 void fill_arrays(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
-	int amount_of_users;
-	fscanf(users_File, "%d", amount_of_users);
-	users_array = (Users*)malloc(sizeof(Users)*amount_of_users);
-	for (int i = 0; i < amount_of_users; i++){
+	fscanf(users_File, "%d", web_users_amount);
+	users_array = (Users*)malloc(sizeof(Users)*web_users_amountusers_amount);
+	for (int i = 0; i < web_users_amount; i++){
 		fscanf(users_File, "%s", users_array[i].name);
 		fscanf(users_File, "%s", users_array[i].password);
 	}
@@ -331,8 +334,8 @@ void remove_task(Users * user){
 	
 }
 void print_user_projects(int index_user_array){
-	for (int i = 0; i < user->projects_amount; i++){
-		printf("1. %s", user->project_list[i]);
+	for (int i = 0; i < users_array[i].projects_amount; i++){
+		printf("1. %s", users_array[i].project_list[i]);
 	}
 }
 
