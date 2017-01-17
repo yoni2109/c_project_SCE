@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
-
+#define TEMP_SIZE 1024
 #define SIZE 20
 #define MODEOUT "w"
 #define USER_FILE_NAME "users.txt"
@@ -17,6 +17,7 @@
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
 {
+	char target[SIZE];
 	char sender[SIZE];
 	char content[MESSAGE_SIZE];
 
@@ -39,9 +40,9 @@ typedef struct
 	char project_name[SIZE];
 	char status_name[SIZE];
 	char name[SIZE];
-	char* task_details;
+	char *task_details;
 	bool task_progres;
-	Users* assign_to;
+	char assign_to[SIZE];
 }Tasks;
 typedef struct
 {
@@ -354,25 +355,54 @@ void fill_arrays(){
 		for (int j = 0; j < projects_array[i].users_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].users_list[j]);
 		}
-		fseek(projects_managers_file,)
-		fscanf(projects_file, "%d", &projects_array[i].manager_amount);
+		char temp[20];
+		fscanf(projects_managers_file, "%s", &temp);
+		fscanf(projects_managers_file, "%d", &projects_array[i].manager_amount);
 		*projects_array[i].Manager_list = (char*)malloc(sizeof(char)*projects_array[i].manager_amount);
 		for (int j = 0; j < projects_array[i].manager_amount; j++){
-			fscanf(projects_file, "%s", projects_array[i].Manager_list[j]);
+			fscanf(projects_managers_file, "%s", &projects_array[i].Manager_list[j]);
 		}
 		fscanf(projects_file, "%d", &projects_array[i].status_amount);
 		projects_array[i].status_list = (Status*)malloc(sizeof(Status)*projects_array[i].status_amount);
 		for (int j = 0; j < projects_array[i].status_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].status_list[j].name);
+			projects_array[i].status_list[j].tasks_amount = 0;
 		}
-		fscanf(projects_file, "%d", &projects_array[i].archived)
+		fscanf(projects_file, "%d", &projects_array[i].archived);
 	}
 	fclose(projects_file);
+	fclose(projects_managers_file);
 	/*end of 2.*/
+	/*3. scan all tasks to tasks global array*/
 	FILE* tasks_file = fopen(TASKS_FILE, "r");
 	fscanf(tasks_file, "%d", &web_tasks_amount);
-	tasks_array = (Tasks*)malloc(sizeof(Tasks))
-
+	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
+	for (int i = 0; i < web_tasks_amount; i++){
+		fscanf(tasks_file, "%s %s %s", &tasks_array[i].project_name, &tasks_array[i].status_name, &tasks_array[i].name);
+		char temp[TEMP_SIZE];
+		int j = 0;
+		while ((temp[j++] = fgetc(tasks_file)) != '\n');
+		temp[j] = '/0';
+		tasks_array[i].task_details = (char*)malloc(sizeof(char)*strlen(temp));
+		strcpy(tasks_array[i].task_details, temp);
+		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
+	}
+	fclose(tasks_file);
+	/*end of  3.*/
+	/*sort tasks to projects*/
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < web_tasks_amount; j++){
+			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
+				for (int k = 0; k < projects_array[i].status_amount; k++){
+					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
+						projects_array[i].status_list[k].tasks_amount
+					}
+				}
+				
+			}
+		}
+		
+	}
 
 }
 void remove_task(int index_user_array){
@@ -410,13 +440,13 @@ void print_web_users(){
 	}
 }
 
-void confirm_project(int index_project,char * manager_project){//func to archived the project *only maneger can do that*
+void confirm_project(int index_project, char * manager_project){//func to archived the project *only maneger can do that*
 	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
 		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
 			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
+		}
 	}
 }
-
 
 
 
