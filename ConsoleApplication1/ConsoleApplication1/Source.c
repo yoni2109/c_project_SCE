@@ -43,6 +43,7 @@ typedef struct
 } Status;
 typedef struct
 {
+	char project_name[SIZE];
 	char name[SIZE];
 	char* task_details;
 	bool task_progres;
@@ -62,6 +63,13 @@ int If_Member_Return_True(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
+
+WebManager* Wmanager;
+Users* users_array;
+Projects* projects_array;
+Messages* messages_array;
+Tasks* tasks_array;
+void fill_arrays();
 int main(){
 	char member[] = { "zohar" };
 	int enter = 0;
@@ -131,10 +139,10 @@ void signUp(){
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
-	fseek(users, 0L, SEEK_SET);//go to start in fie
+	fseek(users, 0L, SEEK_SET);//go to head of fie
 	fscanf(users, "%d", &count);//get the number of users in file
 	count++;//after we get name and password we update the number of users
-	fseek(users, 0L, SEEK_SET);//go back to start in file
+	fseek(users, 0L, SEEK_SET);//go back to head of  file
 	fprintf(users, "%d", count);//print the new number of memeber to file
 	fseek(users, 0L, SEEK_END);//go to end in file
 	fprintf(users, "\n%s %s", member, password);//print to file to new user
@@ -303,4 +311,15 @@ void system_massage(char admin_name[]){
 		strcpy(system_massage.sender, admin_name);
 		fprintf(message, "%s%s", system_massage.sender, system_massage.content);
 	}
+}
+void fill_arrays(){
+	FILE* users_File = fopen(USER_FILE_NAME, "r");
+	int amount_of_users;
+	fscanf(users_File, "%d", amount_of_users);
+	users_array = (Users*)malloc(sizeof(Users)*amount_of_users);
+	for (int i = 0; i < amount_of_users; i++){
+		fscanf(users_File, "%s", users_array[i].name);
+		fscanf(users_File, "%s", users_array[i].password);
+	}
+	printf("%s", users_array[0].name);
 }
