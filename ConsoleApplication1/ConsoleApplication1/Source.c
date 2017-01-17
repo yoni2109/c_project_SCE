@@ -30,13 +30,13 @@ typedef struct
 	char name[SIZE];
 	struct Users** users_list;
 	int users_amount;
-	struct Status* status_list;
+	struct Status * status_list;
 	int status_amount;
 	char** Manager_list;
 	int manager_amount;
 
 }Projects;
-typedef struct
+typedef struct 
 {
 	char name[SIZE];
 	char ** tasks_list;
@@ -55,6 +55,8 @@ typedef struct
 	char content[MESSAGE_SIZE];
 
 }Messages;
+
+
 void signUp();
 void cleanBuffer();
 int log_in(char member[]);
@@ -64,6 +66,9 @@ int If_Member_Return_True(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
+void print_projects_task(int index_project_array);
+void print_web_users();
+int check_admin(char * name);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -77,8 +82,6 @@ int web_tasks_amount=0;//tasks amount
 void fill_arrays();
 int main(){
 	fill_arrays();
-
-
 	char member[] = { "zohar" };
 	int enter = 0;
 	system_massage(member);
@@ -335,20 +338,37 @@ void remove_task(int index_user_array){
 	print_user_projects(index_user_array);
 	printf("Choose Project By Number:\n");
 	scanf("%d", &proj_to_delete_from);//get what user choose
+	print_projects_task(proj_to_delete_from);
 
 
 }
 void print_user_projects(int index_user_array){
 	printf("Those Your projects:\n");
-	for (int i = 0; i < user_amount; i++){
-		printf("1. %s", users_array[i].project_list);
+	for (int i = 0; i < web_users_amount; i++){
+		printf("%d. %s",(i+1), users_array[index_user_array].project_list[i]);
 	}
 	}
 void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
-	for (int i = 0; i < project_amount; i++){
-		for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
-		//printf("1. %s", projects_array[index_project_array].status_list.[0]);
+	for (int i = 0; i < projects_array[index_project_array].status_amount; i++){
+		//for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
+		//printf("1. %s", (projects_array[index_project_array].status_list[0]).);
+	}
+	//projects_array[0].status_list[0]
+		
 }
+int check_admin(char * name){
+	int True = 1,False=0;
+	if (strcmp(name, Wmanager->name) != 0) return 1;//check if the name that func get is the same name as web manager
+	else return 0;
+}
+void print_web_users(){
+	printf("Those All Site Members:\n");
+	for (int i = 0; i < web_users_amount; i++){//loop to print all users
+		printf("%d,%s\n", (i + 1), users_array[i].name);
+	}
+}
+
+
 
 
