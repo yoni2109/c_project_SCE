@@ -5,8 +5,8 @@
 #include <string.h>
 #define SIZE 20
 #define MODEOUT "w"
-#define  USER_FILE_NAME "users.txt"
-#define  ADMIN_FILE "web_manager.txt"
+#define USER_FILE_NAME "users.txt"
+#define ADMIN_FILE "web_manager.txt"
 #define MESSAGE_FILE "messeges.txt"
 #define MESSAGE_SIZE 200
 
@@ -151,7 +151,9 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(char member[]){
-	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True, count = 0;
+	int Not_Valid_Pass = False/*boolean var for password confirmation*/;
+	int Not_Valid_Name = False/*boolean var for username confirmation*/;
+	int Not_Member = True/*boolean var for member verivication*/;
 	char temp = '\0';
 	char password[SIZE];//open string
 	do{
