@@ -30,7 +30,7 @@ typedef struct
 	char name[SIZE];
 	struct Users** users_list;
 	int users_amount;
-	struct Status** status_list;
+	struct Status* status_list;
 	int status_amount;
 	char** Manager_list;
 	int manager_amount;
@@ -39,7 +39,7 @@ typedef struct
 typedef struct
 {
 	char name[SIZE];
-	struct Tasks** tasks_list;
+	char ** tasks_list;
 	int tasks_amount;
 } Status;
 typedef struct
@@ -324,15 +324,25 @@ void fill_arrays(){
 	}
 	printf("%s", users_array[0].name);
 }
-void remove_task(Users * user){
+void remove_task(int index_user_array){
+	int proj_to_delete_from;//value for project to delte from the task
+	print_user_projects(index_user_array);
+	printf("Choose Project By Number:\n");
+	scanf("%d", &proj_to_delete_from);//get what user choose
 
-
-	
-	
+		
 }
 void print_user_projects(int index_user_array){
-	for (int i = 0; i < user->projects_amount; i++){
-		printf("1. %s", user->project_list[i]);
+	printf("Those Your projects:\n");
+	for (int i = 0; i < user_amount; i++){
+		printf("1. %s", users_array[i].project_list);
 	}
 }
+void print_projects_task(int index_project_array){
+	printf("Tasks In Project:\n");
+	for (int i = 0; i < project_amount; i++){
+		for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
+		//printf("1. %s", projects_array[index_project_array].status_list.[0]);
+}
+
 
