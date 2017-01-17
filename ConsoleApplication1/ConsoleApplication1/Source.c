@@ -65,13 +65,20 @@ int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
 
-WebManager* Wmanager;
-Users* users_array;
-Projects* projects_array;
-Messages* messages_array;
-Tasks* tasks_array;
+WebManager* Wmanager;//will contain the web managet user name
+Users* users_array;// will contain all web users
+int web_users_amount = 0;//will contain the amount of users registered to web
+Projects* projects_array;// will contain all web projects
+int web_projects_amount = 0;//will contain the amount of all web projects
+Messages* messages_array;// will contain all messages that moves on the web
+int web_messages_amount = 0;//amount of all messages
+Tasks* tasks_array;//will contain all tasks in web
+int web_tasks_amount=0;//tasks amount
 void fill_arrays();
 int main(){
+	fill_arrays();
+
+
 	char member[] = { "zohar" };
 	int enter = 0;
 	system_massage(member);
@@ -315,14 +322,13 @@ void system_massage(char admin_name[]){
 }
 void fill_arrays(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
-	int amount_of_users;
-	fscanf(users_File, "%d", amount_of_users);
-	users_array = (Users*)malloc(sizeof(Users)*amount_of_users);
-	for (int i = 0; i < amount_of_users; i++){
-		fscanf(users_File, "%s", users_array[i].name);
-		fscanf(users_File, "%s", users_array[i].password);
+	fscanf(users_File, "%d", &web_users_amount);
+	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
+	for (int i = 0; i < web_users_amount; i++){
+		fscanf(users_File, "%s", &users_array[i].name);
+		users_array[i].name[SIZE - 1] = '/0';
+		fscanf(users_File, "%s", &users_array[i].password);
 	}
-	printf("%s", users_array[0].name);
 }
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
@@ -330,14 +336,14 @@ void remove_task(int index_user_array){
 	printf("Choose Project By Number:\n");
 	scanf("%d", &proj_to_delete_from);//get what user choose
 
-		
+
 }
 void print_user_projects(int index_user_array){
 	printf("Those Your projects:\n");
 	for (int i = 0; i < user_amount; i++){
 		printf("1. %s", users_array[i].project_list);
 	}
-}
+	}
 void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
 	for (int i = 0; i < project_amount; i++){
