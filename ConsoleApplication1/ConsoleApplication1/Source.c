@@ -31,6 +31,7 @@ typedef struct
 	int projects_amount;
 	Messages* message_list;
 	int messages_amount;
+	char ** archive_projects;
 }Users;
 typedef struct
 {
@@ -392,7 +393,7 @@ void print_web_users(){
 		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
 }
-}
+
 
 
 
