@@ -57,6 +57,7 @@ typedef struct
 	int status_amount;
 	char** Manager_list;
 	int manager_amount;
+	int archived;
 
 }Projects;
 
@@ -70,6 +71,10 @@ int If_Member_Return_True(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
 void system_massage();
+void print_projects_task(int index_project_array);
+void print_web_users();
+int check_admin(char * name);
+void confirm_project(int index_user);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -83,8 +88,6 @@ int web_tasks_amount=0;//tasks amount
 void fill_arrays();
 int main(){
 	fill_arrays();
-
-
 	char member[] = { "zohar" };
 	int enter = 0;
 	system_massage(member);
@@ -369,20 +372,41 @@ void remove_task(int index_user_array){
 	print_user_projects(index_user_array);
 	printf("Choose Project By Number:\n");
 	scanf("%d", &proj_to_delete_from);//get what user choose
+	print_projects_task(proj_to_delete_from);
 
 
 }
 void print_user_projects(int index_user_array){
 	printf("Those Your projects:\n");
 	for (int i = 0; i < web_users_amount; i++){
-		printf("1. %s", users_array[i].project_list);
+		printf("%d. %s",(i+1), users_array[index_user_array].project_list[i]);
 	}
 	}
 void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
-	for (int i = 0; i < web_projects_amount; i++){
-		for (int j = 0; j < projects_array[index_project_array].status_amount; j++){}
-			//printf("1. %s", projects_array[index_project_array].status_list.[0]);
+	for (int i = 0; i < projects_array[index_project_array].status_amount; i++){
+		//for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
+		//printf("1. %s", (projects_array[index_project_array].status_list[0]).);
+	}
+	//projects_array[0].status_list[0]
+		
+}
+int check_admin(char * name){
+	if (!strcmp(name, Wmanager->name)) return True;//check if the name that func get is the same name as web manager
+	else return False;
+}
+void print_web_users(){
+	printf("Those All Site Members:\n");
+	for (int i = 0; i < web_users_amount; i++){//loop to print all users
+		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
 }
+void confirm_project(int index_project,char * manager_project){
+	if (projects_array[index_project].archived )
+
+}
+
+
+
+
 
