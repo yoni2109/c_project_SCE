@@ -1,16 +1,17 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
-#define SIZE 21
+#define SIZE 20
 #define MODEOUT "w"
 #define  USER_FILE_NAME "users.txt"
+#define  ADMIN_FILE "admin.txt"
 
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
 {
-	char Name[SIZE];
+	char name[SIZE];
 }WebManager;
 typedef struct
 {
@@ -52,90 +53,230 @@ typedef struct
 }Messages;
 void signUp();
 void cleanBuffer();
-void log_in();
-int String(char arry[SIZE]);
-void cleanString(char arry[SIZE]);
-int If_Member_Return_True(char user[SIZE],char password[SIZE]);
+int log_in(char member[]);
+int String(char arry[]);
+void cleanString(char arry[]);
+int If_Member_Return_True(char user[], char password[]);
+int compareArrays(char user_from_list[], char user_from_member[]);
+void play(char member[]);
 
 int main(){
-	//log_in();
-	char yosu[20];
-	scanf("%s", yosu);
-	yosu[20-1] = NULL;
-	printf("%s", yosu);
-
+	char member[SIZE];
+	char enter = '0';
+	do
+	{
+		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
+		scanf("%d", &enter);
+		cleanBuffer();
+		if (enter == 1){
+			if (log_in(member))
+				play(member);
+		}
+		if (enter == 2){
+			signUp();
+		}
+	} while (True);
 	return 0;
 }
 
 void signUp(){
-	FILE* usersdb = fopen("users.txt", "w+");
-	char name[20];
-	fgets(name, SIZE, stdin);
-	//if (name[SIZE - 1] = !'\0') printf("error");
-	fprintf(usersdb, "*%s\n", name);
+	int count = 0, member_Exist = False, temp = '\0';
+	char member[SIZE], password[SIZE];//open arry
+	FILE *users;//Declaring files
+	Users *check_user;// Opening indicates the size of the array;
+	users = fopen(USER_FILE_NAME, "r+");//open file to read
+	if (users == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
+	fscanf(users, "%d", &count);//get the number of users
+	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
+	do//loop for sign up
+	{
+		if (member_Exist){//if user make mistake
+			member_Exist = False;//reset the flag
+			if (wont_exit()){//print to user quiquestion if Continue if not return
+				free(check_user);//free pointer
+				return;
+			}
+		}
+		printf("please enter a new member: ");//print to user Guidelines
+		fseek(users, 0L, SEEK_SET);//go to the start in file
+		member_Exist = String(member);//get the user name from user
+		if (!member_Exist){//if user name is correct get in loop
+			for (int i = 0; i < count && member_Exist == False; i++){//loop for check if user name in system
+				fscanf(users, "%s", &check_user[i].name);//scan from file to pointer
+				if (compareArrays(check_user[i].name, member)){//return true if the user in system
+					printf("this member Exists!\n");
+					member_Exist = True;
+				}
+			}
+		}
+	} while (member_Exist);
+	printf("pleaes enter password without space: ");//Manual
+	do
+	{
+		if (member_Exist){//if user make mistake
+			member_Exist = False;//reset the flag
+			if (wont_exit()){//check if the user want to continue
+				free(check_user);//frre the pointer
+				return;
+			}
+			printf("please enter password again: ");//print to user massage
+		}
+		member_Exist = String(password);//get password from user
+	} while (member_Exist);
+	fseek(users, 0L, SEEK_SET);//go to start in fie
+	fscanf(users, "%d", &count);//get the number of users in file
+	count++;//after we get name and password we update the number of users
+	fseek(users, 0L, SEEK_SET);//go back to start in file
+	fprintf(users, "%d", count);//print the new number of memeber to file
+	fseek(users, 0L, SEEK_END);//go to end in file
+	fprintf(users, "\n%s %s", member, password);//print to file to new user
+	fclose(users);//close the file
+	free(check_user);//free the pointer
 }
 void cleanBuffer(){//clean the buffer
 	char buffer;
 	while (buffer = getchar(), buffer != '\n');
 }
-void cleanString(char arry[SIZE]){//If there are more letters than the size of the string-> string reset
-	for (int i = 0; arry[i]!= '\0'; i++){
+void cleanString(char arry[]){//If there are more letters than the size of the string-> string reset
+	for (int i = 0; arry[i] != '\0'; i++){
 		arry[i] = '\0';
 	}
 }
-void log_in(){
-	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member=False, count = 0;
-	char temp= '\0';
-	char name[SIZE], password[SIZE];//open string
+int log_in(char member[]){
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True, count = 0;
+	char temp = '\0';
+	char password[SIZE];//open string
 	do{
+		if (!Not_Member){//if user make mistake 
+			printf("wrong member or password\n");//print error
+			return False;//return to loby\main
+		}
 		do//loop for scan name and password
 		{
 			if (Not_Valid_Pass || Not_Valid_Name){//if we scan over the size we:
-				cleanBuffer();//clean the buffer (temp)
-				cleanString(name);//put null in the string
 				printf("Invalid Username\n");//print error to user
 				Not_Valid_Name = False;//restart the flag
+				if (wont_exit())
+					return False;
 			}
-			printf("enter your users maximum chars [%d]: ",SIZE -1); //Writes the user what to do
-			Not_Valid_Name = String(name);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
+			printf("enter your users maximum chars [%d]: ", SIZE - 1); //Writes the user what to do
+			Not_Valid_Name = String(member);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Name);//if notvalid = true -> loop
 		do
 		{
 			if (Not_Valid_Pass){
-				cleanBuffer();//clean the buffer (temp)
-				cleanString(password);//put null in the string
 				printf("Invalid Password\n");//print error to user
 				Not_Valid_Pass = False;//restart the flag
+				if (wont_exit())
+					return False;
 			}
-			printf("enter your Password maximum chars [%d]: ",SIZE -1);//Writes the user what to do
+			printf("enter your Password maximum chars [%d]: ", SIZE - 1);//Writes the user what to do
 			Not_Valid_Pass = String(password);//Receiving a string if size of letters big then size of arry Raise Flag (notvalid)
 		} while (Not_Valid_Pass);//if notvalid = true -> loop
-
-		If_Member_Return_True(name, password);
-	} while (Not_Member);
+		Not_Member = If_Member_Return_True(member, password);//check if appropriate password to use
+	} while (!Not_Member);
+	return True;
 }
-int String(char arry[SIZE]){//function to get string for user
+int String(char arry[]){//function to get string for user
 	char temp = '\0';
 	int count = 0;//flag
 	while (temp = getchar(), temp != '\n'){//loop for get the string
-		arry[count] = temp;
-		count++;
-		if (count > SIZE - 1)//if the string biger then size of arry exit from func and start again
+		arry[count] = temp;//put temp in arry
+		if (temp == ' '){//if temp = space(name with space) close arry with end char and return error
+			arry[count] = '\0';
+			while (temp = getchar(), temp != '\n');
+			printf("please enter with out space\n");
 			return True;
+		}
+		count++;
+		if (count > SIZE - 1){//if the string biger then size of arry exit from func and start again{
+			arry[count - 1] = '\0';//close arry with end char
+			return True;
+		}
 	}
 	arry[count] = '\0';//put \0-> end of string in the end of string
 	return False;
 }
-int If_Member_Return_True(char user[SIZE], char password[SIZE]){
+int If_Member_Return_True(char user[], char password[]){
 	int count = 0;
 	FILE *users;//Declaring files
-	Users *check_user;
-	users = fopen(USER_FILE_NAME, MODEOUT);//open file to read
+	Users *check_user; //Open User type structures
+	users = fopen(USER_FILE_NAME, "r");//open file to read
 	if (users == NULL){//if file not open quit from program
 		printf("the file could not be opened\n");
 		exit(1);
 	}
-	fseek(users, 0, SEEK_END);//go to end of file
-	count = ftell(users) / sizeof(Users);//check how match char and And distribute building size to find how many people in text
-
+	fscanf(users, "%d", &count);//get the number of users
+	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array
+	for (int i = 0; i<count; i++){//loop for check if member exist
+		fscanf(users, "%s%s", &check_user[i].name, &check_user[i].password);//scan users from file
+		if (compareArrays(check_user[i].name, user)){//open function if user exsist check password
+			if (compareArrays(check_user[i].password, password)){//If appropriate password to use
+				fclose(users);//close file
+				free(check_user);//free poinet
+				return True;
+			}
+			else{
+				fclose(users);//close file
+				free(check_user);//free pointer
+				return False;
+			}
+		}
+	}
+	free(check_user);
+	fclose(users);
+	return False;
+}
+int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings
+	int i;
+	for (i = 0; user_from_list[i] != '\0' && user_from_member[i] != '\0'; i++) {
+		if (user_from_list[i] != user_from_member[i])
+			return False;
+		if (user_from_list[i + 1] == '\0' && user_from_member[i + 1] != '\0')
+			return False;
+		if (user_from_list[i + 1] != '\0' && user_from_member[i + 1] == '\0')
+			return False;
+	}
+	return True;
+}
+void play(char member[]){
+	int count = 0, i = 0, Not_admin = True;
+	char temp = '\0';
+	FILE *admin;//Declaring files
+	WebManager *check_admin;
+	admin = fopen(ADMIN_FILE, "r");//open file to read
+	if (admin == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
+	fscanf(admin, "%d", &count);
+	check_admin = (WebManager*)malloc((count)*sizeof(WebManager));//Opening indicates the size of the array
+	for (int i = 0; i<count&&Not_admin == True; i++){
+		fscanf(admin, "%s", &check_admin[i].name);//scan from file to pointer
+		if (compareArrays(check_admin[i].name, member)){
+			printf("welcome %s you want to conect to your admin account if so enter Y else enter other any key: ", member);
+			scanf("%c", &temp);
+			if (temp == 'Y' || temp == 'y'){
+				Not_admin = False;
+				printf("%s you now Admin\n", member);
+			}
+		}
+	}
+	fclose(admin);
+	if (Not_admin)
+		printf("welcome %s\n", member);
+}
+int wont_exit(){//function to ask the user if exit to loby/main
+	int temp = False;
+	printf("you want enter again if so enter Y else enter othe key: ");//massage to user
+	scanf("%c", &temp);//scan flag
+	if (!(temp == 'y' || temp == 'Y')){//if flag = y(yes) continue
+		cleanBuffer();//clean buffer
+		return True;
+	}
+	cleanBuffer();
+	return False;
 }
