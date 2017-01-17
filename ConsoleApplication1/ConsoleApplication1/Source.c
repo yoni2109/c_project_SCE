@@ -393,9 +393,12 @@ void print_web_users(){
 		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
 }
-void confirm_project(int index_project,char * manager_project){
-	if (projects_array[index_project].archived )
 
+void confirm_project(int index_project,char * manager_project){//func to archived the project *only maneger can do that*
+	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
+		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
+			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
+	}
 }
 
 
