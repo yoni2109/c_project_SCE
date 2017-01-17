@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+
 #define SIZE 20
 #define MODEOUT "w"
 #define USER_FILE_NAME "users.txt"
@@ -19,7 +20,7 @@ typedef struct
 {
 	char name[SIZE];
 	char password[SIZE];
-	struct Projects** project_list;
+	char **project_list;
 	int projects_amount;
 	struct Messages** message_list;
 	int messages_amount;
@@ -304,3 +305,15 @@ void system_massage(char admin_name[]){
 		fprintf(message, "%s%s", system_massage.sender, system_massage.content);
 	}
 }
+void remove_task(Users * user){
+
+
+	
+	
+}
+void print_user_projects(int index_user_array){
+	for (int i = 0; i < user->projects_amount; i++){
+		printf("1. %s", user->project_list[i]);
+	}
+}
+
