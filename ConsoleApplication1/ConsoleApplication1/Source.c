@@ -75,6 +75,8 @@ void print_projects_task(int index_project_array);
 void print_web_users();
 int check_admin(char * name);
 void confirm_project(int index_user);
+void fill_arrays();
+void send_message();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -85,7 +87,7 @@ Messages* messages_array;// will contain all messages that moves on the web
 int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
-void fill_arrays();
+
 int main(){
 	fill_arrays();
 	char member[] = { "zohar" };
@@ -108,7 +110,6 @@ int main(){
 	} while (True);
 	return 0;
 }
-
 void signUp(){
 	int count = 0, member_Exist = False, temp = '\0';
 	char member[SIZE], password[SIZE];//open arry
@@ -401,13 +402,15 @@ void print_web_users(){
 		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
 }
-
-void confirm_project(int index_project,char * manager_project){//func to archived the project *only maneger can do that*
+void confirm_project(int index_project, char * manager_project){//func to archived the project *only maneger can do that*
 	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
 		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
 			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
+		}
 	}
 }
+
+
 
 
 
