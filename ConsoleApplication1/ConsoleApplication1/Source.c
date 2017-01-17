@@ -10,7 +10,7 @@ struct WebManager
 {
 	char Name[SIZE];
 };
- struct Users
+struct Users
 {
 	char name[SIZE];
 	char password[SIZE];
@@ -53,11 +53,12 @@ void signUp(){
 	char name[20];
 	fgets(name,SIZE,stdin);
 	//if (name[SIZE - 1] = !'\0') printf("error");
-    fprintf(usersdb,"%s", name);
+    fprintf(usersdb,"*%s\n", name);
 }
 
 int main(){
 	signUp();
+
 
 	return 0;
 }
