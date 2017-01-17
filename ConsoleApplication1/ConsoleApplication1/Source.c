@@ -393,6 +393,7 @@ void fill_arrays(){
 	sort_tasks_no4();
 	/*end of 4.*/
 }
+void change_pass();
 
 void scan_no1(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
@@ -538,7 +539,14 @@ void send_message(int index_user_array){
 	}
 	web_messages_amount++;
 }
-
+void change_pass(int index_user_array){
+	char temp_pass[SIZE];
+	printf("Enter New Pass:\n");
+	get(temp_pass);//get new password
+	for (int i = 0; i < SIZE; i++){//loop to change the password
+		users_array[index_user_array].password[i] = temp_pass[i];
+	}
+}
 
 
 
