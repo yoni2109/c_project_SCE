@@ -482,10 +482,11 @@ void change_pass(int index_user_array){
 		users_array[index_user_array].password[i] = temp_pass[i];
 	}
 }
-void send_message_about_new_task(int index_user_array)
+/*void send_message_about_new_task(int index_user_array)
 {
 	int chosen_project;
-	char temp_message[31] = { "There Is New Task - Check It" };
+	char *temp_message[31] = { "There Is New Task - Check It" };
+	char *temp_sender = { "System" };
 	print_user_projects(index_user_array);
 	printf("Choose Project :\n");
 	scanf("%d", &chosen_project);
@@ -498,13 +499,13 @@ void send_message_about_new_task(int index_user_array)
 	realloc(messages_array, projects_array[chosen_project].users_amount * sizeof *messages_array);//realloc 1 place for new message
 	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
 	web_messages_amount = projects_array[chosen_project].users_amount+web_messages_amount;
-	for (int i = projects_array[chosen_project].users_amount; i < web_users_amount; i++){//loop to fill the name,target name,conntent in the last place of array messages
+	/*for (int i = projects_array[chosen_project].users_amount; i < web_users_amount; i++){//loop to fill the name,target name,conntent in the last place of array messages
 		for (int j = 0; j < 31; j++){
-			messages_array[i].sender[j] = users_array[i].name[j];//update sender in the global messages array
-		//messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+			messages_array[i].sender[j] = temp_sender[j];//update sender in the global messages array
+			messages_array[i].target[j] = projects_array[chosen_project].users_list[0].;//update target user in the global messages array
 		//messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}
-}
+	}*/
+}*/
 
 
 
