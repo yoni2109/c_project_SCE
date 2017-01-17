@@ -98,23 +98,25 @@ int web_tasks_amount=0;//tasks amount
 
 int main(){
 	fill_arrays();
-	char member[] = { "zohar" };
-	int enter = 0;
-	system_massage(member);
-	
-	do
-	{
-		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
-		scanf("%d", &enter);
-		cleanBuffer();
-		if (enter == 1)
-			log_in(member);
-		if (enter == 2){
-			signUp();
-		}
-		enter = 0;
-	} while (True);
-	return 0;
+	printf("%d\n", projects_array[0].status_list[0].tasks_list[0].task_progres);
+	printf("%s", projects_array[0].status_list[0].tasks_list[0].task_details);
+	//char member[] = { "zohar" };
+	//int enter = 0;
+	//system_massage(member);
+	//
+	//do
+	//{
+	//	printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
+	//	scanf("%d", &enter);
+	//	cleanBuffer();
+	//	if (enter == 1)
+	//		log_in(member);
+	//	if (enter == 2){
+	//		signUp();
+	//	}
+	//	enter = 0;
+	//} while (True);
+	//return 0;
 }
 void signUp(){
 	int count = 0, member_Exist = False, temp = '\0';
@@ -347,7 +349,7 @@ void system_massage(char sender[]){
 	if (temp == 'y' || temp == 'Y'){
 		if (!(compareArrays(sender, UNIVERSAL_DIRECTOR)))
 			if (ask_if_admin(sender))
-				strcpy(sender, UNIVERSAL_DIRECTOR);
+			strcpy(sender, UNIVERSAL_DIRECTOR);
 		do
 		{
 			if (member_Exist){
@@ -373,8 +375,8 @@ void system_massage(char sender[]){
 		} while (member_Exist);
 		strcpy(system_massage.sender, sender);
 		printf("enter your mesagge: ");
-		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
-		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
+//		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
+//		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
 		fclose(users);
 		fclose(message);
 	}
@@ -393,7 +395,6 @@ void fill_arrays(){
 	sort_tasks_no4();
 	/*end of 4.*/
 }
-
 void scan_no1(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
 	fscanf(users_File, "%d", &web_users_amount);
@@ -403,7 +404,7 @@ void scan_no1(){
 		users_array[i].name[SIZE - 1] = '/0';
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
-	fclose(USER_FILE_NAME);
+	fclose(users_File);
 }
 void scan_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
@@ -443,8 +444,9 @@ void scan_no3(){
 		fscanf(tasks_file, "%s %s %s", &tasks_array[i].project_name, &tasks_array[i].status_name, &tasks_array[i].name);
 		char temp[TEMP_SIZE];
 		int j = 0;
+		fgetc(tasks_file);
 		while ((temp[j++] = fgetc(tasks_file)) != '\n');
-		temp[j] = '/0';
+		temp[j-1] = '\0';
 		tasks_array[i].task_details = (char*)malloc(sizeof(char)*strlen(temp));
 		strcpy(tasks_array[i].task_details, temp);
 		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
@@ -454,13 +456,19 @@ void scan_no3(){
 void sort_tasks_no4(){
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
-			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
+			if (strcmp(projects_array[i].name, tasks_array[j].project_name)!=0){
 				for (int k = 0; k < projects_array[i].status_amount; k++){
 					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
 						if (!projects_array[i].status_list[k].tasks_amount){
 							projects_array[i].status_list[k].tasks_amount++;
 							projects_array[i].status_list[k].tasks_list = (Tasks*)malloc(sizeof(Tasks));
-							projects_array[i].status_list[k].tasks_list[0] = tasks_array[j];
+							strcpy(projects_array[i].status_list[k].tasks_list[0].name , tasks_array[j].name);
+							strcpy(projects_array[i].status_list[k].tasks_list[0].assign_to , tasks_array[j].assign_to);
+							strcpy(projects_array[i].status_list[k].tasks_list[0].project_name , tasks_array[j].project_name);
+							strcpy(projects_array[i].status_list[k].tasks_list[0].status_name , tasks_array[j].status_name);
+							projects_array[i].status_list[k].tasks_list[0].task_details = (char*)malloc(sizeof(char)*strlen(tasks_array[j].task_details));
+							strcpy(projects_array[i].status_list[k].tasks_list[0].task_details , tasks_array[j].task_details);
+							projects_array[i].status_list[k].tasks_list[0].task_progres = tasks_array[j].task_progres;
 						}
 						else{
 							projects_array[i].status_list[k].tasks_amount++;
