@@ -1,7 +1,4 @@
-*projectname
+projectname
 2
-username1
-username2
-*projectname2
-1
-username1
+mark
+idan

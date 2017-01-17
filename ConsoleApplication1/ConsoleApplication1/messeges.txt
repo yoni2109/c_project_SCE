@@ -1,6 +1,3 @@
-*username
-senderusername
-contentcontencontent
-*username
-senderusernam
-contentcontentconten
+ADMIN
+idan
+idan za ani amenal agadol

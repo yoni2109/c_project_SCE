@@ -1,14 +1,7 @@
-*projectname
-4
-$status1
-2
-taskname
-details
-taskname2
-details2
-$status2
+1
+prjectname
+elicitation
+do_abc
+to do abc you need to do bcc
 0
-$status3
-0
-$status4
-0
+mark
