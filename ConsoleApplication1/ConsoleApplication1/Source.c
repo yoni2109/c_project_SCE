@@ -50,9 +50,9 @@ typedef struct
 	struct Users* assign_to;
 }Tasks;
 typedef struct
-{
-	char sender[SIZE];
+{	char sender[SIZE];
 	char content[MESSAGE_SIZE];
+
 }Messages;
 void signUp();
 void cleanBuffer();
