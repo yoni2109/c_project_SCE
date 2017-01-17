@@ -11,6 +11,7 @@
 #define ADMIN_FILE "web_manager.txt"
 #define MESSAGE_FILE "messeges.txt"
 #define MESSAGE_SIZE 200
+#define TASKS_FILE "tasks.txt"
 
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
@@ -337,6 +338,7 @@ void fill_arrays(){
 	}
 	fclose(USER_FILE_NAME);
 	/*end of 1.*/
+	/*2. scan all projects and users that assigned to it from projects file*/
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
 	fscanf(projects_file, "%d", &web_projects_amount);
 	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
@@ -352,7 +354,13 @@ void fill_arrays(){
 		for (int j = 0; j < projects_array[i].status_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].status_list[j].name);
 		}
+		fscanf
 	}
+	fclose(projects_file);
+	/*end of 2.*/
+	FILE* tasks_file = fopen(TASKS_FILE, "r");
+	fscanf(tasks_file, "%d", &web_tasks_amount);
+	tasks_array = (Tasks*)malloc(sizeof(Tasks))
 
 
 }
