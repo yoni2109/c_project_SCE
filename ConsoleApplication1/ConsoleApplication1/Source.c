@@ -78,6 +78,8 @@ int check_admin(char * name);
 void confirm_project(int index_user);
 void fill_arrays();
 void send_message();
+char * func_to_get_message();
+void allocate_messages();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -417,6 +419,31 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 		}
 	}
 }
+
+void send_message(int index_user_array){
+	int chosen_project, chosen_user;
+	char temp_message[TEMP_SIZE];
+	//צריכה להיות פה פונקציה של לוג אין
+	print_user_projects(index_user_array);
+	printf("Choose Project :\n");
+	scanf("%d",&chosen_project);
+	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
+	//הדפסה של כל משתמשי הפרויקט
+	printf("Choose user :\n");
+	scanf("%d", &chosen_user);
+	printf("Write Your Message :\n");
+	get(temp_message);
+	realloc(messages_array, 1 * sizeof *messages_array);
+	
+	
+	
+
+
+}
+
+
+
+
 
 
 
