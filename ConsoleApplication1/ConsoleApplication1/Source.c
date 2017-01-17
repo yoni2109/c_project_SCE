@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+
 #define TEMP_SIZE 1024
 #define SIZE 25
 #define MODEOUT "w"
@@ -49,6 +50,16 @@ typedef struct
 typedef struct
 {
 	char name[SIZE];
+	char password[SIZE];
+	char *project_list[SIZE];
+	int projects_amount;
+	Messages* message_list;
+	int messages_amount;
+}Users;
+
+typedef struct
+{
+	char name[SIZE];
 	Tasks * tasks_list;
 	int tasks_amount;
 } Status;
@@ -64,6 +75,9 @@ typedef struct
 	int archived;
 
 }Projects;
+
+
+void change_name(int index_user_array);
 void scan_no1();
 void scan_no2();
 void scan_no3();
@@ -89,6 +103,8 @@ void send_message();
 char * func_to_get_message();
 void allocate_messages();
 void send_message_about_new_task();
+void change_pass();
+void assigned_to();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -100,8 +116,24 @@ int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
 
+
+
 int main(){
 	fill_arrays();
+	char member[] = { "zohar" };
+	int enter = 0;
+	//system_massage(member);
+	
+	
+	do
+	{
+		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
+		scanf("%d", &enter);
+		cleanBuffer();
+		if (enter == 1)
+			log_in(member);
+		if (enter == 2){
+			signUp();
 	printf("%s", projects_array[1].Manager_list[0]);
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -121,7 +153,7 @@ int main(){
 //		enter = 0;
 //	} while (True);
 //	return 0;
-}
+		}
 void signUp(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
@@ -329,8 +361,6 @@ void fill_arrays(){
 	/*6. scan messages to messages global array*/
 
 }
-//void change_pass();
-
 void scan_no1(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
 	fscanf(users_File, "%d", &web_users_amount);
@@ -468,7 +498,7 @@ void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
 	for (int i = 0; i < projects_array[index_project_array].status_amount; i++){
 		//for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
-		//printf("1. %s", (projects_array[index_project_array].status_list[0]).);
+		printf("%d. %s",(i+1), (projects_array[index_project_array].status_list[0]).tasks_list[i].name);
 	}
 	//projects_array[0].status_list[0]
 		
@@ -502,7 +532,7 @@ void send_message(int index_user_array){
 	printf("Choose user :\n");
 	scanf("%d", &chosen_user);
 	printf("Write Your Message :\n");
-	get(temp_message);
+	gets(temp_message);
 	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
 	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
 	web_messages_amount++;
@@ -515,7 +545,7 @@ void send_message(int index_user_array){
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
 	printf("Enter New Pass:\n");
-	get(temp_pass);//get new password
+	gets(temp_pass);//get new password
 	for (int i = 0; i < SIZE; i++){//loop to change the password
 		users_array[index_user_array].password[i] = temp_pass[i];
 	}
@@ -542,8 +572,33 @@ void change_pass(int index_user_array){
 			messages_array[i].sender[j] = temp_sender[j];//update sender in the global messages array
 			messages_array[i].target[j] = projects_array[chosen_project].users_list[0].;//update target user in the global messages array
 		//messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}*/
-//}
+	}
+}*/
+
+void change_name(int index_user_array){//fund to change the name
+	char temp_name[SIZE];
+	printf("Enter New Name:\n");
+	gets(temp_name);//get new name
+	for (int i = 0; i < SIZE; i++){//loop to change the name
+		users_array[index_user_array].name[i] = temp_name[i];
+	}
+}
+void assigned_to(int index_project_array){
+	int chosen_task, chosen_user;
+	//להדפיס את כל הדרישות
+	print_projects_task(index_project_array);//print all tasks in projects
+	printf("Choose The Task That You Want Assigned To :\n");
+	scanf("%d", &chosen_task);
+	printf("Choose The User That Will Perform The Task :\n");
+	print_web_users();//print all users in web ************לבדוק האם אפשר לשייך רק למשתמשים מאותו פרויקט ***************
+	scanf("%d", &chosen_user);
+	for (int i = 0; i < SIZE; i++){//loop to copy the name
+		tasks_array[chosen_task].assign_to[i] = users_array[chosen_user].name[i];
+	}
+	
+}
+
+
 
 
 
