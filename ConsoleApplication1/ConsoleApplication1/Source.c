@@ -63,7 +63,10 @@ typedef struct
 	int archived;
 
 }Projects;
-
+void scan_no1();
+void scan_no2();
+void scan_no3();
+void sort_tasks_no4();
 void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
@@ -376,6 +379,20 @@ void system_massage(char sender[]){
 }
 void fill_arrays(){
 	/*1. scans user names and passwords into users array*/
+	scan_no1();
+	/*end of 1.*/
+	/*2. scan all projects and users that assigned to it from projects file*/
+	scan_no2();
+	/*end of 2.*/
+	/*3. scan all tasks to tasks global array*/
+	scan_no3();
+	/*end of  3.*/
+	/*4. sort tasks to projects*/
+	sort_tasks_no4();
+	/*end of 4.*/
+}
+
+void scan_no1(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
@@ -385,8 +402,8 @@ void fill_arrays(){
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
 	fclose(USER_FILE_NAME);
-	/*end of 1.*/
-	/*2. scan all projects and users that assigned to it from projects file*/
+}
+void scan_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
 	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
 	fscanf(projects_file, "%d", &web_projects_amount);
@@ -415,8 +432,8 @@ void fill_arrays(){
 	}
 	fclose(projects_file);
 	fclose(projects_managers_file);
-	/*end of 2.*/
-	/*3. scan all tasks to tasks global array*/
+}
+void scan_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "r");
 	fscanf(tasks_file, "%d", &web_tasks_amount);
 	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
@@ -431,22 +448,30 @@ void fill_arrays(){
 		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
 	}
 	fclose(tasks_file);
-	/*end of  3.*/
-	/*sort tasks to projects*/
+}
+void sort_tasks_no4(){
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
 			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
 				for (int k = 0; k < projects_array[i].status_amount; k++){
 					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
-						projects_array[i].status_list[k].tasks_amount
+						if (!projects_array[i].status_list[k].tasks_amount){
+							projects_array[i].status_list[k].tasks_amount++;
+							projects_array[i].status_list[k].tasks_list = (Tasks*)malloc(sizeof(Tasks));
+							projects_array[i].status_list[k].tasks_list[0] = tasks_array[j];
+						}
+						else{
+							projects_array[i].status_list[k].tasks_amount++;
+							projects_array[i].status_list[k].tasks_list = (Tasks*)realloc(projects_array[i].status_list[k].tasks_list, projects_array[i].status_list[k].tasks_amount++);
+							projects_array[i].status_list[k].tasks_list[projects_array[i].status_list[k].tasks_amount - 1] = tasks_array[j];
+						}
 					}
 				}
-				
+
 			}
 		}
 
 	}
-
 }
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
