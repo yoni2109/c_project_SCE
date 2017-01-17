@@ -58,11 +58,7 @@ void cleanString(char arry[SIZE]);
 int If_Member_Return_True(char user[SIZE],char password[SIZE]);
 
 int main(){
-	//log_in();
-	char yosu[20];
-	scanf("%s", yosu);
-	yosu[20-1] = NULL;
-	printf("%s", yosu);
+
 
 	return 0;
 }
