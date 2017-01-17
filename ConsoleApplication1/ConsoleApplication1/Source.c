@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
-
+#define TEMP_SIZE 1024
 #define SIZE 20
 #define MODEOUT "w"
 #define USER_FILE_NAME "users.txt"
@@ -14,9 +14,11 @@
 #define TASKS_FILE "tasks.txt"
 #define PROJECT_MANAGERS_FILE "projects_managers.txt"
 
+
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
 {
+	char target[SIZE];
 	char sender[SIZE];
 	char content[MESSAGE_SIZE];
 
@@ -39,9 +41,9 @@ typedef struct
 	char project_name[SIZE];
 	char status_name[SIZE];
 	char name[SIZE];
-	char* task_details;
+	char *task_details;
 	bool task_progres;
-	Users* assign_to;
+	char assign_to[SIZE];
 }Tasks;
 typedef struct
 {
@@ -102,10 +104,8 @@ int main(){
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
 		scanf("%d", &enter);
 		cleanBuffer();
-		if (enter == 1){
-			if (log_in(member))
-				play(member);
-		}
+		if (enter == 1)
+			log_in(member);
 		if (enter == 2){
 			signUp();
 		}
@@ -180,9 +180,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(char member[]){
-	int Not_Valid_Pass = False/*boolean var for password confirmation*/;
-	int Not_Valid_Name = False/*boolean var for username confirmation*/;
-	int Not_Member = True/*boolean var for member verivication*/;
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
 	char temp = '\0';
 	char password[SIZE];//open string
 	do{
@@ -266,7 +264,7 @@ int If_Member_Return_True(char user[], char password[]){
 	fclose(users);
 	return False;
 }
-int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings
+int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings // בודק אם שם משתמש קיים במערכת
 	int i;
 	for (i = 0; user_from_list[i] != '\0' && user_from_member[i] != '\0'; i++) {
 		if (user_from_list[i] != user_from_member[i])
@@ -278,7 +276,7 @@ int compareArrays(char user_from_list[], char user_from_member[]) {//Check for i
 	}
 	return True;
 }
-void play(char member[]){
+int ask_if_admin(char member[]){
 	int count = 0, i = 0, Not_admin = True;
 	char temp = '\0';
 	FILE *admin;//Declaring files
@@ -298,12 +296,17 @@ void play(char member[]){
 			if (temp == 'Y' || temp == 'y'){
 				Not_admin = False;
 				printf("%s you now Admin\n", member);
+				fclose(admin);
+				free(check_admin);
+				return True;
 			}
 		}
 	}
 	fclose(admin);
+	free(check_admin);
 	if (Not_admin)
 		printf("welcome %s\n", member);
+	return False;
 }
 int wont_exit(){//function to ask the user if exit to loby/main
 	int temp = False;
@@ -316,21 +319,61 @@ int wont_exit(){//function to ask the user if exit to loby/main
 	cleanBuffer();
 	return False;
 }
-void system_massage(char admin_name[]){
+void system_massage(char sender[]){
+	int count = 0, member_Exist = False;
 	char temp = '\0';
 	FILE *message;//Declaring files
 	Messages system_massage;// Opening indicates the size of the array;
-	message = fopen(MESSAGE_FILE, "a+");//open file to read
+	FILE *users;
+	Users *check_user;// Opening indicates the size of the array;
+	users = fopen(USER_FILE_NAME, "r+");//open file to read
+	if (users == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
+	fscanf(users, "%d", &count);//get the number of users
+	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
+	message = fopen(MESSAGE_FILE, "a");//open file to read
 	if (message == NULL){//if file not open quit from program
 		printf("the file could not be opened\n");
 		exit(1);
 	}
-	printf("helo admin you want to send sysem massage?\nif yes press Y other print any key: ");
+	printf("%s you want to send system massage?\nif yes press Y other print any key: ", sender);
 	scanf("%c", &temp);
+	cleanBuffer();
 	if (temp == 'y' || temp == 'Y'){
-		fgets(system_massage.content, MESSAGE_SIZE, stdin);
-		strcpy(system_massage.sender, admin_name);
-		fprintf(message, "%s%s", system_massage.sender, system_massage.content);
+		if (!(compareArrays(sender, UNIVERSAL_DIRECTOR)))
+			if (ask_if_admin(sender))
+				strcpy(sender, UNIVERSAL_DIRECTOR);
+		do
+		{
+			if (member_Exist){
+				printf("member not Exists");
+				member_Exist = False;
+				if (wont_exit()){//check if the user want to continue
+					free(check_user);//frre the pointer
+					return;
+				}
+			}
+
+			printf("enter content name: ");
+			cleanBuffer();
+			member_Exist = String(system_massage.content);
+			if (!member_Exist){
+				member_Exist = True;
+				for (int i = 0; i < count && member_Exist == True; i++){//loop for check if user name in system
+					fscanf(users, "%s%s", &check_user[i].name, check_user[i].password);//scan from file to pointer
+					if (compareArrays(check_user[i].name, system_massage.content))//return true if the user in system
+						member_Exist = False;
+				}
+			}
+		} while (member_Exist);
+		strcpy(system_massage.sender, sender);
+		printf("enter your mesagge: ");
+		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
+		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
+		fclose(users);
+		fclose(message);
 	}
 }
 void fill_arrays(){
@@ -357,25 +400,54 @@ void fill_arrays(){
 		for (int j = 0; j < projects_array[i].users_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].users_list[j]);
 		}
-		fseek(projects_managers_file,)
-		fscanf(projects_file, "%d", &projects_array[i].manager_amount);
+		char temp[20];
+		fscanf(projects_managers_file, "%s", &temp);
+		fscanf(projects_managers_file, "%d", &projects_array[i].manager_amount);
 		*projects_array[i].Manager_list = (char*)malloc(sizeof(char)*projects_array[i].manager_amount);
 		for (int j = 0; j < projects_array[i].manager_amount; j++){
-			fscanf(projects_file, "%s", projects_array[i].Manager_list[j]);
+			fscanf(projects_managers_file, "%s", &projects_array[i].Manager_list[j]);
 		}
 		fscanf(projects_file, "%d", &projects_array[i].status_amount);
 		projects_array[i].status_list = (Status*)malloc(sizeof(Status)*projects_array[i].status_amount);
 		for (int j = 0; j < projects_array[i].status_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].status_list[j].name);
+			projects_array[i].status_list[j].tasks_amount = 0;
 		}
-		fscanf(projects_file, "%d", &projects_array[i].archived)
+		fscanf(projects_file, "%d", &projects_array[i].archived);
 	}
 	fclose(projects_file);
+	fclose(projects_managers_file);
 	/*end of 2.*/
+	/*3. scan all tasks to tasks global array*/
 	FILE* tasks_file = fopen(TASKS_FILE, "r");
 	fscanf(tasks_file, "%d", &web_tasks_amount);
-	tasks_array = (Tasks*)malloc(sizeof(Tasks))
+	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
+	for (int i = 0; i < web_tasks_amount; i++){
+		fscanf(tasks_file, "%s %s %s", &tasks_array[i].project_name, &tasks_array[i].status_name, &tasks_array[i].name);
+		char temp[TEMP_SIZE];
+		int j = 0;
+		while ((temp[j++] = fgetc(tasks_file)) != '\n');
+		temp[j] = '/0';
+		tasks_array[i].task_details = (char*)malloc(sizeof(char)*strlen(temp));
+		strcpy(tasks_array[i].task_details, temp);
+		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
+	}
+	fclose(tasks_file);
+	/*end of  3.*/
+	/*sort tasks to projects*/
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < web_tasks_amount; j++){
+			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
+				for (int k = 0; k < projects_array[i].status_amount; k++){
+					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
+						projects_array[i].status_list[k].tasks_amount
+					}
+				}
+				
+			}
+		}
 
+	}
 
 }
 void remove_task(int index_user_array){
@@ -416,8 +488,8 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
 		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
 			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
-		}
 	}
+}
 }
 
 void send_message(int index_user_array){
