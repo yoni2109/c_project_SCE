@@ -7,6 +7,8 @@
 #define MODEOUT "w"
 #define  USER_FILE_NAME "users.txt"
 #define  ADMIN_FILE "web_manager.txt"
+#define MESSAGE_FILE "messeges.txt"
+#define MESSAGE_SIZE 200
 
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
@@ -49,7 +51,7 @@ typedef struct
 typedef struct
 {
 	char sender[SIZE];
-	char* content;
+	char content[MESSAGE_SIZE];
 }Messages;
 void signUp();
 void cleanBuffer();
@@ -59,10 +61,12 @@ void cleanString(char arry[]);
 int If_Member_Return_True(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
 void play(char member[]);
-
+void system_massage();
 int main(){
-	char member[SIZE];
-	char enter = '0';
+	char member[] = { "zohar" };
+	int enter = 0;
+	system_massage(member);
+	
 	do
 	{
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
@@ -75,6 +79,7 @@ int main(){
 		if (enter == 2){
 			signUp();
 		}
+		enter = 0;
 	} while (True);
 	return 0;
 }
@@ -279,4 +284,21 @@ int wont_exit(){//function to ask the user if exit to loby/main
 	}
 	cleanBuffer();
 	return False;
+}
+void system_massage(char admin_name[]){
+	char temp = '\0';
+	FILE *message;//Declaring files
+	Messages system_massage;// Opening indicates the size of the array;
+	message = fopen(MESSAGE_FILE, "a+");//open file to read
+	if (message == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
+	printf("helo admin you want to send sysem massage?\nif yes press Y other print any key: ");
+	scanf("%c", &temp);
+	if (temp == 'y' || temp == 'Y'){
+		fgets(system_massage.content, MESSAGE_SIZE, stdin);
+		strcpy(system_massage.sender, admin_name);
+		fprintf(message, "%s%s", system_massage.sender, system_massage.content);
+	}
 }
