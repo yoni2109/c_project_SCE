@@ -7,11 +7,18 @@
 #define SIZE 20
 #define MODEOUT "w"
 #define USER_FILE_NAME "users.txt"
+#define PROJECTS_FILE_NAME "projects.txt"
 #define ADMIN_FILE "web_manager.txt"
 #define MESSAGE_FILE "messeges.txt"
 #define MESSAGE_SIZE 200
 
 typedef enum{ False = 0, True = 1 } bool;
+typedef struct
+{
+	char sender[SIZE];
+	char content[MESSAGE_SIZE];
+
+}Messages;
 typedef struct
 {
 	char name[SIZE];
@@ -22,39 +29,37 @@ typedef struct
 	char password[SIZE];
 	char **project_list;
 	int projects_amount;
-	struct Messages** message_list;
+	Messages* message_list;
 	int messages_amount;
 }Users;
 typedef struct
 {
+	char project_name[SIZE];
+	char status_name[SIZE];
 	char name[SIZE];
-	struct Users** users_list;
+	char* task_details;
+	bool task_progres;
+	Users* assign_to;
+}Tasks;
+typedef struct
+{
+	char name[SIZE];
+	Tasks * tasks_list;
+	int tasks_amount;
+} Status;
+typedef struct
+{
+	char name[SIZE];
+	char* users_list[SIZE];
 	int users_amount;
-	struct Status* status_list;
+	Status* status_list;
 	int status_amount;
 	char** Manager_list;
 	int manager_amount;
 
 }Projects;
-typedef struct
-{
-	char name[SIZE];
-	char ** tasks_list;
-	int tasks_amount;
-} Status;
-typedef struct
-{
-	char project_name[SIZE];
-	char name[SIZE];
-	char* task_details;
-	bool task_progres;
-	struct Users* assign_to;
-}Tasks;
-typedef struct
-{	char sender[SIZE];
-	char content[MESSAGE_SIZE];
 
-}Messages;
+void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
 int log_in(char member[]);
@@ -321,6 +326,7 @@ void system_massage(char admin_name[]){
 	}
 }
 void fill_arrays(){
+	/*1. scans user names and passwords into users array*/
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
@@ -329,6 +335,26 @@ void fill_arrays(){
 		users_array[i].name[SIZE - 1] = '/0';
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
+	fclose(USER_FILE_NAME);
+	/*end of 1.*/
+	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
+	fscanf(projects_file, "%d", &web_projects_amount);
+	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
+	for (int i = 0; i < web_projects_amount; i++){
+		fscanf(projects_file, "%s", &projects_array[i].name);
+		fscanf(projects_file, "%d", &projects_array[i].users_amount);
+		*projects_array[i].users_list = (Users*)malloc(sizeof(Users)*projects_array[i].users_amount);
+		for (int j = 0; j < projects_array[i].users_amount; j++){
+			fscanf(projects_file, "%s", &projects_array[i].users_list[j]);
+		}
+		fscanf(projects_file, "%d", &projects_array[i].status_amount);
+		projects_array[i].status_list = (Status*)malloc(sizeof(Status)*projects_array[i].status_amount);
+		for (int j = 0; j < projects_array[i].status_amount; j++){
+			fscanf(projects_file, "%s", &projects_array[i].status_list[j].name);
+		}
+	}
+
+
 }
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
@@ -340,15 +366,15 @@ void remove_task(int index_user_array){
 }
 void print_user_projects(int index_user_array){
 	printf("Those Your projects:\n");
-	for (int i = 0; i < user_amount; i++){
+	for (int i = 0; i < web_users_amount; i++){
 		printf("1. %s", users_array[i].project_list);
 	}
 	}
 void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
-	for (int i = 0; i < project_amount; i++){
-		for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
-		//printf("1. %s", projects_array[index_project_array].status_list.[0]);
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < projects_array[index_project_array].status_amount; j++){}
+			//printf("1. %s", projects_array[index_project_array].status_list.[0]);
+	}
 }
-
 
