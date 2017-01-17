@@ -6,7 +6,7 @@
 #define SIZE 20
 #define MODEOUT "w"
 #define  USER_FILE_NAME "users.txt"
-#define  ADMIN_FILE "admin.txt"
+#define  ADMIN_FILE "web_manager.txt"
 
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
@@ -17,10 +17,10 @@ typedef struct
 {
 	char name[SIZE];
 	char password[SIZE];
-	/*struct Projects** project_list;
+	struct Projects** project_list;
 	int projects_amount;
 	struct Messages** message_list;
-	int messages_amount;*/
+	int messages_amount;
 }Users;
 typedef struct
 {
