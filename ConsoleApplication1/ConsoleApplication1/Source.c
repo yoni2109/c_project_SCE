@@ -118,13 +118,14 @@ int web_tasks_amount=0;//tasks amount
 
 
 
-int main(){
+int main()
+{
 	fill_arrays();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
-	
-	
+
+
 	do
 	{
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
@@ -134,7 +135,11 @@ int main(){
 			log_in(member);
 		if (enter == 2){
 			signUp();
-	printf("%s", projects_array[1].Manager_list[0]);
+			printf("%s", projects_array[1].Manager_list[0]);
+		}
+	} while (True);
+}
+
 //	char member[] = { "zohar" };
 //	int enter = 0;
 //	//system_massage(member);
@@ -153,7 +158,7 @@ int main(){
 //		enter = 0;
 //	} while (True);
 //	return 0;
-		}
+		
 void signUp(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
