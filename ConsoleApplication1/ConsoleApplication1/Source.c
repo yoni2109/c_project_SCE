@@ -12,6 +12,7 @@
 #define MESSAGE_FILE "messeges.txt"
 #define MESSAGE_SIZE 200
 #define TASKS_FILE "tasks.txt"
+#define PROJECT_MANAGERS_FILE "projects_managers.txt"
 
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
@@ -28,7 +29,7 @@ typedef struct
 {
 	char name[SIZE];
 	char password[SIZE];
-	char **project_list;
+	char *project_list[SIZE];
 	int projects_amount;
 	Messages* message_list;
 	int messages_amount;
@@ -55,7 +56,7 @@ typedef struct
 	int users_amount;
 	Status* status_list;
 	int status_amount;
-	char** Manager_list;
+	char* Manager_list[SIZE];
 	int manager_amount;
 	int archived;
 
@@ -343,21 +344,28 @@ void fill_arrays(){
 	/*end of 1.*/
 	/*2. scan all projects and users that assigned to it from projects file*/
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
+	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
 	fscanf(projects_file, "%d", &web_projects_amount);
 	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
 		fscanf(projects_file, "%s", &projects_array[i].name);
 		fscanf(projects_file, "%d", &projects_array[i].users_amount);
-		*projects_array[i].users_list = (Users*)malloc(sizeof(Users)*projects_array[i].users_amount);
+		*projects_array[i].users_list = (char*)malloc(sizeof(char)*projects_array[i].users_amount);
 		for (int j = 0; j < projects_array[i].users_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].users_list[j]);
+		}
+		fseek(projects_managers_file,)
+		fscanf(projects_file, "%d", &projects_array[i].manager_amount);
+		*projects_array[i].Manager_list = (char*)malloc(sizeof(char)*projects_array[i].manager_amount);
+		for (int j = 0; j < projects_array[i].manager_amount; j++){
+			fscanf(projects_file, "%s", projects_array[i].Manager_list[j]);
 		}
 		fscanf(projects_file, "%d", &projects_array[i].status_amount);
 		projects_array[i].status_list = (Status*)malloc(sizeof(Status)*projects_array[i].status_amount);
 		for (int j = 0; j < projects_array[i].status_amount; j++){
 			fscanf(projects_file, "%s", &projects_array[i].status_list[j].name);
 		}
-		fscanf
+		fscanf(projects_file, "%d", &projects_array[i].archived)
 	}
 	fclose(projects_file);
 	/*end of 2.*/
