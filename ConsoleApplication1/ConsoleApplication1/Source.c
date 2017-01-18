@@ -22,7 +22,7 @@ typedef struct
 	char target[SIZE];
 	char sender[SIZE];
 	char content[SIZE];
-	char message[MESSAGE_SIZE]
+	char message[MESSAGE_SIZE];
 }Messages;
 typedef struct
 {
@@ -86,6 +86,7 @@ void fill_arrays();
 void send_message();
 char * func_to_get_message();
 void allocate_messages();
+void change_pass(int index_user_array);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -101,7 +102,7 @@ int main(){
 	fill_arrays();
 	char member[] = { "zohar" };
 	int enter = 0;
-	system_massage(member);
+//	system_massage(member);
 	
 	
 	do
@@ -272,8 +273,8 @@ void system_massage(char sender[]){
 	scanf("%c", &temp);
 	cleanBuffer();
 	if (temp == 'y' || temp == 'Y'){
-		if (!(compareArrays(sender, UNIVERSAL_DIRECTOR)))
-			if (ask_if_admin(sender))
+		if (!(strcmp(sender, UNIVERSAL_DIRECTOR)))
+			if (check_admin(sender))
 				strcpy(sender, UNIVERSAL_DIRECTOR);
 		do
 		{
@@ -300,8 +301,8 @@ void system_massage(char sender[]){
 		} while (member_Exist);
 		strcpy(system_massage.sender, sender);
 		printf("enter your mesagge: ");
-		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
-		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
+		fgets(system_massage.message, MESSAGE_SIZE, stdin);
+		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.message);
 		fclose(users);
 		fclose(message);
 	}
@@ -451,37 +452,37 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-void send_message(int index_user_array){
-	int chosen_project, chosen_user;
-	char temp_message[TEMP_SIZE];
-	//צריכה להיות פה פונקציה של לוג אין
-	print_user_projects(index_user_array);
-	printf("Choose Project :\n");
-	scanf("%d",&chosen_project);
-	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
-	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
-	printf("Choose user :\n");
-	scanf("%d", &chosen_user);
-	printf("Write Your Message :\n");
-	get(temp_message);
-	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
-	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
-	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
-		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
-		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
-		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}
-	web_messages_amount++;
-}
-void change_pass(int index_user_array){
-	char temp_pass[SIZE];
-	printf("Enter New Pass:\n");
-	get(temp_pass);//get new password
-	for (int i = 0; i < SIZE; i++){//loop to change the password
-		users_array[index_user_array].password[i] = temp_pass[i];
-	}
-}
-
+//void send_message(int index_user_array){
+//	int chosen_project, chosen_user;
+//	char temp_message[TEMP_SIZE];
+//	//צריכה להיות פה פונקציה של לוג אין
+//	print_user_projects(index_user_array);
+//	printf("Choose Project :\n");
+//	scanf("%d",&chosen_project);
+//	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
+//	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
+//	printf("Choose user :\n");
+//	scanf("%d", &chosen_user);
+//	printf("Write Your Message :\n");
+//	get(temp_message);
+//	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
+//	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+//	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
+//		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
+//		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+//		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+//	}
+//	web_messages_amount++;
+//}
+//void change_pass(int index_user_array){
+//	char temp_pass[SIZE];
+//	printf("Enter New Pass:\n");
+//	get(temp_pass);//get new password
+//	for (int i = 0; i < SIZE; i++){//loop to change the password
+//		users_array[index_user_array].password[i] = temp_pass[i];
+//	}
+//}
+//
 
 
 
