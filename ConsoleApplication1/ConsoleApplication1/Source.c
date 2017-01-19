@@ -81,7 +81,7 @@ void print_no1();
 void print_no2();
 void print_no3();
 void print_no4();
-void print_user_projects(int index_user_array);
+int print_and_choose_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
 int log_in();
@@ -106,7 +106,8 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
-void add_user_to_project();
+void add_user_to_project(int index_project);
+
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -124,16 +125,18 @@ int curr_index_user;//the current user after log in
 int main()
 {
 	fill_arrays();
-	printf("%s", users_array[0].name);
+	//printf("%s", users_array[0].name);
 	
-	print_arrays_to_files();
+	//print_arrays_to_files();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
 	//print_all_messages();
-	print_login_singup();
-	printf("curr_index_user :%d", curr_index_user);
-	print_user_projects(curr_index_user);	
+	//print_login_singup();
+	print_users();
+	add_user_to_project(print_and_choose_user_projects(curr_index_user));
+
+
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -256,12 +259,12 @@ int String(char arry[]){//function to get string for user
 }
 int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
-		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
+		if (!strcmp(users_array[i].name, user)){//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password))//If appropriate password to use
-			printf("*** i *** :%d", i);
-				curr_index_user = i;
-				return True;
-			}
+			curr_index_user = i;
+			return True;
+		}
+	}
 	return False;
 }
 int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings 
@@ -590,18 +593,21 @@ void print_no4(){
 	}
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
-	print_user_projects(index_user_array);
-	printf("Choose Project By Number:\n");
-	scanf("%d", &proj_to_delete_from);//get what user choose
-	print_projects_task(proj_to_delete_from);
-
-
+	print_and_choose_user_projects(index_user_array);
+	//printf("Choose Project By Number:\n");
+	//scanf("%d", &proj_to_delete_from);//get what user choose
+	print_projects_task(print_and_choose_user_projects(index_user_array));
 }
-void print_user_projects(int index_user_array){
+int print_and_choose_user_projects(int index_user_array){
+	int chosen_proj;
 	printf("Those Your projects:\n");
-	for (int i = 0; i < web_users_amount; i++){
+	for (int i = 0; i < users_array[index_user_array].projects_amount; i++){
 		printf("%d. %s",(i+1), users_array[index_user_array].project_list[i]);
 	}
+	printf("Choose Project By Number:\n");
+	scanf("%d", &chosen_proj);
+	getchar();//get the enter
+	return chosen_proj;
 	}
 void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
@@ -735,24 +741,23 @@ void print_login_singup(){
 			//printf("%s", projects_array[1].Manager_list[0]);
 		}
 }
-void add_user_to_project(){
+void add_user_to_project(int index_project){
 	char temp_user[20];
-	int flag=0;
-	do
-	{
-		printf("Enter user name that You want assigned to [20 chars] : \n");
-		gets(temp_user);
-		for (int i = 0; i < web_users_amount; i++){
+	int flag=0,index_try=0;
+	while (flag == 0){//loop to get the name of user that we want add - if there is no exist this user - again
+		printf("Enter user name that You want add to project [20 chars] : \n");
+		fgets(temp_user, 20, stdin);
+		temp_user[strlen(temp_user) - 1]='\0';
+		for (int i = 0; i < web_users_amount; i++){//loop to find the user in web array users
 			if (strcmp(temp_user, users_array[i].name) == 0) flag = 1;
 		}
-		if (flag == 0)printf("User Not Exist - Try Again\n");
-	} while (flag == 0);
-
-
-	
-	
-
+	}
+	projects_array[index_project].users_amount++;//increase the amount of users in the project
+	projects_array[index_project].users_list = (char **)realloc(projects_array[index_project].users_list, sizeof(char*)*projects_array[index_project].users_amount);//increas by one the users list
+	projects_array[index_project].users_list[projects_array[index_project].users_amount-1] = (char*)malloc(sizeof(char)*25);//allocate new memory 
+	strcpy(projects_array[index_project].users_list[projects_array[index_project].users_amount-1], temp_user);//copy the new name 
 }
+
 
 
 
