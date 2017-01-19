@@ -104,6 +104,7 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
+void add_user_to_project();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -128,8 +129,7 @@ int main()
 	//system_massage(member);
 	//print_all_messages();
 	print_login_singup();
-
-	
+	print_user_projects(curr_index_user);	
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -711,6 +711,26 @@ void print_login_singup(){
 			//printf("%s", projects_array[1].Manager_list[0]);
 		}
 }
+void add_user_to_project(){
+	char temp_user[20];
+	int flag=0;
+	do
+	{
+		printf("Enter user name that You want assigned to [20 chars] : \n");
+		gets(temp_user);
+		for (int i = 0; i < web_users_amount; i++){
+			if (strcmp(temp_user, users_array[i].name) == 0) flag = 1;
+		}
+		if (flag == 0)printf("User Not Exist - Try Again\n");
+	} while (flag == 0);
+
+
+	
+	
+
+}
+
+
 
 
 
