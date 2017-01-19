@@ -100,6 +100,7 @@ void allocate_messages();
 void send_message_about_new_task();
 void change_pass();
 void assigned_to();
+void print_users();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -678,6 +679,22 @@ void assigned_to(int index_project_array){
 		tasks_array[chosen_task].assign_to[i] = users_array[chosen_user].name[i];
 	}
 	
+}
+void print_users(){
+	for (int i = 0; i < web_users_amount; i++){//loop to run array users
+		printf("name:%s ", users_array[i].name);
+		printf("password:%s\n", users_array[i].password);
+		//printf("message messages_amount :%d ", users_array[i].messages_amount);
+		for (int j = 0; j < users_array[i].messages_amount; j++){//print user messages
+			printf("message:%s *", users_array[i].message_list);
+		}
+		printf("\n");
+		printf("projects_amount :%d ", users_array[i].projects_amount);//print users projects
+		for (int j = 0; j < users_array[i].projects_amount; j++){
+			printf("projects:%s ", users_array[i].project_list[j]);
+		}
+		printf("\n");
+	}
 }
 
 
