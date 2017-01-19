@@ -108,6 +108,7 @@ void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
 void add_user_to_project(int index_project);
+void print_users_project(int index_project);
 
 
 WebManager* Wmanager;//will contain the web managet user name
@@ -136,8 +137,8 @@ int main()
 	//print_all_messages();
 	//print_login_singup();
 	print_users();
-	add_user_to_project(print_and_choose_user_projects(curr_index_user));
-
+	
+	print_users_project(print_and_choose_user_projects(curr_index_user));
 
 }
 //	char member[] = { "zohar" };
@@ -759,8 +760,6 @@ void add_user_to_project(int index_project){//fund to add new user to project
 	projects_array[index_project].users_list[projects_array[index_project].users_amount-1] = (char*)malloc(sizeof(char)*25);//allocate new memory 
 	strcpy(projects_array[index_project].users_list[projects_array[index_project].users_amount-1], temp_user);//copy the new name 
 }
-
-
 char new_project_name(){
 	int flag = 0;
 	printf("\nInsert your Project Name:(projects name must be up to 25 characters)\n");
@@ -826,6 +825,13 @@ void add_new_project(){
 
 
 }
+void print_users_project(int index_project){//func to print the users in project
+	printf("The Users In This Project :\n");
+	for (int i = 0; i < projects_array[index_project].users_amount; i++){
+		printf("%d. %s\n", (i + 1), projects_array[index_project].users_list[i]);
+	}
+}
+
 
 
 
