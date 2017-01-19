@@ -17,6 +17,7 @@
 #define UNIVERSAL_DIRECTOR "ADMIN"
 
 
+
 typedef enum{ False = 0, True = 1 } bool;
 typedef struct
 {
@@ -47,7 +48,6 @@ typedef struct
 	bool task_progres;
 	char assign_to[SIZE];
 }Tasks;
-
 typedef struct
 {
 	char name[SIZE];
@@ -101,6 +101,9 @@ void send_message_about_new_task();
 void change_pass();
 void assigned_to();
 void print_users();
+void print_all_messages();
+void print_login_singup();
+int get_user_index_by_name();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -111,34 +114,23 @@ Messages* messages_array;// will contain all messages that moves on the web
 int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
+int curr_index_user = 0;//the current user after log in
 
 
 
 int main()
 {
 	fill_arrays();
-	printf("%s", users_array[1].project_list[1]);
-	
+	//printf("%s", users_array[1].project_list[1]);
 //	print_arrays_to_files();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
+	//print_all_messages();
+	print_login_singup();
 
-
-	do
-	{
-		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
-		scanf("%d", &enter);
-		cleanBuffer();
-		if (enter == 1)
-			log_in(member);
-		if (enter == 2){
-			signUp();
-			printf("%s", projects_array[1].Manager_list[0]);
-		}
-	} while (True);
+	
 }
-
 //	char member[] = { "zohar" };
 //	int enter = 0;
 //	//system_massage(member);
@@ -235,6 +227,7 @@ int log_in(){
 		} while (Not_Valid_Pass);//if notvalid = true -> loop
 		Not_Member = check_member(member, password);//check if appropriate password to use
 	} while (!Not_Member);
+
 	return True;
 }
 int String(char arry[]){//function to get string for user
@@ -604,28 +597,29 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-void send_message(int index_user_array){
-	int chosen_project, chosen_user;
-	char temp_message[TEMP_SIZE];
-	//צריכה להיות פה פונקציה של לוג אין
-	print_user_projects(index_user_array);
-	printf("Choose Project :\n");
-	scanf("%d",&chosen_project);
-	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
-	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
-	printf("Choose user :\n");
-	scanf("%d", &chosen_user);
-	printf("Write Your Message :\n");
-	gets(temp_message);
-	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
-	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
-	web_messages_amount++;
-	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
-		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
-		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
-		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}
-}
+//void send_message(int index_user_array){
+//	int chosen_project, chosen_user;
+//	char temp_message[TEMP_SIZE];
+//	//צריכה להיות פה פונקציה של לוג אין
+//	print_user_projects(index_user_array);
+//	printf("Choose Project :\n");
+//	scanf("%d",&chosen_project);
+//	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
+//	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
+//	printf("Choose user :\n");
+//	scanf("%d", &chosen_user);
+//	printf("Write Your Message :\n");
+//	gets(temp_message);
+//	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
+//	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+//	web_messages_amount++;
+//	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
+//		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
+//		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+//		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+//	}
+//}
+
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
 	printf("Enter New Pass:\n");
@@ -695,6 +689,27 @@ void print_users(){
 		}
 		printf("\n");
 	}
+}
+void print_all_messages()
+{
+	for (int i = 0; i < web_messages_amount; i++){//print all messages from array
+		printf("# # #Message #%d # # #\n", (i+1));
+		printf("The Sender : %s\n", messages_array[i].sender);
+		printf("The Target : %s\n", messages_array[i].target);
+		printf("Content : %s\n", messages_array[i].content);
+	}
+}
+void print_login_singup(){
+	int enter;
+		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
+		scanf("%d", &enter);
+		cleanBuffer();
+		if (enter == 1)
+			log_in();
+		if (enter == 2){
+			signUp();
+			//printf("%s", projects_array[1].Manager_list[0]);
+		}
 }
 
 
