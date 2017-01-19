@@ -22,8 +22,8 @@ typedef struct
 {
 	char target[SIZE];
 	char sender[SIZE];
-	char content[SIZE];
-	char message[MESSAGE_SIZE];
+	char *content;
+	
 }Messages;
 typedef struct
 {
@@ -47,16 +47,6 @@ typedef struct
 	bool task_progres;
 	char assign_to[SIZE];
 }Tasks;
-//נתנו פה שם כפול יש עוד יוזר למעלה צריך לבחור אחד מהם ההבדל כוכביות בפרוגיקט ליסט
-//typedef struct
-//{
-//	char name[SIZE];
-//	char password[SIZE];
-//	char *project_list[SIZE];
-//	int projects_amount;
-//	Messages* message_list;
-//	int messages_amount;
-//}Users;
 
 typedef struct
 {
@@ -85,6 +75,7 @@ void scan_no3();
 void sort_tasks_no4();
 void sort_projects_to_users_no5();
 void scan_no6();
+void sort_messages_to_users_no7();
 void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
@@ -125,8 +116,8 @@ int main()
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
-	
-	
+
+
 	do
 	{
 		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
@@ -365,6 +356,11 @@ void fill_arrays(){
 	sort_projects_to_users_no5();
 	/*end of 5.*/
 	/*6. scan messages to messages global array*/
+	scan_no6();
+	/*end of 6.*/
+	/*7. sort messages into users*/
+	sort_messages_to_users_no7();
+	/*end of 7.*/
 
 }
 void scan_no1(){
@@ -375,6 +371,7 @@ void scan_no1(){
 		fscanf(users_File, "%s", &users_array[i].name);
 		//users_array[i].name[SIZE - 1] = '/0';
 		users_array[i].projects_amount = 0;
+		users_array[i].messages_amount = 0;
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
 	fclose(users_File);
@@ -464,26 +461,65 @@ void sort_tasks_no4(){
 	}
 }
 void sort_projects_to_users_no5(){
-//	for (int i = 0; i < web_users_amount; i++){
-//		for (int j = 0; j < web_projects_amount; j++){
-//			for (int k = 0; k < projects_array[j].users_amount; k++){
-//				if (!strcmp(users_array[i].name, projects_array[j].users_list[k])){
-//					if (!users_array[i].projects_amount){
-//						users_array[i].projects_amount++;
-//						users_array[i].project_list = (char**)malloc(sizeof(char*));
-//						users_array[i].project_list[0] = (char*)malloc(sizeof(char)*SIZE);
-//						strcpy(users_array[i].project_list[0], projects_array[j].name);
-//					}
-//					else{
-//						users_array[i].projects_amount++;
-//						users_array[i].project_list = (char**)realloc(users_array[i].project_list, users_array[i].projects_amount);
-//						users_array[i].project_list[users_array[i].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
-//						strcpy(users_array[i].project_list[users_array[i].projects_amount - 1], projects_array[j].name);
-//					}
-//				}
-//			}
-//		}
-//	}
+	for (int i = 0; i < web_users_amount; i++){
+		for (int j = 0; j < web_projects_amount; j++){
+			for (int k = 0; k < projects_array[j].users_amount; k++){
+				if (!strcmp(users_array[i].name, projects_array[j].users_list[k])){
+					if (!users_array[i].projects_amount){
+						users_array[i].projects_amount++;
+						users_array[i].project_list = (char**)malloc(sizeof(char*));
+						users_array[i].project_list[0] = (char*)malloc(sizeof(char)*SIZE);
+						strcpy(users_array[i].project_list[0], projects_array[j].name);
+					}
+					else{
+						users_array[i].projects_amount++;
+						users_array[i].project_list = (char**)realloc(users_array[i].project_list, users_array[i].projects_amount);
+						users_array[i].project_list[users_array[i].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
+						strcpy(users_array[i].project_list[users_array[i].projects_amount - 1], projects_array[j].name);
+					}
+				}
+			}
+		}
+	}
+}
+void scan_no6(){
+	FILE* messages_file = fopen(MESSAGE_FILE, "r");
+	fscanf(messages_file, "%d", &web_messages_amount);
+	messages_array = (Messages*)malloc(sizeof(Messages)*web_messages_amount);
+	for (int i = 0; i < web_messages_amount; i++){
+		fscanf(messages_file, "%s", &messages_array[i].sender);
+		fscanf(messages_file, "%s", &messages_array[i].target);
+		char temp[MESSAGE_SIZE];
+		int j = 0;
+		fgetc(messages_file);
+		while ((temp[j++] = fgetc(messages_file)) != '\n');
+		temp[j - 1] = '\0';
+		messages_array[i].content = (char*)malloc(sizeof(char)*strlen(temp));
+		for (j = 0; j < strlen(temp); j++){
+			messages_array[i].content[j] = temp[j];
+		}
+		messages_array[i].content[j] = '\0';
+	}
+	fclose(messages_file);
+
+}
+void sort_messages_to_users_no7(){
+	for (int i = 0; i < web_users_amount; i++){
+		for (int j = 0; j < web_messages_amount; j++){
+			if (!strcmp(users_array[i].name, messages_array[j].target)){
+				if (!users_array[i].messages_amount){
+					users_array[i].messages_amount++;
+					users_array[i].message_list = (Messages*)malloc(sizeof(Messages));
+					users_array[i].message_list[0] = messages_array[j];
+				}
+				else{
+					users_array[i].messages_amount++;
+					users_array[i].message_list = (Messages*)realloc(users_array[i].message_list, users_array[i].messages_amount);
+					users_array[i].message_list[users_array[i].messages_amount - 1] = messages_array[j];
+				}
+			}
+		}
+	}
 }
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
