@@ -149,8 +149,7 @@ int main()
 //		}
 //		enter = 0;
 //	} while (True);
-//	return 0;
-		
+//	return 0;		
 void signUp(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
@@ -616,7 +615,6 @@ void change_pass(int index_user_array){
 		//messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
 	}
 }*/
-
 void change_name(int index_user_array){//fund to change the name
 	char temp_name[SIZE];
 	printf("Enter New Name:\n");
