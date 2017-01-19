@@ -75,6 +75,9 @@ void scan_no3();
 void sort_tasks_no4();
 void sort_projects_to_users_no5();
 void scan_no6();
+void print_arrays_to_files();
+void print_no1();
+void print_no2();
 void sort_messages_to_users_no7();
 void print_user_projects(int index_user_array);
 void signUp();
@@ -113,6 +116,9 @@ int web_tasks_amount=0;//tasks amount
 int main()
 {
 	fill_arrays();
+	printf("%s", users_array[1].project_list[1]);
+	
+//	print_arrays_to_files();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
@@ -448,7 +454,7 @@ void sort_tasks_no4(){
 						}
 						else{
 							projects_array[i].status_list[k].tasks_amount++;
-							projects_array[i].status_list[k].tasks_list = (Tasks*)realloc(projects_array[i].status_list[k].tasks_list, projects_array[i].status_list[k].tasks_amount++);
+							projects_array[i].status_list[k].tasks_list = (Tasks*)realloc(projects_array[i].status_list[k].tasks_list, projects_array[i].status_list[k].tasks_amount*sizeof(Tasks));
 							projects_array[i].status_list[k].tasks_list[projects_array[i].status_list[k].tasks_amount - 1] = tasks_array[j];
 						}
 					}
@@ -472,7 +478,7 @@ void sort_projects_to_users_no5(){
 					}
 					else{
 						users_array[i].projects_amount++;
-						users_array[i].project_list = (char**)realloc(users_array[i].project_list, users_array[i].projects_amount);
+						users_array[i].project_list = (char**)realloc(users_array[i].project_list, users_array[i].projects_amount*sizeof(char*));
 						users_array[i].project_list[users_array[i].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
 						strcpy(users_array[i].project_list[users_array[i].projects_amount - 1], projects_array[j].name);
 					}
@@ -513,11 +519,47 @@ void sort_messages_to_users_no7(){
 				}
 				else{
 					users_array[i].messages_amount++;
-					users_array[i].message_list = (Messages*)realloc(users_array[i].message_list, users_array[i].messages_amount);
+					users_array[i].message_list = (Messages*)realloc(users_array[i].message_list, users_array[i].messages_amount*sizeof(Messages));
 					users_array[i].message_list[users_array[i].messages_amount - 1] = messages_array[j];
 				}
 			}
 		}
+	}
+}
+void print_arrays_to_files(){
+	/*1. prints users array*/
+	print_no1();
+	/*end of 1.*/
+	/*2. print projects array*/
+	print_no2();
+	/*end of 2.*/
+}
+void print_no1(){
+	FILE *users_file = fopen(USER_FILE_NAME, "w");
+	fprintf(users_file, "%d\n", web_users_amount);
+	for (int i = 0; i < web_users_amount; i++){
+		fprintf(users_file, "%s\n%s\n", users_array[i].name,users_array[i].password);
+	}
+	fclose(users_file);
+}
+void print_no2(){
+	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "w");
+	FILE* project_managers = fopen(PROJECT_MANAGERS_FILE, "w");
+	fprintf(projects_file, "%d\n", web_projects_amount);
+	for (int i = 0; i < web_projects_amount; i++){
+		fprintf(projects_file, "%s\n%d\n", projects_array[i].name, projects_array[i].users_amount);
+		for (int j = 0; j < projects_array[i].users_amount; j++){
+			fprintf(projects_file, "%s\n", projects_array[i].users_list[j]);
+		}
+		fprintf(projects_file, "%d\n", projects_array[i].status_amount);
+		for (int j = 0; j < projects_array[i].status_amount; j++){
+			fprintf(projects_file, "%s\n", projects_array[i].status_list[j].name);
+		}
+		fprintf(projects_file, "%d\n", projects_array[i].archived);
+		fprintf(project_managers, "%s\n%d\n", projects_array[i].name,projects_array[i].manager_amount);
+		
+
+
 	}
 }
 void remove_task(int index_user_array){
