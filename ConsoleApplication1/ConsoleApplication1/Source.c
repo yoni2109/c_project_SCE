@@ -435,19 +435,21 @@ void scan_no3(){
 void sort_tasks_no4(){
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
-			if (strcmp(projects_array[i].name, tasks_array[j].project_name)!=0){
+			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
 				for (int k = 0; k < projects_array[i].status_amount; k++){
 					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
 						if (!projects_array[i].status_list[k].tasks_amount){
 							projects_array[i].status_list[k].tasks_amount++;
 							projects_array[i].status_list[k].tasks_list = (Tasks*)malloc(sizeof(Tasks));
-							strcpy(projects_array[i].status_list[k].tasks_list[0].name , tasks_array[j].name);
-							strcpy(projects_array[i].status_list[k].tasks_list[0].assign_to , tasks_array[j].assign_to);
-							strcpy(projects_array[i].status_list[k].tasks_list[0].project_name , tasks_array[j].project_name);
-							strcpy(projects_array[i].status_list[k].tasks_list[0].status_name , tasks_array[j].status_name);
-							projects_array[i].status_list[k].tasks_list[0].task_details = (char*)malloc(sizeof(char)*strlen(tasks_array[j].task_details));
-							strcpy(projects_array[i].status_list[k].tasks_list[0].task_details , tasks_array[j].task_details);
-							projects_array[i].status_list[k].tasks_list[0].task_progres = tasks_array[j].task_progres;
+							projects_array[i].status_list[k].tasks_list[0] = tasks_array[j];
+							printf("%s", projects_array[i].status_list[k].tasks_list[0].name);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].name , tasks_array[j].name);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].assign_to , tasks_array[j].assign_to);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].project_name , tasks_array[j].project_name);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].status_name , tasks_array[j].status_name);
+							//projects_array[i].status_list[k].tasks_list[0].task_details = (char*)malloc(sizeof(char)*strlen(tasks_array[j].task_details));
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].task_details , tasks_array[j].task_details);
+							//projects_array[i].status_list[k].tasks_list[0].task_progres = tasks_array[j].task_progres;
 						}
 						else{
 							projects_array[i].status_list[k].tasks_amount++;
@@ -624,21 +626,21 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-void send_message(char *sender, char* target, char* message){
-	char temp_message;
-
-
-	printf("Write Your Message :\n");
-	gets(temp_message);
-	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
-	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
-	web_messages_amount++;
-	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
-		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
-		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
-		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}
-}
+//void send_message(char *sender, char* target, char* message){
+//	char temp_message;
+//
+//
+//	printf("Write Your Message :\n");
+//	gets(temp_message);
+//	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
+//	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+//	web_messages_amount++;
+//	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
+//		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
+//		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+//		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+//	}
+//}
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
 	printf("Enter New Pass:\n");
