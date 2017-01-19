@@ -196,7 +196,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(){
-	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True, temp_curr_index_user;
 	char password[SIZE], member[SIZE];//open string
 	do{
 		if (!Not_Member){//if user make mistake 
@@ -254,6 +254,7 @@ int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password))//If appropriate password to use
+				curr_index_user = i;
 				return True;
 			}
 	return False;
@@ -601,7 +602,7 @@ void send_message(char *sender, char* target, char* message){
 	char temp_message;
 
 
-	printf("Write Your Message :\n");
+	/*printf("Write Your Message :\n");
 	gets(temp_message);
 	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
 	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
@@ -610,7 +611,7 @@ void send_message(char *sender, char* target, char* message){
 		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
 		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
 		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}
+	}*/
 }
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
