@@ -110,6 +110,7 @@ int get_user_index_by_name();
 void add_user_to_project(int index_project);
 int get_project_index(char*);
 void defult_status_to_new_project();
+void print_users_project(int index_project);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -137,8 +138,8 @@ int main()
 	//print_all_messages();
 	//print_login_singup();
 	print_users();
-	add_user_to_project(print_and_choose_user_projects(curr_index_user));
 
+	print_users_project(print_and_choose_user_projects(curr_index_user));
 
 }
 //	char member[] = { "zohar" };
@@ -608,7 +609,7 @@ int print_and_choose_user_projects(int index_user_array){
 		printf("%d. %s", (i+1), users_array[index_user_array].project_list[i]);
 		if (projects_array[get_project_index(users_array[index_user_array].project_list[i])].archived){
 			printf(" **project is archived**");
-		}
+	}
 		printf("\n");
 	}
 	printf("Choose Project By Number:\n");
@@ -640,8 +641,8 @@ int confirm_project(int index_project){//func to archived the project *only mane
 		if (!strcmp(projects_array[index_project].Manager_list[i], users_array[curr_index_user].name)){
 			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
 			return 1;
-		}
 	}
+}
 	return -1;
 }
 void send_message(char *sender, char* target, char* message){
@@ -750,7 +751,7 @@ void print_login_singup(){
 			//printf("%s", projects_array[1].Manager_list[0]);
 		}
 }
-void add_user_to_project(int index_project){
+void add_user_to_project(int index_project){//fund to add new user to project
 	char temp_user[20];
 	int flag=0,index_try=0;
 	while (flag == 0){//loop to get the name of user that we want add - if there is no exist this user - again
@@ -855,6 +856,13 @@ int get_project_index(char* project_name){
 	}
 	return -1;
 }
+void print_users_project(int index_project){//func to print the users in project
+	printf("The Users In This Project :\n");
+	for (int i = 0; i < projects_array[index_project].users_amount; i++){
+		printf("%d. %s\n", (i + 1), projects_array[index_project].users_list[i]);
+	}
+}
+
 
 
 
