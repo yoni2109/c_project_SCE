@@ -76,9 +76,11 @@ void sort_tasks_no4();
 void sort_projects_to_users_no5();
 void scan_no6();
 void print_arrays_to_files();
+void sort_messages_to_users_no7();
 void print_no1();
 void print_no2();
-void sort_messages_to_users_no7();
+void print_no3();
+void print_no4();
 void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
@@ -116,9 +118,9 @@ int web_tasks_amount=0;//tasks amount
 int main()
 {
 	fill_arrays();
-	printf("%s", users_array[1].project_list[1]);
+	//printf("%s", users_array[1].project_list[1]);
 	
-//	print_arrays_to_files();
+	print_arrays_to_files();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
@@ -534,6 +536,11 @@ void print_arrays_to_files(){
 	/*2. print projects array*/
 	print_no2();
 	/*end of 2.*/
+	/*3. print tasks to files*/
+	print_no3();
+	/*4. print messages to file*/
+	print_no4();
+	/*end of 4.*/
 }
 void print_no1(){
 	FILE *users_file = fopen(USER_FILE_NAME, "w");
@@ -558,10 +565,29 @@ void print_no2(){
 		}
 		fprintf(projects_file, "%d\n", projects_array[i].archived);
 		fprintf(project_managers, "%s\n%d\n", projects_array[i].name,projects_array[i].manager_amount);
-		
-
-
+		for (int j = 0; j < projects_array[i].manager_amount; j++){
+			fprintf(project_managers, "%s\n", projects_array[i].Manager_list[j]);
+		}
 	}
+	fclose(projects_file);
+	fclose(project_managers);
+}
+void print_no3(){
+	FILE* tasks_file = fopen(TASKS_FILE, "w");
+	fprintf(tasks_file, "%d\n", web_tasks_amount);
+	for (int i = 0; i < web_tasks_amount; i++){
+		fprintf(tasks_file, "%s\n%s\n%s\n%s\n%d\n%s\n", tasks_array[i].project_name, tasks_array[i].status_name, tasks_array[i].name, tasks_array[i].task_details, tasks_array[i].task_progres, tasks_array[i].assign_to);
+	}
+	fclose(tasks_file);
+}
+void print_no4(){
+	FILE * messages_file = fopen(MESSAGE_FILE, "w");
+	fprintf(messages_file, "%d\n", web_messages_amount);
+	for (int i = 0; i < web_messages_amount; i++){
+		fprintf(messages_file, "%s\n%s\n%s\n", messages_array[i].sender, messages_array[i].target, messages_array[i].content);
+	}
+	fclose(messages_file);
+
 }
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
