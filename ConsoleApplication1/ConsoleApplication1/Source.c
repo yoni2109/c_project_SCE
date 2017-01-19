@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+
 #define TEMP_SIZE 1024
-#define SIZE 20
+#define SIZE 25
 #define MODEOUT "w"
 #define USER_FILE_NAME "users.txt"
 #define PROJECTS_FILE_NAME "projects.txt"
@@ -32,7 +33,7 @@ typedef struct
 {
 	char name[SIZE];
 	char password[SIZE];
-	char *project_list[SIZE];
+	char **project_list;
 	int projects_amount;
 	Messages* message_list;
 	int messages_amount;
@@ -46,6 +47,17 @@ typedef struct
 	bool task_progres;
 	char assign_to[SIZE];
 }Tasks;
+//נתנו פה שם כפול יש עוד יוזר למעלה צריך לבחור אחד מהם ההבדל כוכביות בפרוגיקט ליסט
+//typedef struct
+//{
+//	char name[SIZE];
+//	char password[SIZE];
+//	char *project_list[SIZE];
+//	int projects_amount;
+//	Messages* message_list;
+//	int messages_amount;
+//}Users;
+
 typedef struct
 {
 	char name[SIZE];
@@ -55,19 +67,24 @@ typedef struct
 typedef struct
 {
 	char name[SIZE];
-	char* users_list[SIZE];
+	char** users_list;
 	int users_amount;
 	Status* status_list;
 	int status_amount;
-	char* Manager_list[SIZE];
+	char** Manager_list;
 	int manager_amount;
 	int archived;
 
 }Projects;
+
+
+void change_name(int index_user_array);
 void scan_no1();
 void scan_no2();
 void scan_no3();
 void sort_tasks_no4();
+void sort_projects_to_users_no5();
+void scan_no6();
 void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
@@ -86,7 +103,9 @@ void fill_arrays();
 void send_message();
 char * func_to_get_message();
 void allocate_messages();
-void change_pass(int index_user_array);
+void send_message_about_new_task();
+void change_pass();
+void assigned_to();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -98,11 +117,14 @@ int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
 
-int main(){
+
+
+int main()
+{
 	fill_arrays();
 	char member[] = { "zohar" };
 	int enter = 0;
-//	system_massage(member);
+	//system_massage(member);
 	
 	
 	do
@@ -114,11 +136,30 @@ int main(){
 			log_in(member);
 		if (enter == 2){
 			signUp();
+			printf("%s", projects_array[1].Manager_list[0]);
 		}
-		enter = 0;
 	} while (True);
-	return 0;
 }
+
+//	char member[] = { "zohar" };
+//	int enter = 0;
+//	//system_massage(member);
+//	
+//	
+//	do
+//	{
+//		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
+//		scanf("%d", &enter);
+//		cleanBuffer();
+//		if (enter == 1)
+//			log_in(member);
+//		if (enter == 2){
+//			signUp();
+//		}
+//		enter = 0;
+//	} while (True);
+//	return 0;
+		
 void signUp(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
@@ -250,63 +291,63 @@ int wont_exit(){//function to ask the user if exit to loby/main
 	cleanBuffer();
 	return False;
 }
-void system_massage(char sender[]){
-	int count = 0, member_Exist = False;
-	char temp = '\0';
-	FILE *message;//Declaring files
-	Messages system_massage;// Opening indicates the size of the array;
-	FILE *users;
-	Users *check_user;// Opening indicates the size of the array;
-	users = fopen(USER_FILE_NAME, "r+");//open file to read
-	if (users == NULL){//if file not open quit from program
-		printf("the file could not be opened\n");
-		exit(1);
-	}
-	fscanf(users, "%d", &count);//get the number of users
-	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
-	message = fopen(MESSAGE_FILE, "a");//open file to read
-	if (message == NULL){//if file not open quit from program
-		printf("the file could not be opened\n");
-		exit(1);
-	}
-	printf("%s you want to send system massage?\nif yes press Y other print any key: ", sender);
-	scanf("%c", &temp);
-	cleanBuffer();
-	if (temp == 'y' || temp == 'Y'){
-		if (!(strcmp(sender, UNIVERSAL_DIRECTOR)))
-			if (check_admin(sender))
-				strcpy(sender, UNIVERSAL_DIRECTOR);
-		do
-		{
-			if (member_Exist){
-				printf("member not Exists");
-				member_Exist = False;
-				if (wont_exit()){//check if the user want to continue
-					free(check_user);//frre the pointer
-					return;
-				}
-			}
-
-			printf("enter content name: ");
-			cleanBuffer();
-			member_Exist = String(system_massage.content);
-			if (!member_Exist){
-				member_Exist = True;
-				for (int i = 0; i < count && member_Exist == True; i++){//loop for check if user name in system
-					fscanf(users, "%s%s", &check_user[i].name, check_user[i].password);//scan from file to pointer
-					if (compareArrays(check_user[i].name, system_massage.content))//return true if the user in system
-						member_Exist = False;
-				}
-			}
-		} while (member_Exist);
-		strcpy(system_massage.sender, sender);
-		printf("enter your mesagge: ");
-		fgets(system_massage.message, MESSAGE_SIZE, stdin);
-		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.message);
-		fclose(users);
-		fclose(message);
-	}
-}
+//void system_massage(char sender[]){
+//	int count = 0, member_Exist = False;
+//	char temp = '\0';
+//	FILE *message;//Declaring files
+//	Messages system_massage;// Opening indicates the size of the array;
+//	FILE *users;
+//	Users *check_user;// Opening indicates the size of the array;
+//	users = fopen(USER_FILE_NAME, "r+");//open file to read
+//	if (users == NULL){//if file not open quit from program
+//		printf("the file could not be opened\n");
+//		exit(1);
+//	}
+//	fscanf(users, "%d", &count);//get the number of users
+//	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
+//	message = fopen(MESSAGE_FILE, "a");//open file to read
+//	if (message == NULL){//if file not open quit from program
+//		printf("the file could not be opened\n");
+//		exit(1);
+//	}
+//	printf("%s you want to send system massage?\nif yes press Y other print any key: ", sender);
+//	scanf("%c", &temp);
+//	cleanBuffer();
+//	if (temp == 'y' || temp == 'Y'){
+//		if (!(compareArrays(sender, UNIVERSAL_DIRECTOR)))
+//			if (ask_if_admin(sender))
+//				strcpy(sender, UNIVERSAL_DIRECTOR);
+//		do
+//		{
+//			if (member_Exist){
+//				printf("member not Exists");
+//				member_Exist = False;
+//				if (wont_exit()){//check if the user want to continue
+//					free(check_user);//frre the pointer
+//					return;
+//				}
+//			}
+//
+//			printf("enter content name: ");
+//			cleanBuffer();
+//			member_Exist = String(system_massage.content);
+//			if (!member_Exist){
+//				member_Exist = True;
+//				for (int i = 0; i < count && member_Exist == True; i++){//loop for check if user name in system
+//					fscanf(users, "%s%s", &check_user[i].name, check_user[i].password);//scan from file to pointer
+//					if (compareArrays(check_user[i].name, system_massage.content))//return true if the user in system
+//						member_Exist = False;
+//				}
+//			}
+//		} while (member_Exist);
+//		strcpy(system_massage.sender, sender);
+//		printf("enter your mesagge: ");
+//		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
+//		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
+//		fclose(users);
+//		fclose(message);
+//	}
+//}
 void fill_arrays(){
 	/*1. scans user names and passwords into users array*/
 	scan_no1();
@@ -320,16 +361,20 @@ void fill_arrays(){
 	/*4. sort tasks to projects*/
 	sort_tasks_no4();
 	/*end of 4.*/
-}
-void change_pass();
+	/*5. sort projects to users*/
+	sort_projects_to_users_no5();
+	/*end of 5.*/
+	/*6. scan messages to messages global array*/
 
+}
 void scan_no1(){
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
 		fscanf(users_File, "%s", &users_array[i].name);
-		users_array[i].name[SIZE - 1] = '/0';
+		//users_array[i].name[SIZE - 1] = '/0';
+		users_array[i].projects_amount = 0;
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
 	fclose(users_File);
@@ -342,16 +387,23 @@ void scan_no2(){
 	for (int i = 0; i < web_projects_amount; i++){
 		fscanf(projects_file, "%s", &projects_array[i].name);
 		fscanf(projects_file, "%d", &projects_array[i].users_amount);
-		*projects_array[i].users_list = (char*)malloc(sizeof(char)*projects_array[i].users_amount);
+		projects_array[i].users_list = (char**)malloc(sizeof(char*)*projects_array[i].users_amount+1);
 		for (int j = 0; j < projects_array[i].users_amount; j++){
-			fscanf(projects_file, "%s", &projects_array[i].users_list[j]);
+			char temp[SIZE];
+			projects_array[i].users_list[j] = (char*)malloc(sizeof(char)*SIZE);
+			fscanf(projects_file, "%s", &temp);
+			strcpy(projects_array[i].users_list[j],temp);
 		}
 		char temp[20];
 		fscanf(projects_managers_file, "%s", &temp);
 		fscanf(projects_managers_file, "%d", &projects_array[i].manager_amount);
-		*projects_array[i].Manager_list = (char*)malloc(sizeof(char)*projects_array[i].manager_amount);
+		projects_array[i].Manager_list = (char**)malloc(sizeof(char*)*projects_array[i].manager_amount);
 		for (int j = 0; j < projects_array[i].manager_amount; j++){
-			fscanf(projects_managers_file, "%s", &projects_array[i].Manager_list[j]);
+			projects_array[i].Manager_list[j] = (char*)malloc(sizeof(char)*SIZE);
+			char temp[SIZE];
+			fscanf(projects_managers_file, "%s", &temp);
+			strcpy(projects_array[i].Manager_list[j], temp);
+
 		}
 		fscanf(projects_file, "%d", &projects_array[i].status_amount);
 		projects_array[i].status_list = (Status*)malloc(sizeof(Status)*projects_array[i].status_amount);
@@ -411,6 +463,28 @@ void sort_tasks_no4(){
 
 	}
 }
+void sort_projects_to_users_no5(){
+//	for (int i = 0; i < web_users_amount; i++){
+//		for (int j = 0; j < web_projects_amount; j++){
+//			for (int k = 0; k < projects_array[j].users_amount; k++){
+//				if (!strcmp(users_array[i].name, projects_array[j].users_list[k])){
+//					if (!users_array[i].projects_amount){
+//						users_array[i].projects_amount++;
+//						users_array[i].project_list = (char**)malloc(sizeof(char*));
+//						users_array[i].project_list[0] = (char*)malloc(sizeof(char)*SIZE);
+//						strcpy(users_array[i].project_list[0], projects_array[j].name);
+//					}
+//					else{
+//						users_array[i].projects_amount++;
+//						users_array[i].project_list = (char**)realloc(users_array[i].project_list, users_array[i].projects_amount);
+//						users_array[i].project_list[users_array[i].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
+//						strcpy(users_array[i].project_list[users_array[i].projects_amount - 1], projects_array[j].name);
+//					}
+//				}
+//			}
+//		}
+//	}
+}
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
 	print_user_projects(index_user_array);
@@ -430,7 +504,7 @@ void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
 	for (int i = 0; i < projects_array[index_project_array].status_amount; i++){
 		//for (int j = 0; j < projects_array[index_project_array].status_amount;j++)
-		//printf("1. %s", (projects_array[index_project_array].status_list[0]).);
+		printf("%d. %s",(i+1), (projects_array[index_project_array].status_list[0]).tasks_list[i].name);
 	}
 	//projects_array[0].status_list[0]
 		
@@ -452,37 +526,85 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-//void send_message(int index_user_array){
-//	int chosen_project, chosen_user;
-//	char temp_message[TEMP_SIZE];
-//	//צריכה להיות פה פונקציה של לוג אין
-//	print_user_projects(index_user_array);
-//	printf("Choose Project :\n");
-//	scanf("%d",&chosen_project);
-//	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
-//	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
-//	printf("Choose user :\n");
-//	scanf("%d", &chosen_user);
-//	printf("Write Your Message :\n");
-//	get(temp_message);
-//	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
-//	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
-//	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
-//		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
-//		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
-//		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-//	}
-//	web_messages_amount++;
-//}
-//void change_pass(int index_user_array){
-//	char temp_pass[SIZE];
-//	printf("Enter New Pass:\n");
-//	get(temp_pass);//get new password
-//	for (int i = 0; i < SIZE; i++){//loop to change the password
-//		users_array[index_user_array].password[i] = temp_pass[i];
-//	}
-//}
-//
+void send_message(int index_user_array){
+	int chosen_project, chosen_user;
+	char temp_message[TEMP_SIZE];
+	//צריכה להיות פה פונקציה של לוג אין
+	print_user_projects(index_user_array);
+	printf("Choose Project :\n");
+	scanf("%d",&chosen_project);
+	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
+	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
+	printf("Choose user :\n");
+	scanf("%d", &chosen_user);
+	printf("Write Your Message :\n");
+	gets(temp_message);
+	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
+	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	web_messages_amount++;
+	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
+		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
+		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+	}
+}
+void change_pass(int index_user_array){
+	char temp_pass[SIZE];
+	printf("Enter New Pass:\n");
+	gets(temp_pass);//get new password
+	for (int i = 0; i < SIZE; i++){//loop to change the password
+		users_array[index_user_array].password[i] = temp_pass[i];
+	}
+}
+/*void send_message_about_new_task(int index_user_array)
+{
+	int chosen_project;
+	char *temp_message[31] = { "There Is New Task - Check It" };
+	char *temp_sender = { "System" };
+	print_user_projects(index_user_array);
+	printf("Choose Project :\n");
+	scanf("%d", &chosen_project);
+	//צריכה להיות פונקציה שמדפיסה את כל האפשריות
+	print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
+	//printf("Choose user :\n");
+	//scanf("%d", &chosen_user);
+	//printf("Write Your Message :\n");
+	//get(temp_message);
+	realloc(messages_array, projects_array[chosen_project].users_amount * sizeof *messages_array);//realloc 1 place for new message
+	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	web_messages_amount = projects_array[chosen_project].users_amount+web_messages_amount;
+	/*for (int i = projects_array[chosen_project].users_amount; i < web_users_amount; i++){//loop to fill the name,target name,conntent in the last place of array messages
+		for (int j = 0; j < 31; j++){
+			messages_array[i].sender[j] = temp_sender[j];//update sender in the global messages array
+			messages_array[i].target[j] = projects_array[chosen_project].users_list[0].;//update target user in the global messages array
+		//messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+	}
+}*/
+
+void change_name(int index_user_array){//fund to change the name
+	char temp_name[SIZE];
+	printf("Enter New Name:\n");
+	gets(temp_name);//get new name
+	for (int i = 0; i < SIZE; i++){//loop to change the name
+		users_array[index_user_array].name[i] = temp_name[i];
+	}
+}
+void assigned_to(int index_project_array){
+	int chosen_task, chosen_user;
+	//להדפיס את כל הדרישות
+	print_projects_task(index_project_array);//print all tasks in projects
+	printf("Choose The Task That You Want Assigned To :\n");
+	scanf("%d", &chosen_task);
+	printf("Choose The User That Will Perform The Task :\n");
+	print_web_users();//print all users in web ************לבדוק האם אפשר לשייך רק למשתמשים מאותו פרויקט ***************
+	scanf("%d", &chosen_user);
+	for (int i = 0; i < SIZE; i++){//loop to copy the name
+		tasks_array[chosen_task].assign_to[i] = users_array[chosen_user].name[i];
+	}
+	
+}
+
+
 
 
 

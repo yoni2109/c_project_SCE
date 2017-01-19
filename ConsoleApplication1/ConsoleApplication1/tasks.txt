@@ -1,5 +1,5 @@
 1
-prjectname
+projectname
 elicitation
 do_abc
 to do abc you need to do bcc
