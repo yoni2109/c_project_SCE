@@ -53,7 +53,7 @@ typedef struct
 	char name[SIZE];
 	Tasks * tasks_list;
 	int tasks_amount;
-} Status;
+}Status;
 typedef struct
 {
 	char name[SIZE];
@@ -109,6 +109,12 @@ void print_login_singup();
 int get_user_index_by_name();
 void add_user_to_project(int index_project);
 void print_users_project(int index_project);
+void new_task(int index_project);
+void allocate_for_first_task(int index_project, int task_size_details);
+void allocate_for_new_task(int index_project,int task_size_details);
+void print_tasks_array();
+
+
 
 
 WebManager* Wmanager;//will contain the web managet user name
@@ -137,8 +143,7 @@ int main()
 	//print_all_messages();
 	//print_login_singup();
 	print_users();
-	
-	print_users_project(print_and_choose_user_projects(curr_index_user));
+	new_task(print_and_choose_user_projects(curr_index_user));
 
 }
 //	char member[] = { "zohar" };
@@ -749,7 +754,7 @@ void add_user_to_project(int index_project){//fund to add new user to project
 	int flag=0,index_try=0;
 	while (flag == 0){//loop to get the name of user that we want add - if there is no exist this user - again
 		printf("Enter user name that You want add to project [20 chars] : \n");
-		fgets(temp_user, 20, stdin);
+		fgets(temp_user, SIZE, stdin);
 		temp_user[strlen(temp_user) - 1]='\0';
 		for (int i = 0; i < web_users_amount; i++){//loop to find the user in web array users
 			if (strcmp(temp_user, users_array[i].name) == 0) flag = 1;
@@ -831,6 +836,70 @@ void print_users_project(int index_project){//func to print the users in project
 		printf("%d. %s\n", (i + 1), projects_array[index_project].users_list[i]);
 	}
 }
+void new_task(int index_project){
+	char temp_task[SIZE],details_task[TEMP_SIZE];
+	int size_details;
+	printf("Fill Details:\n");
+	printf("Enter Name:");
+	fgets(temp_task, SIZE, stdin);
+	temp_task[strlen(temp_task) - 1] = '\0';
+	printf("Enter Details:");
+	fgets(details_task, TEMP_SIZE, stdin);
+	size_details = strlen(details_task);
+	details_task[strlen(details_task) - 1] = '\0';
+	printf("projects_array[index_project].status_list[0].tasks_amount %d\n", projects_array[index_project].status_list[0].tasks_amount);
+
+		if (projects_array[index_project].status_list[0].tasks_amount == 0){
+			projects_array[index_project].status_list[0].tasks_amount++;
+			allocate_for_first_task(index_project, size_details);
+			strcpy(projects_array[index_project].status_list[0].tasks_list[0].name, temp_task);
+			strcpy(projects_array[index_project].status_list[0].tasks_list[0].task_details, details_task);
+			if (web_tasks_amount == 0){
+				web_tasks_amount++;
+				tasks_array = (Tasks *)malloc(sizeof(Tasks)*web_tasks_amount);
+				tasks_array[web_tasks_amount - 1] = projects_array[index_project].status_list[0].tasks_list[0];
+			}
+			else{
+				web_tasks_amount++;
+				tasks_array = (Tasks *)realloc(tasks_array,sizeof(Tasks)*web_tasks_amount);
+				tasks_array[web_tasks_amount - 1] = projects_array[index_project].status_list[0].tasks_list[0];
+			}
+
+
+		}
+		else{
+			projects_array[index_project].status_list[0].tasks_amount++;
+			allocate_for_new_task(index_project, size_details);
+			strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount-1].name, temp_task);
+			strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount-1].task_details, details_task);
+		}
+
+
+}
+void allocate_for_first_task(int index_project, int size_details){
+	//*****Notice that this funs does not increas the amount task-Do it before*******
+	projects_array[index_project].status_list[0].tasks_list = (Tasks *)malloc(sizeof(Tasks)*projects_array[index_project].status_list[0].tasks_amount);
+	projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].task_details = (char *)malloc(sizeof(char)*size_details);
+	strcpy(projects_array[index_project].status_list[0].tasks_list[0].name, projects_array[index_project].name);//copy the name project
+	strcpy(projects_array[index_project].status_list[0].tasks_list[0].status_name, projects_array[index_project].status_list[0].name);//copy the status name
+	strcpy(projects_array[index_project].status_list[0].tasks_list[0].assign_to, "None");//Fill "none" by defult
+	strcpy(projects_array[index_project].status_list[0].tasks_list[0].name, projects_array[index_project].name);//Fill "none" by defult
+	projects_array[index_project].status_list[0].tasks_list[0].task_progres = False;//task progres is 0 by defult
+}
+void allocate_for_new_task(int index_project, int size_details){
+	//*****Notice that this funs does not increas the amount task-Do it before*******
+	projects_array[index_project].status_list[0].tasks_list = (Tasks *)realloc(projects_array[index_project].status_list[0].tasks_list, sizeof(Tasks)*projects_array[index_project].status_list[0].tasks_amount);
+	projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount-1].task_details = (char *)malloc(sizeof(char)*size_details);
+	strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount].name, projects_array[index_project].name);//copy the name project
+	strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].status_name, projects_array[index_project].status_list[0].name);//copy the status name
+	strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].assign_to, "None");//Fill "none" by defult
+	strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].project_name, projects_array[index_project].name);//Fill "none" by defult
+	projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].task_progres = False;//task progres is 0 by defult
+}
+
+
+
+
 
 
 
