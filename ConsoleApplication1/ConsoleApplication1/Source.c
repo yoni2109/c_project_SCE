@@ -760,7 +760,7 @@ void add_user_to_project(int index_project){
 	strcpy(projects_array[index_project].users_list[projects_array[index_project].users_amount-1], temp_user);//copy the new name 
 }
 
-}
+
 char new_project_name(){
 	int flag = 0;
 	printf("\nInsert your Project Name:(projects name must be up to 25 characters)\n");
