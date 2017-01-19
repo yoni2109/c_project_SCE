@@ -118,7 +118,7 @@ Messages* messages_array;// will contain all messages that moves on the web
 int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount=0;//tasks amount
-int curr_index_user = 0;//the current user after log in
+int curr_index_user;//the current user after log in
 
 
 
@@ -134,6 +134,7 @@ int main()
 	//system_massage(member);
 	//print_all_messages();
 	print_login_singup();
+	printf("curr_index_user :%d", curr_index_user);
 	print_user_projects(curr_index_user);	
 		}
 //	char member[] = { "zohar" };
@@ -259,6 +260,7 @@ int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password))//If appropriate password to use
+			printf("*** i *** :%d", i);
 				curr_index_user = i;
 				return True;
 			}
