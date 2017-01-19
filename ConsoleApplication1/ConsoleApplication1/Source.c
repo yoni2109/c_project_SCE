@@ -67,7 +67,7 @@ typedef struct
 
 }Projects;
 
-char new_project_name();
+char *new_project_name();
 void change_name(int index_user_array);
 void scan_no1();
 void scan_no2();
@@ -95,7 +95,7 @@ void system_massage();
 void print_projects_task(int index_project_array);
 void print_web_users();
 int check_admin(char * name);
-void confirm_project(int index_user);
+int confirm_project(int index_user);
 void fill_arrays();
 void send_message(char *sender,char* target,char* message);
 char * func_to_get_message();
@@ -108,7 +108,8 @@ void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
 void add_user_to_project(int index_project);
-
+int get_project_index(char*);
+void defult_status_to_new_project();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -126,7 +127,7 @@ int curr_index_user;//the current user after log in
 int main()
 {
 	fill_arrays();
-	//add_new_project();
+	add_new_project();
 	//printf("%s", users_array[1].project_list[1]);
 	
 	//print_arrays_to_files();
@@ -604,12 +605,16 @@ int print_and_choose_user_projects(int index_user_array){
 	int chosen_proj;
 	printf("Those Your projects:\n");
 	for (int i = 0; i < users_array[index_user_array].projects_amount; i++){
-		printf("%d. %s",(i+1), users_array[index_user_array].project_list[i]);
+		printf("%d. %s", (i+1), users_array[index_user_array].project_list[i]);
+		if (projects_array[get_project_index(users_array[index_user_array].project_list[i])].archived){
+			printf(" **project is archived**");
+		}
+		printf("\n");
 	}
 	printf("Choose Project By Number:\n");
 	scanf("%d", &chosen_proj);
 	getchar();//get the enter
-	return chosen_proj;
+	return get_project_index(users_array[index_user_array].project_list[chosen_proj-1]);
 	}
 void print_projects_task(int index_project_array){
 	printf("Tasks In Project:\n");
@@ -630,12 +635,14 @@ void print_web_users(){
 		printf("%d,%s\n", (i + 1), users_array[i].name);
 	}
 }
-void confirm_project(int index_project, char * manager_project){//func to archived the project *only maneger can do that*
+int confirm_project(int index_project){//func to archived the project *only maneger can do that*
 	for (int i = 0; i < projects_array[index_project].manager_amount; i++){//loop to check if manager exists in the managers array 
-		if (!strcmp(projects_array[index_project].Manager_list[i], manager_project)){
+		if (!strcmp(projects_array[index_project].Manager_list[i], users_array[curr_index_user].name)){
 			projects_array[index_project].archived = True;//if we found we will change the archived variable to True
+			return 1;
+		}
 	}
-}
+	return -1;
 }
 void send_message(char *sender, char* target, char* message){
 	char temp_message;
@@ -759,20 +766,31 @@ void add_user_to_project(int index_project){
 	projects_array[index_project].users_list[projects_array[index_project].users_amount-1] = (char*)malloc(sizeof(char)*25);//allocate new memory 
 	strcpy(projects_array[index_project].users_list[projects_array[index_project].users_amount-1], temp_user);//copy the new name 
 }
-
-
-char new_project_name(){
+void defult_status_to_new_project(){
+	projects_array[web_projects_amount - 1].status_amount = 4;
+	projects_array[web_projects_amount - 1].status_list = (Status*)malloc(sizeof(Status)*projects_array[web_projects_amount - 1].status_amount);
+	*projects_array[web_projects_amount - 1].status_list[0].name = "Elicitation";
+	*projects_array[web_projects_amount - 1].status_list[1].name = "Analasys";
+	*projects_array[web_projects_amount - 1].status_list[2].name = "VandV";
+	*projects_array[web_projects_amount - 1].status_list[3].name = "Approved";
+	projects_array[web_projects_amount - 1].status_list[0].tasks_amount = 0;
+	projects_array[web_projects_amount - 1].status_list[1].tasks_amount = 0;
+	projects_array[web_projects_amount - 1].status_list[2].tasks_amount = 0;
+	projects_array[web_projects_amount - 1].status_list[3].tasks_amount = 0;
+}
+char* new_project_name(){
 	int flag = 0;
 	printf("\nInsert your Project Name:(projects name must be up to 25 characters)\n");
-	char temp1[1024], temp[SIZE];
+	char temp1[1024],*temp;
 	while (!flag){
 		fgets(temp1, 1024, stdin);
+		temp1[strlen(temp1) - 1] = '\0';
 		if (strlen(temp1) > 25)
 			printf("the inserted name is too long pls try again!\n");
 		else flag = 1;
 		for (int i = 0; i < web_projects_amount; i++){
 			if (!strcmp(temp1, projects_array[i].name)){
-				printf("this name is already taken, pls choose another name");
+				printf("this name is already taken, pls choose another name\n");
 				flag = 0;
 				i = web_projects_amount;
 			}
@@ -783,15 +801,17 @@ char new_project_name(){
 			temp1[i] = '_';
 		}
 	}
+	temp = (char*)malloc(sizeof(char)*SIZE);
 	for (int i = 0; i < strlen(temp1); i++){
 		temp[i] = temp1[i];
 	}
-	temp[strlen(temp1) - 1] = '\0';
+	temp[strlen(temp1)] = '\0';
 	return temp;
 }
 void add_new_project(){
 	/**/
-	char temp = new_project_name();
+	char *temp = (char*)malloc(sizeof(char)*SIZE);
+	strcpy(temp,new_project_name());
 	/**/
 	if (!web_projects_amount){
 		web_projects_amount++;
@@ -808,9 +828,10 @@ void add_new_project(){
 	projects_array[web_projects_amount - 1].users_list[0] = (char*)malloc(sizeof(char)*strlen(users_array[curr_index_user].name));
 	strcpy(projects_array[web_projects_amount - 1].users_list[0], users_array[curr_index_user].name);
 	projects_array[web_projects_amount - 1].Manager_list = (char**)malloc(sizeof(char*));
-	projects_array[web_projects_amount - 1].Manager_list = (char*)malloc(sizeof(char)*strlen(users_array[curr_index_user].name));
+	projects_array[web_projects_amount - 1].Manager_list[0] = (char*)malloc(sizeof(char)*strlen(users_array[curr_index_user].name));
 	strcpy(projects_array[web_projects_amount - 1].Manager_list[0], users_array[curr_index_user].name);
 	projects_array[web_projects_amount - 1].archived = 0;
+	
 	if (!users_array[curr_index_user].projects_amount){
 		users_array[curr_index_user].projects_amount++;
 		users_array[curr_index_user].project_list = (char**)malloc(sizeof(char*));
@@ -821,12 +842,19 @@ void add_new_project(){
 	}
 	users_array[curr_index_user].project_list[users_array[curr_index_user].projects_amount - 1] = (char*)malloc(sizeof(char)*sizeof(temp));
 	strcpy(users_array[curr_index_user].project_list[users_array[curr_index_user].projects_amount - 1], temp);
-
+	defult_status_to_new_project();
 	//temp[SIZE - 1] = '\0';
 
 
 }
-
+int get_project_index(char* project_name){
+	for (int i = 0; i < web_projects_amount; i++){
+		if (!strcmp(project_name, projects_array[i].name)){
+			return i;
+		}
+	}
+	return -1;
+}
 
 
 
