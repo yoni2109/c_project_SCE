@@ -625,20 +625,25 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-void send_message(char *sender, char* target, char* message){
-	char temp_message;
-
-
-	/*printf("Write Your Message :\n");
+void send_message(char *sender, char* target, int team_message){
+	char temp_message[MESSAGE_SIZE];
+	printf("Write Your Message :\n");
 	gets(temp_message);
-	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
-	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	if (check_admin(sender)){
+		messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
+		for (int i = web_users_amount; i < web_users_amount + web_users_amount -1; i++){
+			srtcpy(messages_array[i].content, temp_message);//העתקות לתוך מערך
+			strcpy(messages_array[i].sender, sender);
+			strcpy(messages_array[i].target, target);
+		}
+		return;
+	}
 	web_messages_amount++;
-	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
-		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
-		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
-		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-	}*/
+	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
+	messages_array[web_messages_amount - 1].content = (char*)malloc(sizeof(char)*strlen(temp_message));//הקצאה מדויקת של גודל הודעה
+	srtcpy(messages_array[web_messages_amount - 1].content, temp_message);//העתקות לתוך מערך
+	strcpy(messages_array[web_messages_amount - 1].sender, sender);
+	strcpy(messages_array[web_messages_amount - 1].target, target);
 }
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
