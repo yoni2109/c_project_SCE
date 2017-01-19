@@ -106,6 +106,7 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
+void add_user_to_project();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -131,8 +132,7 @@ int main()
 	//system_massage(member);
 	//print_all_messages();
 	print_login_singup();
-
-
+	print_user_projects(curr_index_user);	
 		}
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -199,7 +199,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(){
-	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True, temp_curr_index_user;
 	char password[SIZE], member[SIZE];//open string
 	do{
 		if (!Not_Member){//if user make mistake 
@@ -257,6 +257,7 @@ int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password))//If appropriate password to use
+				curr_index_user = i;
 				return True;
 			}
 	return False;
@@ -626,21 +627,21 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-//void send_message(char *sender, char* target, char* message){
-//	char temp_message;
-//
-//
-//	printf("Write Your Message :\n");
-//	gets(temp_message);
-//	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
-//	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
-//	web_messages_amount++;
-//	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
-//		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
-//		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
-//		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-//	}
-//}
+void send_message(char *sender, char* target, char* message){
+	char temp_message;
+
+
+	/*printf("Write Your Message :\n");
+	gets(temp_message);
+	realloc(messages_array, 1 * sizeof *messages_array);//realloc 1 place for new message
+	//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
+	web_messages_amount++;
+	for (int i = 0; i < SIZE; i++){//loop to fill the name,target name,conntent in the last place of array messages
+		messages_array[web_messages_amount].sender[i] = users_array[index_user_array].name[i];//update sender in the global messages array
+		messages_array[web_messages_amount].target[i] = users_array[chosen_user].name[i];//update target user in the global messages array
+		messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
+	}*/
+}
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
 	printf("Enter New Pass:\n");
@@ -732,6 +733,26 @@ void print_login_singup(){
 			//printf("%s", projects_array[1].Manager_list[0]);
 		}
 }
+void add_user_to_project(){
+	char temp_user[20];
+	int flag=0;
+	do
+	{
+		printf("Enter user name that You want assigned to [20 chars] : \n");
+		gets(temp_user);
+		for (int i = 0; i < web_users_amount; i++){
+			if (strcmp(temp_user, users_array[i].name) == 0) flag = 1;
+		}
+		if (flag == 0)printf("User Not Exist - Try Again\n");
+	} while (flag == 0);
+
+
+	
+	
+
+}
+
+
 
 
 
