@@ -67,7 +67,7 @@ typedef struct
 
 }Projects;
 
-
+char new_project_name();
 void change_name(int index_user_array);
 void scan_no1();
 void scan_no2();
@@ -81,6 +81,7 @@ void print_no1();
 void print_no2();
 void print_no3();
 void print_no4();
+void add_new_project();
 void print_user_projects(int index_user_array);
 void signUp();
 void cleanBuffer();
@@ -124,9 +125,10 @@ int curr_index_user = 0;//the current user after log in
 int main()
 {
 	fill_arrays();
+	//add_new_project();
 	//printf("%s", users_array[1].project_list[1]);
 	
-	print_arrays_to_files();
+	//print_arrays_to_files();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
@@ -751,9 +753,71 @@ void add_user_to_project(){
 	
 
 }
+char new_project_name(){
+	int flag = 0;
+	printf("\nInsert your Project Name:(projects name must be up to 25 characters)\n");
+	char temp1[1024], temp[SIZE];
+	while (!flag){
+		fgets(temp1, 1024, stdin);
+		if (strlen(temp1) > 25)
+			printf("the inserted name is too long pls try again!\n");
+		else flag = 1;
+		for (int i = 0; i < web_projects_amount; i++){
+			if (!strcmp(temp1, projects_array[i].name)){
+				printf("this name is already taken, pls choose another name");
+				flag = 0;
+				i = web_projects_amount;
+			}
+		}
+	}
+	for (int i = 0; i < strlen(temp1); i++){
+		if (temp1[i] == 32){
+			temp1[i] = '_';
+		}
+	}
+	for (int i = 0; i < strlen(temp1); i++){
+		temp[i] = temp1[i];
+	}
+	temp[strlen(temp1) - 1] = '\0';
+	return temp;
+}
+void add_new_project(){
+	/**/
+	char temp = new_project_name();
+	/**/
+	if (!web_projects_amount){
+		web_projects_amount++;
+		projects_array = (Projects*)malloc(sizeof(Projects));
+	}
+	else{
+		web_projects_amount++;
+		projects_array = (Projects*)realloc(projects_array,sizeof(Projects)* web_projects_amount);
+	}
+	strcpy(projects_array[web_projects_amount-1].name , temp);
+	projects_array[web_projects_amount - 1].users_amount = 1;
+	projects_array[web_projects_amount - 1].manager_amount = 1;
+	projects_array[web_projects_amount - 1].users_list = (char**)malloc(sizeof(char*));
+	projects_array[web_projects_amount - 1].users_list[0] = (char*)malloc(sizeof(char)*strlen(users_array[curr_index_user].name));
+	strcpy(projects_array[web_projects_amount - 1].users_list[0], users_array[curr_index_user].name);
+	projects_array[web_projects_amount - 1].Manager_list = (char**)malloc(sizeof(char*));
+	projects_array[web_projects_amount - 1].Manager_list = (char*)malloc(sizeof(char)*strlen(users_array[curr_index_user].name));
+	strcpy(projects_array[web_projects_amount - 1].Manager_list[0], users_array[curr_index_user].name);
+	projects_array[web_projects_amount - 1].archived = 0;
+	if (!users_array[curr_index_user].projects_amount){
+		users_array[curr_index_user].projects_amount++;
+		users_array[curr_index_user].project_list = (char**)malloc(sizeof(char*));
+	}
+	else{
+		users_array[curr_index_user].projects_amount++;
+		users_array[curr_index_user].project_list = (char**)realloc(users_array[curr_index_user].project_list,sizeof(char*)* users_array[curr_index_user].projects_amount);
+	}
+	users_array[curr_index_user].project_list[users_array[curr_index_user].projects_amount - 1] = (char*)malloc(sizeof(char)*sizeof(temp));
+	strcpy(users_array[curr_index_user].project_list[users_array[curr_index_user].projects_amount - 1], temp);
+
+	//temp[SIZE - 1] = '\0';
 
 
-
+}
 
 
 
