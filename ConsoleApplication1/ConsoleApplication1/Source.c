@@ -741,7 +741,7 @@ void print_login_singup(){
 			//printf("%s", projects_array[1].Manager_list[0]);
 		}
 }
-void add_user_to_project(int index_project){
+void add_user_to_project(int index_project){//fund to add new user to project
 	char temp_user[20];
 	int flag=0,index_try=0;
 	while (flag == 0){//loop to get the name of user that we want add - if there is no exist this user - again
