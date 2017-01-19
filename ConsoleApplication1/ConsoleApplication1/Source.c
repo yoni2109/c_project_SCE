@@ -133,7 +133,7 @@ int main()
 	//print_all_messages();
 	print_login_singup();
 	printf("curr_index_user :%d", curr_index_user);
-	print_user_projects(curr_index_user);
+	print_user_projects(curr_index_user);	
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -257,7 +257,7 @@ int String(char arry[]){//function to get string for user
 int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
-		if (!strcmp(users_array[i].password, password))//If appropriate password to use
+			if (!strcmp(users_array[i].password, password))//If appropriate password to use
 			printf("*** i *** :%d", i);
 				curr_index_user = i;
 				return True;
@@ -438,19 +438,21 @@ void scan_no3(){
 void sort_tasks_no4(){
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
-			if (strcmp(projects_array[i].name, tasks_array[j].project_name)!=0){
+			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
 				for (int k = 0; k < projects_array[i].status_amount; k++){
 					if (!strcmp(projects_array[i].status_list[k].name, tasks_array[j].status_name)){
 						if (!projects_array[i].status_list[k].tasks_amount){
 							projects_array[i].status_list[k].tasks_amount++;
 							projects_array[i].status_list[k].tasks_list = (Tasks*)malloc(sizeof(Tasks));
-							strcpy(projects_array[i].status_list[k].tasks_list[0].name , tasks_array[j].name);
-							strcpy(projects_array[i].status_list[k].tasks_list[0].assign_to , tasks_array[j].assign_to);
-							strcpy(projects_array[i].status_list[k].tasks_list[0].project_name , tasks_array[j].project_name);
-							strcpy(projects_array[i].status_list[k].tasks_list[0].status_name , tasks_array[j].status_name);
-							projects_array[i].status_list[k].tasks_list[0].task_details = (char*)malloc(sizeof(char)*strlen(tasks_array[j].task_details));
-							strcpy(projects_array[i].status_list[k].tasks_list[0].task_details , tasks_array[j].task_details);
-							projects_array[i].status_list[k].tasks_list[0].task_progres = tasks_array[j].task_progres;
+							projects_array[i].status_list[k].tasks_list[0] = tasks_array[j];
+							printf("%s", projects_array[i].status_list[k].tasks_list[0].name);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].name , tasks_array[j].name);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].assign_to , tasks_array[j].assign_to);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].project_name , tasks_array[j].project_name);
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].status_name , tasks_array[j].status_name);
+							//projects_array[i].status_list[k].tasks_list[0].task_details = (char*)malloc(sizeof(char)*strlen(tasks_array[j].task_details));
+							//strcpy(projects_array[i].status_list[k].tasks_list[0].task_details , tasks_array[j].task_details);
+							//projects_array[i].status_list[k].tasks_list[0].task_progres = tasks_array[j].task_progres;
 						}
 						else{
 							projects_array[i].status_list[k].tasks_amount++;
