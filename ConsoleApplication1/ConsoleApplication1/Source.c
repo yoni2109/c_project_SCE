@@ -105,9 +105,9 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
-void send_message_by_admin(char *sender);
-void send_message_by_user(char *sender, char* target);
-void send_message_by_admin_in_project(char *sender, char* target);
+void send_message_by_admin(char *sender, char* message);
+void send_message_by_user(char *sender, char* target, char* message);
+void send_message_for_all_in_project(char *sender, int index_project, char* message);
 
 
 WebManager* Wmanager;//will contain the web managet user name
@@ -126,9 +126,9 @@ int curr_index_user = 0;//the current user after log in
 int main()
 {
 	char a[6] = { "zohar" };
-	char b[4] = { "avi" };
+	char b[] = { "jlkjlklajlkfasfal "};
 	fill_arrays();
-	send_message_by_admin(a);
+	send_message_for_all_in_project(a, 1,b);
 
 	//printf("%s", users_array[1].project_list[1]);
 
@@ -653,37 +653,41 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 		}
 	}
 }
-void send_message_by_user(char *sender, char* target){
-	char temp_message[MESSAGE_SIZE];
-	printf("Write Your Message :\n");
-	gets(temp_message);
+void send_message_by_user(char *sender, char* target,char *message){
 	web_messages_amount++;
 	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
 	if (messages_array == NULL)
 		exit(1);
-	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(temp_message)*sizeof(char));//Opening indicates the size of the array
+	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 	if (messages_array[web_messages_amount - 1].content == NULL)
 		exit(1);
-	strcpy(messages_array[web_messages_amount - 1].content, temp_message);//העתקות לתוך מערך
+	strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
 	strcpy(messages_array[web_messages_amount - 1].sender, sender);
 	strcpy(messages_array[web_messages_amount - 1].target, target);
 }
-void send_message_by_admin(char *sender){
-	char temp_message[MESSAGE_SIZE];
+void send_message_by_admin(char *sender, char *message){
 	int j = 0;
-	printf("Write Your Message :\n");
-	gets(temp_message);
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
-	for (int i = web_users_amount; i < web_users_amount + web_users_amount - 1; i++){
-		messages_array[i - 1].content = (char*)malloc(strlen(temp_message)*sizeof(char));//Opening indicates the size of the array
-		strcpy(messages_array[i-1].content, temp_message);//העתקות לתוך מערך
+	for (int i = web_users_amount; i < web_users_amount + web_users_amount; i++){
+		messages_array[i - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
+		strcpy(messages_array[i - 1].content, message);//העתקות לתוך מערך
 		strcpy(messages_array[i-1].sender, "ADMIN");
 		strcpy(messages_array[i-1].target,users_array[j].name);
 		j++;
 	}
 	web_messages_amount += web_users_amount;
 }
-void send_message_by_admin_in_project(char *sender, char* target){
+void send_message_for_all_in_project(char *sender, int index_project, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
+	int j = 0;
+	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + projects_array[index_project].users_amount) * sizeof(Messages));//realloc 1 place for new message
+	for (int i = web_users_amount; i < web_users_amount + projects_array[index_project].users_amount; i++){
+		messages_array[i - 1].content = (char*)malloc(strlen(message_demand)*sizeof(char));//Opening indicates the size of the array
+		strcpy(messages_array[i - 1].content, message_demand);//העתקות לתוך מערך
+		strcpy(messages_array[i - 1].sender, sender);
+		strcpy(messages_array[i - 1].target, projects_array[index_project].users_list[j]);
+		j++;
+	}
+	web_messages_amount += projects_array[index_project].users_amount;
 }
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
