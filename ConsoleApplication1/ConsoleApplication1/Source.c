@@ -385,6 +385,7 @@ void scan_no1(){
 void scan_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
 	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
+
 	fscanf(projects_file, "%d", &web_projects_amount);
 	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
