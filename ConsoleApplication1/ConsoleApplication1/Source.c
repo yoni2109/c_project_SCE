@@ -96,7 +96,6 @@ void print_web_users();
 int check_admin(char * name);
 void confirm_project(int index_user);
 void fill_arrays();
-void send_message(char *sender,char* target,char* message);
 char * func_to_get_message();
 void allocate_messages();
 void send_message_about_new_task();
@@ -106,6 +105,10 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
+void send_message_by_admin(char *sender, char* target);
+void send_message_by_user(char *sender, char* target);
+void send_message_by_admin_in_project(char *sender, char* target);
+
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -199,7 +202,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 	}
 }
 int log_in(){
-	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True, temp_curr_index_user;
+	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
 	char password[SIZE], member[SIZE];//open string
 	do{
 		if (!Not_Member){//if user make mistake 
@@ -625,25 +628,32 @@ void confirm_project(int index_project, char * manager_project){//func to archiv
 	}
 }
 }
-void send_message(char *sender, char* target, int team_message){
+void send_message_by_user(char *sender, char* target){
 	char temp_message[MESSAGE_SIZE];
 	printf("Write Your Message :\n");
 	gets(temp_message);
-	if (check_admin(sender)){
-		messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
-		for (int i = web_users_amount; i < web_users_amount + web_users_amount -1; i++){
-			srtcpy(messages_array[i].content, temp_message);//העתקות לתוך מערך
-			strcpy(messages_array[i].sender, sender);
-			strcpy(messages_array[i].target, target);
-		}
-		return;
-	}
 	web_messages_amount++;
 	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
 	messages_array[web_messages_amount - 1].content = (char*)malloc(sizeof(char)*strlen(temp_message));//הקצאה מדויקת של גודל הודעה
 	srtcpy(messages_array[web_messages_amount - 1].content, temp_message);//העתקות לתוך מערך
 	strcpy(messages_array[web_messages_amount - 1].sender, sender);
 	strcpy(messages_array[web_messages_amount - 1].target, target);
+}
+void send_message_by_admin(char *sender, char* target){
+		char temp_message[MESSAGE_SIZE];
+		printf("Write Your Message :\n");
+		gets(temp_message);
+		if (check_admin(sender)){
+			messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
+			for (int i = web_users_amount; i < web_users_amount + web_users_amount -1; i++){
+				//srtcpy(messages_array[i].content, temp_message);//העתקות לתוך מערך
+				strcpy(messages_array[i].sender, sender);
+				strcpy(messages_array[i].target, target);
+			}
+			return;
+		}
+}
+void send_message_by_admin_in_project(char *sender, char* target){
 }
 void change_pass(int index_user_array){
 	char temp_pass[SIZE];
