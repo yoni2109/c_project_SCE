@@ -669,13 +669,16 @@ void send_message_by_user(char *sender, char* target){
 }
 void send_message_by_admin(char *sender){
 	char temp_message[MESSAGE_SIZE];
+	int j = 0;
 	printf("Write Your Message :\n");
 	gets(temp_message);
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
 	for (int i = web_users_amount; i < web_users_amount + web_users_amount - 1; i++){
-		strcpy(messages_array[i].content, temp_message);//העתקות לתוך מערך
-		strcpy(messages_array[i].sender, "ADMIN");
-		strcpy(messages_array[i].target,users_array[i].name);
+		messages_array[i - 1].content = (char*)malloc(strlen(temp_message)*sizeof(char));//Opening indicates the size of the array
+		strcpy(messages_array[i-1].content, temp_message);//העתקות לתוך מערך
+		strcpy(messages_array[i-1].sender, "ADMIN");
+		strcpy(messages_array[i-1].target,users_array[j].name);
+		j++;
 	}
 	web_messages_amount += web_users_amount;
 }
