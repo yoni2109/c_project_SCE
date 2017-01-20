@@ -105,7 +105,7 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
-void send_message_by_admin(char *sender, char* target);
+void send_message_by_admin(char *sender);
 void send_message_by_user(char *sender, char* target);
 void send_message_by_admin_in_project(char *sender, char* target);
 
@@ -125,7 +125,11 @@ int curr_index_user = 0;//the current user after log in
 
 int main()
 {
+	char a[6] = { "zohar" };
+	char b[4] = { "avi" };
 	fill_arrays();
+	send_message_by_admin(a);
+
 	//printf("%s", users_array[1].project_list[1]);
 
 	print_arrays_to_files();
@@ -543,6 +547,10 @@ void print_arrays_to_files(){
 }
 void print_no1(){
 	FILE *users_file = fopen(USER_FILE_NAME, "w");
+	if (users_file == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
 	fprintf(users_file, "%d\n", web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
 		fprintf(users_file, "%s\n%s\n", users_array[i].name, users_array[i].password);
@@ -551,7 +559,15 @@ void print_no1(){
 }
 void print_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "w");
+	if (projects_file == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
 	FILE* project_managers = fopen(PROJECT_MANAGERS_FILE, "w");
+	if (projects_file == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
 	fprintf(projects_file, "%d\n", web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
 		fprintf(projects_file, "%s\n%d\n", projects_array[i].name, projects_array[i].users_amount);
@@ -573,6 +589,10 @@ void print_no2(){
 }
 void print_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "w");
+	if (tasks_file == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
 	fprintf(tasks_file, "%d\n", web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
 		fprintf(tasks_file, "%s\n%s\n%s\n%s\n%d\n%s\n", tasks_array[i].project_name, tasks_array[i].status_name, tasks_array[i].name, tasks_array[i].task_details, tasks_array[i].task_progres, tasks_array[i].assign_to);
@@ -581,6 +601,10 @@ void print_no3(){
 }
 void print_no4(){
 	FILE * messages_file = fopen(MESSAGE_FILE, "w");
+	if (messages_file == NULL){//if file not open quit from program
+		printf("the file could not be opened\n");
+		exit(1);
+	}
 	fprintf(messages_file, "%d\n", web_messages_amount);
 	for (int i = 0; i < web_messages_amount; i++){
 		fprintf(messages_file, "%s\n%s\n%s\n", messages_array[i].sender, messages_array[i].target, messages_array[i].content);
@@ -635,24 +659,26 @@ void send_message_by_user(char *sender, char* target){
 	gets(temp_message);
 	web_messages_amount++;
 	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
-	messages_array[web_messages_amount - 1].content = (char*)malloc(sizeof(char)*strlen(temp_message));//הקצאה מדויקת של גודל הודעה
-	srtcpy(messages_array[web_messages_amount - 1].content, temp_message);//העתקות לתוך מערך
+	if (messages_array == NULL)
+		exit(1);
+	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(temp_message)*sizeof(char));//Opening indicates the size of the array
+	if (messages_array[web_messages_amount - 1].content == NULL)
+		exit(1);
+	strcpy(messages_array[web_messages_amount - 1].content, temp_message);//העתקות לתוך מערך
 	strcpy(messages_array[web_messages_amount - 1].sender, sender);
 	strcpy(messages_array[web_messages_amount - 1].target, target);
 }
-void send_message_by_admin(char *sender, char* target){
+void send_message_by_admin(char *sender){
 	char temp_message[MESSAGE_SIZE];
 	printf("Write Your Message :\n");
 	gets(temp_message);
-	if (check_admin(sender)){
-		messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
-		for (int i = web_users_amount; i < web_users_amount + web_users_amount - 1; i++){
-			//srtcpy(messages_array[i].content, temp_message);//העתקות לתוך מערך
-			strcpy(messages_array[i].sender, sender);
-			strcpy(messages_array[i].target, target);
-		}
-		return;
+	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
+	for (int i = web_users_amount; i < web_users_amount + web_users_amount - 1; i++){
+		strcpy(messages_array[i].content, temp_message);//העתקות לתוך מערך
+		strcpy(messages_array[i].sender, "ADMIN");
+		strcpy(messages_array[i].target,users_array[i].name);
 	}
+	web_messages_amount += web_users_amount;
 }
 void send_message_by_admin_in_project(char *sender, char* target){
 }
