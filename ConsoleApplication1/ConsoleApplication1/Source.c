@@ -124,6 +124,7 @@ void remove_task(int index_user_array);
 void choose_task();
 void remove_user();
 int choose_yes_or_no();
+void add_Wmanager(int index_user, int index_project);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -142,9 +143,7 @@ int main()
 {
 	
 	fill_arrays();
-	remove_user();
-
-
+	add_Wmanager(1,1);
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -976,6 +975,15 @@ void remove_user(){
 		web_users_amount--;
 	}
 	users_array = (Users*)realloc(users_array, (web_users_amount) * sizeof(Users));
+}
+void add_Wmanager(int index_user,int index_project){
+	printf("you want to make %s manger in this project", projects_array[index_project].users_list[index_user]);//print to user 
+	if (!choose_yes_or_no()){//if manger choose yes continue
+		projects_array[index_project].manager_amount++;//manager_amount +1
+		projects_array[index_project].Manager_list = (char**)realloc(projects_array[index_project].Manager_list, sizeof(char*)*projects_array[index_project].manager_amount);//Memory allocation
+		projects_array[index_project].Manager_list[projects_array[index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);//Memory allocation
+		strcpy(projects_array[index_project].Manager_list[projects_array[index_project].manager_amount - 1], projects_array[index_project].users_list[index_user]);//copy the name to new arry
+		}
 }
 
 
