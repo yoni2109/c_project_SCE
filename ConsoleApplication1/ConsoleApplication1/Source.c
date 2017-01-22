@@ -141,7 +141,7 @@ int main()
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	fill_arrays();
-
+	log_in();
 
 
 }
@@ -266,10 +266,12 @@ int String(char arry[]){//function to get string for user
 }
 int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
-		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
-		if (!strcmp(users_array[i].password, password))//If appropriate password to use
-			curr_index_user = i;
-		return True;
+		if (!strcmp(users_array[i].name, user)){
+			{//open function if user exsist check password
+				if (!strcmp(users_array[i].password, password))//If appropriate password to use
+					curr_index_user = i;
+				return True; }
+		}
 	}
 	return False;
 }
