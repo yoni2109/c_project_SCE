@@ -119,8 +119,8 @@ void print_tasks_array();
 void send_message_by_admin(char *sender, char* message);
 void send_message_by_user(char *sender, char* target, char* message);
 void send_message_for_all_in_project(char *sender, int index_project, char* message);
-
-
+void manage_task(int project_index, int status, int task);
+void remove_task(int index_user_array);
 void choose_task();
 
 WebManager* Wmanager;//will contain the web managet user name
@@ -141,16 +141,7 @@ int main()
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	fill_arrays();
-	send_message_for_all_in_project(a, 1, b);
 
-	//printf("%s", users_array[1].project_list[1]);
-
-	print_arrays_to_files();
-	char member[] = { "zohar" };
-	int enter = 0;
-	//system_massage(member);
-	//print_all_messages();
-	print_login_singup();
 
 
 }
@@ -607,10 +598,10 @@ void print_no4(){
 }
 void remove_task(int index_user_array){
 	int proj_to_delete_from;//value for project to delte from the task
-	print_user_projects(index_user_array);
-	printf("Choose Project By Number:\n");
-	scanf("%d", &proj_to_delete_from);//get what user choose
-	print_projects_task(proj_to_delete_from);
+	//print_user_projects(index_user_array);
+	//printf("Choose Project By Number:\n");
+	//scanf("%d", &proj_to_delete_from);//get what user choose
+	print_projects_task(print_and_choose_user_projects(curr_index_user));
 
 
 }
@@ -952,11 +943,6 @@ void allocate_for_new_task(int index_project, int size_details){
 	strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].project_name, projects_array[index_project].name);//Fill "none" by defult
 	projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].task_progres = False;//task progres is 0 by defult
 }
-
-
-
-
-
 void confirm_task(int project_index, int status_index, int task_index){
 	projects_array[project_index].status_list[status_index].tasks_list[task_index].task_progres = 1;
 }
