@@ -123,7 +123,11 @@ void send_message_for_all_in_project(char *sender, int index_project, char* mess
 void manage_task(int project_index, int status, int task);
 void remove_task(int index_user_array);
 void choose_task();
+void remove_user();
+int choose_yes_or_no();
+void add_Wmanager(int index_user, int index_project);
 void change_name();
+void exit_from_project(int project_index,int user_array);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -138,6 +142,7 @@ int curr_index_user;//the current user after log in
 
 
 
+
 int main()
 {
 	char a[6] = { "zohar" };
@@ -147,8 +152,12 @@ int main()
 	printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
 	printf("%s\n", tasks_array[1].status_name);
 	//signUp();
+	if (log_in()){
+		//new_task(print_and_choose_user_projects(curr_index_user));
+		exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
+	}
 
-
+	add_Wmanager(1,1);
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -272,10 +281,11 @@ int String(char arry[]){//function to get string for user
 }
 int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
-		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
-		if (!strcmp(users_array[i].password, password))//If appropriate password to use
-			curr_index_user = i;
-		return True;
+		if (!strcmp(users_array[i].name, user)){//open function if user exsist check password
+			if (!strcmp(users_array[i].password, password)){//If appropriate password to use
+					curr_index_user = i;
+				return True;
+		}
 	}
 	return False;
 }
@@ -924,12 +934,12 @@ void new_task(int index_project){
 			web_tasks_amount++;
 			tasks_array = (Tasks *)malloc(sizeof(Tasks)*web_tasks_amount);
 			tasks_array[web_tasks_amount - 1] = *projects_array[index_project].status_list[0].tasks_list[0];
-		}
-		else{
+	}
+	else{
 			web_tasks_amount++;
 			tasks_array = (Tasks *)realloc(tasks_array, sizeof(Tasks)*web_tasks_amount);
 			tasks_array[web_tasks_amount - 1] = *projects_array[index_project].status_list[0].tasks_list[0];
-		}
+	}
 
 
 	}
@@ -1083,6 +1093,57 @@ char *new_user_name(){
 	}
 	temp[strlen(temp1)] = '\0';
 	return temp;
+}
+void exit_from_project(int project_index, int curr_index_user){
+	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
+		printf("Names Before Change:\n");
+		printf("%s\n", projects_array[project_index].users_list[k]);
+		}*/
+	for (int i = 0, j = 0; i < projects_array[project_index].users_amount; i++, j++){//loop to run on the project array and find the user that we want to delete
+		if (strcmp(projects_array[project_index].users_list[i], users_array[curr_index_user].name) == 0){//if we found the user
+			projects_array[project_index].users_list[i] = projects_array[project_index].users_list[i + 1];//we will delete
+			j = i + 1;//increase the j
+	}
+		projects_array[project_index].users_list[i] = projects_array[project_index].users_list[j];//copy all the other users in 1 place before
+}
+	projects_array[project_index].users_amount--;//decrase the amnout users in project
+	int new_user_amount_in_project;
+	new_user_amount_in_project = projects_array[project_index].users_amount;
+	projects_array[project_index].users_list = (char **)realloc(projects_array[project_index].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
+	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
+		printf("Names After Change:\n");
+		printf("%s\n", projects_array[project_index].users_list[k]);
+		}*/
+
+	/*printf("Projects Before Change:\n");
+	for (int k = 0; k < users_array[curr_index_user].projects_amount; k++){
+		printf("%s\n", users_array[curr_index_user].project_list[k]);
+	}*/
+	for (int i = 0, j = 0; i < users_array[curr_index_user].projects_amount; i++, j++){//loop to run on the users array and find the project that we want to delete
+		if (strcmp(users_array[curr_index_user].project_list[i], projects_array[project_index].name) == 0){//if we found the project
+			users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[i + 1];//we will delete
+			j = i + 1;//increase the j
+		}
+		users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[j];//copy all the other projects in 1 place before
+	}
+	users_array[curr_index_user].projects_amount--;//decrease the amount projects of user
+	int new_project_amount_in_users;
+	new_project_amount_in_users = users_array[curr_index_user].projects_amount;
+	users_array[curr_index_user].project_list = (char **)realloc(users_array[curr_index_user].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
+	/*printf("Projects After Change:\n");
+	for (int k = 0; k < users_array[curr_index_user].projects_amount; k++){
+		printf("%s\n", users_array[curr_index_user].project_list[k]);
+	}*/
+
+}
+void add_Wmanager(int index_user,int index_project){
+	printf("you want to make %s manger in this project", projects_array[index_project].users_list[index_user]);//print to user 
+	if (!choose_yes_or_no()){//if manger choose yes continue
+		projects_array[index_project].manager_amount++;//manager_amount +1
+		projects_array[index_project].Manager_list = (char**)realloc(projects_array[index_project].Manager_list, sizeof(char*)*projects_array[index_project].manager_amount);//Memory allocation
+		projects_array[index_project].Manager_list[projects_array[index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);//Memory allocation
+		strcpy(projects_array[index_project].Manager_list[projects_array[index_project].manager_amount - 1], projects_array[index_project].users_list[index_user]);//copy the name to new arry
+		}
 }
 
 
