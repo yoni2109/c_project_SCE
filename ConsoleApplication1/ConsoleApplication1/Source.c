@@ -123,6 +123,9 @@ void send_message_for_all_in_project(char *sender, int index_project, char* mess
 void manage_task(int project_index, int status, int task);
 void remove_task(int index_user_array);
 void choose_task();
+void remove_user();
+int choose_yes_or_no();
+void add_Wmanager(int index_user, int index_project);
 void change_name();
 void exit_from_project(int project_index,int user_array);
 
@@ -145,15 +148,16 @@ int main()
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	fill_arrays();
-	//move_task(0, 0, 0);
-	//printf("%s\n", projects_array[0].status_list[1].tasks_list[0]->status_name);
-	//printf("%s\n", tasks_array[0].status_name);
+	move_task(0, 0, 0);
+	printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
+	printf("%s\n", tasks_array[1].status_name);
 	//signUp();
 	if (log_in()){
 		//new_task(print_and_choose_user_projects(curr_index_user));
 		exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
 	}
 
+	add_Wmanager(1,1);
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -180,7 +184,7 @@ void signUp(){
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit())//print to user quiquestion if Continue if not return
+			if (choose_yes_or_no())//print to user quiquestion if Continue if not return
 				return;
 		}
 		printf("please enter a new member: ");//print to user Guidelines
@@ -200,7 +204,7 @@ void signUp(){
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit()){//check if the user want to continue
+			if (choose_yes_or_no()){//check if the user want to continue
 				return;
 			}
 			printf("please enter password again: ");//print to user massage
@@ -233,7 +237,7 @@ int log_in(){
 			if (Not_Valid_Pass || Not_Valid_Name){//if we scan over the size we:
 				printf("Invalid Username\n");//print error to user
 				Not_Valid_Name = False;//restart the flag
-				if (wont_exit())
+				if (choose_yes_or_no())
 					return False;
 			}
 			printf("enter your users maximum chars [%d]: ", SIZE - 1); //Writes the user what to do
@@ -244,7 +248,7 @@ int log_in(){
 			if (Not_Valid_Pass){
 				printf("Invalid Password\n");//print error to user
 				Not_Valid_Pass = False;//restart the flag
-				if (wont_exit())
+				if (choose_yes_or_no())
 					return False;
 			}
 			printf("enter your Password maximum chars [%d]: ", SIZE - 1);//Writes the user what to do
@@ -298,7 +302,7 @@ int compareArrays(char user_from_list[], char user_from_member[]) {//Check for i
 	}
 	return True;
 }
-int wont_exit(){//function to ask the user if exit to loby/main
+int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	char temp = '\0';
 	printf("you want enter again if so enter Y else enter othe key: ");//massage to user
 	scanf("%c", &temp);//scan flag
@@ -936,7 +940,7 @@ void new_task(int index_project){
 			web_tasks_amount++;
 			tasks_array = (Tasks *)realloc(tasks_array, sizeof(Tasks)*web_tasks_amount);
 			tasks_array[web_tasks_amount - 1] = *projects_array[index_project].status_list[0].tasks_list[0];
-		}
+	}
 
 
 	}
@@ -1100,9 +1104,9 @@ void exit_from_project(int project_index, int curr_index_user){
 		if (strcmp(projects_array[project_index].users_list[i], users_array[curr_index_user].name) == 0){//if we found the user
 			projects_array[project_index].users_list[i] = projects_array[project_index].users_list[i + 1];//we will delete
 			j = i + 1;//increase the j
-		}
-		projects_array[project_index].users_list[i] = projects_array[project_index].users_list[j];//copy all the other users in 1 place before
 	}
+		projects_array[project_index].users_list[i] = projects_array[project_index].users_list[j];//copy all the other users in 1 place before
+}
 	projects_array[project_index].users_amount--;//decrase the amnout users in project
 	int new_user_amount_in_project;
 	new_user_amount_in_project = projects_array[project_index].users_amount;
@@ -1132,6 +1136,43 @@ void exit_from_project(int project_index, int curr_index_user){
 		printf("%s\n", users_array[curr_index_user].project_list[k]);
 	}*/
 
+}
+void remove_user(){
+	int i, notvalid = False;
+	print_web_users();
+	printf("choose member for remove for site enter the number between 1-%d: ", web_users_amount);
+
+	do
+	{
+		if (notvalid){
+			printf("wrong key");
+			if (choose_yes_or_no())
+				return;
+			printf("enter key again");
+			notvalid = False;
+		}
+		scanf("%d", &i);
+		if (i<1 || i>web_users_amount + 1)
+			notvalid = True;
+	} while (notvalid);
+	printf("you want to remove %s from the site ", users_array[i - 1].name);
+	if (choose_yes_or_no()){
+		for (i -= 1; i < web_users_amount - 1; i++){
+			strcpy(users_array[i].name, users_array[i + 1].name);
+			strcpy(users_array[i].password, users_array[i + 1].password);
+		}
+		web_users_amount--;
+	}
+	users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));
+}
+void add_Wmanager(int index_user,int index_project){
+	printf("you want to make %s manger in this project", projects_array[index_project].users_list[index_user]);//print to user 
+	if (!choose_yes_or_no()){//if manger choose yes continue
+		projects_array[index_project].manager_amount++;//manager_amount +1
+		projects_array[index_project].Manager_list = (char**)realloc(projects_array[index_project].Manager_list, sizeof(char*)*projects_array[index_project].manager_amount);//Memory allocation
+		projects_array[index_project].Manager_list[projects_array[index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);//Memory allocation
+		strcpy(projects_array[index_project].Manager_list[projects_array[index_project].manager_amount - 1], projects_array[index_project].users_list[index_user]);//copy the name to new arry
+		}
 }
 
 
