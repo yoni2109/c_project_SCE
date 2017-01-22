@@ -148,7 +148,9 @@ int main()
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	fill_arrays();
-	move_task(0, 0, 0);
+	
+	log_in();
+	//move_task(0, 0, 0);
 	printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
 	printf("%s\n", tasks_array[1].status_name);
 	//signUp();
