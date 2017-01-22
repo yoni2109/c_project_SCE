@@ -145,9 +145,9 @@ int main()
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	fill_arrays();
-	move_task(0, 0, 0);
-	printf("%s\n", projects_array[0].status_list[1].tasks_list[0]->status_name);
-	printf("%s\n", tasks_array[0].status_name);
+	//move_task(0, 0, 0);
+	//printf("%s\n", projects_array[0].status_list[1].tasks_list[0]->status_name);
+	//printf("%s\n", tasks_array[0].status_name);
 	//signUp();
 	if (log_in()){
 		//new_task(print_and_choose_user_projects(curr_index_user));
@@ -278,12 +278,13 @@ int String(char arry[]){//function to get string for user
 int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user)){//open function if user exsist check password
-				if (!strcmp(users_array[i].password, password)){//If appropriate password to use
-			curr_index_user = i;
-					return True;
-				}
+			if (!strcmp(users_array[i].password, password)){//If appropriate password to use
+				curr_index_user = i;
+				return True;
+			}
 		}
-	return False;
+		return False;
+	}
 }
 int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings 
 	int i;
