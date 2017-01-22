@@ -269,9 +269,9 @@ int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password)){//If appropriate password to use
-				curr_index_user = i;
+					curr_index_user = i;
 				return True;
-			}
+		}
 	}
 	return False;
 }
@@ -828,24 +828,16 @@ void new_task(int index_project){
 	size_details = strlen(details_task);
 	details_task[strlen(details_task) - 1] = '\0';
 	printf("projects_array[index_project].status_list[0].tasks_amount %d\n", projects_array[index_project].status_list[0].tasks_amount);
-
+	printf("This Is The Tasks : \n");
+	for (int i = 0; i < projects_array[index_project].status_list[0].tasks_amount; i++){
+		printf("Task Name:%s\n", projects_array[index_project].status_list[0].tasks_list[i].name);
+		printf("Task Details:%s\n", projects_array[index_project].status_list[0].tasks_list[i].task_details);
+	}
 	if (projects_array[index_project].status_list[0].tasks_amount == 0){
 		projects_array[index_project].status_list[0].tasks_amount++;
 		allocate_for_first_task(index_project, size_details);
 		strcpy(projects_array[index_project].status_list[0].tasks_list[0].name, temp_task);
 		strcpy(projects_array[index_project].status_list[0].tasks_list[0].task_details, details_task);
-		if (web_tasks_amount == 0){
-			web_tasks_amount++;
-			tasks_array = (Tasks *)malloc(sizeof(Tasks)*web_tasks_amount);
-			tasks_array[web_tasks_amount - 1] = projects_array[index_project].status_list[0].tasks_list[0];
-		}
-		else{
-			web_tasks_amount++;
-			tasks_array = (Tasks *)realloc(tasks_array, sizeof(Tasks)*web_tasks_amount);
-			tasks_array[web_tasks_amount - 1] = projects_array[index_project].status_list[0].tasks_list[0];
-		}
-
-
 	}
 	else{
 		projects_array[index_project].status_list[0].tasks_amount++;
@@ -853,6 +845,40 @@ void new_task(int index_project){
 		strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].name, temp_task);
 		strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1].task_details, details_task);
 	}
+	printf("*** web_tasks_amount : %d", web_tasks_amount);
+	for (int i = 0; i < projects_array[index_project].status_list[0].tasks_amount; i++){
+		printf("Task Name:%s\n", tasks_array[i].name);
+		printf("Task Details:%s\n", tasks_array[i].task_details);
+	}
+	/*Update the main tasks array*/
+	if (web_tasks_amount == 0){//if we did not have any task in the array task
+			web_tasks_amount++;
+		tasks_array = (Tasks *)malloc(sizeof(Tasks));
+		tasks_array[0].task_details = (char *)malloc(sizeof(char)*strlen(strlen(details_task)));
+		strcpy(tasks_array[0].assign_to, "None");
+		strcpy(tasks_array[0].name, temp_task);
+		strcpy(tasks_array[0].project_name, projects_array[index_project].name);
+		strcpy(tasks_array[0].status_name, projects_array[index_project].status_list[0].name);
+		strcpy(tasks_array[0].task_details, details_task);
+		tasks_array[0].task_progres = 0;
+		}
+	else{//if we already have tasks in the array tasks
+			web_tasks_amount++;
+			tasks_array = (Tasks *)realloc(tasks_array, sizeof(Tasks)*web_tasks_amount);
+		tasks_array[web_tasks_amount-1].task_details = (char *)malloc(sizeof(char)*(strlen(details_task)));
+		strcpy(tasks_array[web_tasks_amount - 1].assign_to, "None");
+		strcpy(tasks_array[web_tasks_amount - 1].name, temp_task);
+		strcpy(tasks_array[web_tasks_amount - 1].project_name, projects_array[index_project].name);
+		strcpy(tasks_array[web_tasks_amount - 1].status_name, projects_array[index_project].status_list[0].name);
+		strcpy(tasks_array[web_tasks_amount - 1].task_details, details_task);
+		tasks_array[web_tasks_amount - 1].task_progres = 0;
+	}
+	for (int i = 0; i < projects_array[index_project].status_list[0].tasks_amount; i++){
+		printf("Task Name:%s\n", tasks_array[i].name);
+		printf("Task Details:%s\n", tasks_array[i].task_details);
+		}
+
+
 
 
 }
