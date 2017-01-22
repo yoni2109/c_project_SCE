@@ -108,6 +108,7 @@ int get_user_index_by_name();
 void send_message_by_admin(char *sender, char* message);
 void send_message_by_user(char *sender, char* target, char* message);
 void send_message_for_all_in_project(char *sender, int index_project, char* message);
+void new_task();
 
 
 WebManager* Wmanager;//will contain the web managet user name
@@ -780,6 +781,12 @@ void print_login_singup(){
 		//printf("%s", projects_array[1].Manager_list[0]);
 	}
 }
+//void new_task(int index){
+//	char temp_name[SIZE];
+//	printf("entser task name");
+//	gets(tasks_array[index].name);
+//	 
+//}
 
 
 
