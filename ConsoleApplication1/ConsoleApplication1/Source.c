@@ -184,7 +184,7 @@ void signUp(){
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit())//print to user quiquestion if Continue if not return
+			if (choose_yes_or_no())//print to user quiquestion if Continue if not return
 				return;
 		}
 		printf("please enter a new member: ");//print to user Guidelines
@@ -204,7 +204,7 @@ void signUp(){
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit()){//check if the user want to continue
+			if (choose_yes_or_no()){//check if the user want to continue
 				return;
 			}
 			printf("please enter password again: ");//print to user massage
@@ -237,7 +237,7 @@ int log_in(){
 			if (Not_Valid_Pass || Not_Valid_Name){//if we scan over the size we:
 				printf("Invalid Username\n");//print error to user
 				Not_Valid_Name = False;//restart the flag
-				if (wont_exit())
+				if (choose_yes_or_no())
 					return False;
 			}
 			printf("enter your users maximum chars [%d]: ", SIZE - 1); //Writes the user what to do
@@ -248,7 +248,7 @@ int log_in(){
 			if (Not_Valid_Pass){
 				printf("Invalid Password\n");//print error to user
 				Not_Valid_Pass = False;//restart the flag
-				if (wont_exit())
+				if (choose_yes_or_no())
 					return False;
 			}
 			printf("enter your Password maximum chars [%d]: ", SIZE - 1);//Writes the user what to do
@@ -283,11 +283,12 @@ int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user)){//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password)){//If appropriate password to use
-					curr_index_user = i;
+				curr_index_user = i;
 				return True;
+			}
 		}
+		return False;
 	}
-	return False;
 }
 int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings 
 	int i;
@@ -301,7 +302,7 @@ int compareArrays(char user_from_list[], char user_from_member[]) {//Check for i
 	}
 	return True;
 }
-int wont_exit(){//function to ask the user if exit to loby/main
+int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	char temp = '\0';
 	printf("you want enter again if so enter Y else enter othe key: ");//massage to user
 	scanf("%c", &temp);//scan flag
@@ -1135,6 +1136,34 @@ void exit_from_project(int project_index, int curr_index_user){
 		printf("%s\n", users_array[curr_index_user].project_list[k]);
 	}*/
 
+}
+void remove_user(){
+	int i, notvalid = False;
+	print_web_users();
+	printf("choose member for remove for site enter the number between 1-%d: ", web_users_amount);
+
+	do
+	{
+		if (notvalid){
+			printf("wrong key");
+			if (choose_yes_or_no())
+				return;
+			printf("enter key again");
+			notvalid = False;
+		}
+		scanf("%d", &i);
+		if (i<1 || i>web_users_amount + 1)
+			notvalid = True;
+	} while (notvalid);
+	printf("you want to remove %s from the site ", users_array[i - 1].name);
+	if (choose_yes_or_no()){
+		for (i -= 1; i < web_users_amount - 1; i++){
+			strcpy(users_array[i].name, users_array[i + 1].name);
+			strcpy(users_array[i].password, users_array[i + 1].password);
+		}
+		web_users_amount--;
+	}
+	users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));
 }
 void add_Wmanager(int index_user,int index_project){
 	printf("you want to make %s manger in this project", projects_array[index_project].users_list[index_user]);//print to user 
