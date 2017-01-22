@@ -122,6 +122,8 @@ void send_message_for_all_in_project(char *sender, int index_project, char* mess
 void manage_task(int project_index, int status, int task);
 void remove_task(int index_user_array);
 void choose_task();
+void remove_user();
+int choose_yes_or_no();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -138,10 +140,9 @@ int curr_index_user;//the current user after log in
 
 int main()
 {
-	char a[6] = { "zohar" };
-	char b[] = { "jlkjlklajlkfasfal " };
+	
 	fill_arrays();
-	log_in();
+	remove_user();
 
 
 }
@@ -170,7 +171,7 @@ void signUp(){
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit())//print to user quiquestion if Continue if not return
+			if (choose_yes_or_no())//print to user quiquestion if Continue if not return
 				return;
 		}
 		printf("please enter a new member: ");//print to user Guidelines
@@ -189,16 +190,16 @@ void signUp(){
 	{
 		if (member_Exist){//if user make mistake
 			member_Exist = False;//reset the flag
-			if (wont_exit()){//check if the user want to continue
+			if (choose_yes_or_no()){//check if the user want to continue
 				return;
 			}
 			printf("please enter password again: ");//print to user massage
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
-	realloc(users_array, web_projects_amount + 1);
-	strcpy(users_array[web_projects_amount].name, member);
-	strcpy(users_array[web_projects_amount].password, password);
+	users_array = (Users*)realloc(users_array, (web_users_amount+1)* sizeof(Users));
+	strcpy(users_array[web_users_amount].name, member);
+	strcpy(users_array[web_users_amount].password, password);
 }
 void cleanBuffer(){//clean the buffer
 	char buffer;
@@ -220,9 +221,9 @@ int log_in(){
 		do//loop for scan name and password
 		{
 			if (Not_Valid_Pass || Not_Valid_Name){//if we scan over the size we:
-				printf("Invalid Username\n");//print error to user
+				printf("Invalid Username\nyou want enter again ");//print error to user
 				Not_Valid_Name = False;//restart the flag
-				if (wont_exit())
+				if (choose_yes_or_no())
 					return False;
 			}
 			printf("enter your users maximum chars [%d]: ", SIZE - 1); //Writes the user what to do
@@ -231,9 +232,9 @@ int log_in(){
 		do
 		{
 			if (Not_Valid_Pass){
-				printf("Invalid Password\n");//print error to user
+				printf("Invalid Password\nyou want enter again ");//print error to user
 				Not_Valid_Pass = False;//restart the flag
-				if (wont_exit())
+				if (choose_yes_or_no())
 					return False;
 			}
 			printf("enter your Password maximum chars [%d]: ", SIZE - 1);//Writes the user what to do
@@ -266,30 +267,17 @@ int String(char arry[]){//function to get string for user
 }
 int check_member(char user[], char password[]){
 	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
-		if (!strcmp(users_array[i].name, user)){
-			{//open function if user exsist check password
-				if (!strcmp(users_array[i].password, password))//If appropriate password to use
-					curr_index_user = i;
-				return True; }
-		}
+		if (!strcmp(users_array[i].name, user))//open function if user exsist check password
+			if (!strcmp(users_array[i].password, password)){//If appropriate password to use
+				curr_index_user = i;
+				return True;
+			}
 	}
 	return False;
 }
-int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings 
-	int i;
-	for (i = 0; user_from_list[i] != '\0' && user_from_member[i] != '\0'; i++) {
-		if (user_from_list[i] != user_from_member[i])
-			return False;
-		if (user_from_list[i + 1] == '\0' && user_from_member[i + 1] != '\0')
-			return False;
-		if (user_from_list[i + 1] != '\0' && user_from_member[i + 1] == '\0')
-			return False;
-	}
-	return True;
-}
-int wont_exit(){//function to ask the user if exit to loby/main
+int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	char temp = '\0';
-	printf("you want enter again if so enter Y else enter othe key: ");//massage to user
+	printf("if so enter Y else enter othe key: ");//massage to user
 	scanf("%c", &temp);//scan flag
 	if (!(temp == 'y' || temp == 'Y')){//if flag = y(yes) continue
 		cleanBuffer();//clean buffer
@@ -298,63 +286,6 @@ int wont_exit(){//function to ask the user if exit to loby/main
 	cleanBuffer();
 	return False;
 }
-//void system_massage(char sender[]){
-//	int count = 0, member_Exist = False;
-//	char temp = '\0';
-//	FILE *message;//Declaring files
-//	Messages system_massage;// Opening indicates the size of the array;
-//	FILE *users;
-//	Users *check_user;// Opening indicates the size of the array;
-//	users = fopen(USER_FILE_NAME, "r+");//open file to read
-//	if (users == NULL){//if file not open quit from program
-//		printf("the file could not be opened\n");
-//		exit(1);
-//	}
-//	fscanf(users, "%d", &count);//get the number of users
-//	check_user = (Users*)malloc((count)*sizeof(Users));//Opening indicates the size of the array;
-//	message = fopen(MESSAGE_FILE, "a");//open file to read
-//	if (message == NULL){//if file not open quit from program
-//		printf("the file could not be opened\n");
-//		exit(1);
-//	}
-//	printf("%s you want to send system massage?\nif yes press Y other print any key: ", sender);
-//	scanf("%c", &temp);
-//	cleanBuffer();
-//	if (temp == 'y' || temp == 'Y'){
-//		if (!(compareArrays(sender, UNIVERSAL_DIRECTOR)))
-//			if (ask_if_admin(sender))
-//				strcpy(sender, UNIVERSAL_DIRECTOR);
-//		do
-//		{
-//			if (member_Exist){
-//				printf("member not Exists");
-//				member_Exist = False;
-//				if (wont_exit()){//check if the user want to continue
-//					free(check_user);//frre the pointer
-//					return;
-//				}
-//			}
-//
-//			printf("enter content name: ");
-//			cleanBuffer();
-//			member_Exist = String(system_massage.content);
-//			if (!member_Exist){
-//				member_Exist = True;
-//				for (int i = 0; i < count && member_Exist == True; i++){//loop for check if user name in system
-//					fscanf(users, "%s%s", &check_user[i].name, check_user[i].password);//scan from file to pointer
-//					if (compareArrays(check_user[i].name, system_massage.content))//return true if the user in system
-//						member_Exist = False;
-//				}
-//			}
-//		} while (member_Exist);
-//		strcpy(system_massage.sender, sender);
-//		printf("enter your mesagge: ");
-//		fgets(system_massage.massage, MESSAGE_SIZE, stdin);
-//		fprintf(message, "%s\n%s\n%s", system_massage.sender, system_massage.content, system_massage.massage);
-//		fclose(users);
-//		fclose(message);
-//	}
-//}
 void fill_arrays(){
 	/*1. scans user names and passwords into users array*/
 	scan_no1();
@@ -992,7 +923,34 @@ void move_task(int project_index, int status, int task){
 		//todo
 	}
 }
+void remove_user(){
+	int i, notvalid=False;
+	print_web_users();
+	printf("choose member for remove for site enter the number between 1-%d: ", web_users_amount);
 
+	do
+	{
+		if (notvalid){
+			printf("wrong key");
+			if (choose_yes_or_no())
+				return;
+			printf("enter key again");
+			notvalid = False;
+		}
+		scanf("%d", &i);
+		if (i<1 || i>web_users_amount + 1)
+			notvalid = True;
+	} while (notvalid);
+	printf("you want to remove %s from the site ",users_array[i-1].name);
+	if (choose_yes_or_no()){
+		for (i-=1; i < web_users_amount-1; i++){
+			strcpy(users_array[i].name, users_array[i + 1].name);
+			strcpy(users_array[i].password, users_array[i + 1].password);
+		}
+		web_users_amount--;
+	}
+	users_array = (Users*)realloc(users_array, (web_users_amount) * sizeof(Users));
+}
 
 
 
