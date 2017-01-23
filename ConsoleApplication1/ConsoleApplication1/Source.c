@@ -130,6 +130,7 @@ void change_name();
 void exit_from_project(int project_index,int user_array);
 void message_abute_task();
 void change_status();
+void remove_user_from_project(int project_index, int index_to_delete);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -142,29 +143,35 @@ Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount = 0;//tasks amount
 int curr_index_user;//the current user after log in
 int curr_index_project;
+void remove_user_from_project();
 
 
 
 int main()
 {
 	fill_arrays();
-
+	int curr_index_project, user_in;
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	if (log_in()){
 		//new_task(print_and_choose_user_projects(curr_index_user));
-		exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
+		//exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
+		curr_index_project = print_and_choose_user_projects(curr_index_user);
+		print_users_project(curr_index_project);
+		printf("Choose User To remove:\n");
+		scanf("%d", &user_in);
+		remove_user_from_project(curr_index_project, user_in);
 	}
 
 	
-	log_in();
+	//log_in();
 	//move_task(0, 0, 0);
-	printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
-	printf("%s\n", tasks_array[1].status_name);
+	//printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
+	//printf("%s\n", tasks_array[1].status_name);
 	//signUp();
 	
 
-	add_Wmanager(1,1);
+	//add_Wmanager(1,1);
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -950,9 +957,6 @@ void new_task(int index_project){
 
 
 	}
-
-
-
 void allocate_for_first_task(int index_project, int size_details){
 	//*****Notice that this funs does not increas the amount task-Do it before*******
 	projects_array[index_project].status_list[0].tasks_list = (Tasks *)malloc(sizeof(Tasks)*projects_array[index_project].status_list[0].tasks_amount);
@@ -1180,6 +1184,41 @@ void message_abute_task(int index){
 void change_status(){
 
 }
+void remove_user_from_project(int project_index, int index_to_delete){
+	int flag = 0,check_if_manager=0;
+
+	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
+		printf("Names Before Change:\n");
+		printf("%s\n", projects_array[project_index].users_list[k]);
+	}*/
+	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//loop to check if we connected as a manger of project
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_project].name) == 0)flag = 1;//if yes change the flag to 1
+		}
+	if (strcmp(users_array[curr_index_project].name, users_array[index_to_delete].name) == 0)check_if_manager = 1;//check if manager try to delete itself 
+		if (flag == 1 && check_if_manager ==0){
+			for (int i = 0, j = 0; i < projects_array[curr_index_project].users_amount; i++, j++){//loop to run on the project array and find the user that we want to delete
+				if (strcmp(projects_array[curr_index_project].users_list[i], users_array[index_to_delete].name) == 0){//if we found the user
+					projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[i + 1];//we will delete
+					j = i + 1;//increase the j
+				}
+				projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[j];//copy all the other users in 1 place before
+			}
+			projects_array[curr_index_project].users_amount--;//decrase the amnout users in project
+			int new_user_amount_in_project;
+			new_user_amount_in_project = projects_array[curr_index_project].users_amount;
+			projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
+
+		}
+		else {
+			printf("You Are Not A Manager In This Project - Sorry Only Manager Can Remove User From Project\n");
+			printf("Or You Are Manager And you Try To Delete Your Self\n");
+		}
+
+		/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
+			printf("Names After Change:\n");
+			printf("%s\n", projects_array[project_index].users_list[k]);
+		}*/
+	}
 
 
 
