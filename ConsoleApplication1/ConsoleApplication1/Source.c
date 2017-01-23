@@ -153,7 +153,7 @@ int main()
 		//new_task(print_and_choose_user_projects(curr_index_user));
 		exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
 	}
-	fill_arrays();
+
 	
 	log_in();
 	//move_task(0, 0, 0);
@@ -930,16 +930,16 @@ void new_task(int index_project){
 	details_task[strlen(details_task) - 1] = '\0';
 	printf("projects_array[index_project].status_list[0].tasks_amount %d\n", projects_array[index_project].status_list[0].tasks_amount);
 
-	if (projects_array[index_project].status_list[0].tasks_amount == 0){
-		projects_array[index_project].status_list[0].tasks_amount++;
-		allocate_for_first_task(index_project, size_details);
-		strcpy(projects_array[index_project].status_list[0].tasks_list[0]->name, temp_task);
-		strcpy(projects_array[index_project].status_list[0].tasks_list[0]->task_details, details_task);
-		if (web_tasks_amount == 0){
+	if (web_tasks_amount == 0){
+		if (web_tasks_amount == 0)
 			web_tasks_amount++;
-			tasks_array = (Tasks *)malloc(sizeof(Tasks)*web_tasks_amount);
-			tasks_array[web_tasks_amount - 1] = *projects_array[index_project].status_list[0].tasks_list[0];
+		tasks_array = (Tasks *)malloc(sizeof(Tasks)*web_tasks_amount);
+		strcpy(tasks_array[web_tasks_amount - 1].assign_to,"None");
+		strcpy(tasks_array[0].name, temp_task);
+		tasks_array[0].task_details = (char*)malloc(sizeof(char)*strlen(details_task));
+		strcpy(tasks_array[0].task_details, details_task);
 	}
+	
 	else{
 			web_tasks_amount++;
 			tasks_array = (Tasks *)realloc(tasks_array, sizeof(Tasks)*web_tasks_amount);
@@ -948,15 +948,9 @@ void new_task(int index_project){
 
 
 	}
-	else{
-		projects_array[index_project].status_list[0].tasks_amount++;
-		allocate_for_new_task(index_project, size_details);
-		strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1]->name, temp_task);
-		strcpy(projects_array[index_project].status_list[0].tasks_list[projects_array[index_project].status_list[0].tasks_amount - 1]->task_details, details_task);
-	}
 
 
-}
+
 void allocate_for_first_task(int index_project, int size_details){
 	//*****Notice that this funs does not increas the amount task-Do it before*******
 	projects_array[index_project].status_list[0].tasks_list = (Tasks *)malloc(sizeof(Tasks)*projects_array[index_project].status_list[0].tasks_amount);
