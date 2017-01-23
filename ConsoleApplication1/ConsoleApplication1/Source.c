@@ -92,7 +92,7 @@ int String(char arry[]);
 void cleanString(char arry[]);
 int check_member(char user[], char password[]);
 int compareArrays(char user_from_list[], char user_from_member[]);
-void play(char member[]);
+void play();
 void system_massage();
 void print_projects_task();
 void print_web_users();
@@ -133,6 +133,8 @@ void print_project_menu(int);
 int print_and_choose_user_projects();
 void print_main_menu();
 void add_new_status();
+void print_chosen_user_menu(int, int);
+void user_main_menu();
 
 
 WebManager* Wmanager;//will contain the web managet user name
@@ -152,27 +154,7 @@ int curr_index_project;
 int main()
 {
 	fill_arrays();
-	curr_index_project = 0;
-	remove_task(0, 0);
-	printf("%s", projects_array[0].status_list[0].tasks_list[0]->name);
-	signUp();
-	int curr_index_project, user_in;
-	char a[6] = { "zohar" };
-	char b[] = { "jlkjlklajlkfasfal " };
-	
-	if (log_in()){
-		print_and_choose_user_projects(curr_index_user);
-		add_new_status();
-		//new_task(print_and_choose_user_projects(curr_index_user));
-		//exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
-		curr_index_project = print_and_choose_user_projects(curr_index_user);
-		print_users_project(curr_index_project);
-		printf("Choose User To remove:\n");
-		scanf("%d", &user_in);
-		remove_user_from_project(curr_index_project, user_in);
-
-	}
-
+	play();
 	
 	//log_in();
 	//move_task(0, 0, 0);
@@ -206,6 +188,7 @@ int main()
 //		enter = 0;
 //	} while (True);
 //	return 0;		
+/*sign up*/
 void signUp(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
@@ -754,10 +737,10 @@ void add_user_to_project(){//fund to add new user to project
 void defult_status_to_new_project(){
 	projects_array[web_projects_amount - 1].status_amount = 4;
 	projects_array[web_projects_amount - 1].status_list = (Status*)malloc(sizeof(Status)*projects_array[web_projects_amount - 1].status_amount);
-	*projects_array[web_projects_amount - 1].status_list[0].name = "Elicitation";
-	*projects_array[web_projects_amount - 1].status_list[1].name = "Analasys";
-	*projects_array[web_projects_amount - 1].status_list[2].name = "VandV";
-	*projects_array[web_projects_amount - 1].status_list[3].name = "Approved";
+	strcpy(projects_array[web_projects_amount - 1].status_list[0].name , "Elicitation");
+	strcpy(projects_array[web_projects_amount - 1].status_list[1].name , "Analasys");
+	strcpy(projects_array[web_projects_amount - 1].status_list[2].name , "VandV");
+	strcpy(projects_array[web_projects_amount - 1].status_list[3].name , "Approved");
 	projects_array[web_projects_amount - 1].status_list[0].tasks_amount = 0;
 	projects_array[web_projects_amount - 1].status_list[1].tasks_amount = 0;
 	projects_array[web_projects_amount - 1].status_list[2].tasks_amount = 0;
@@ -797,6 +780,7 @@ void add_new_project(){
 	/**/
 	char *temp = (char*)malloc(sizeof(char)*SIZE);
 	strcpy(temp, new_project_name());
+	getchar();
 	/**/
 	if (!web_projects_amount){
 		web_projects_amount++;
@@ -908,12 +892,12 @@ void choose_task(){
 	for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
 		printf("status %d: %s\n", (i + 1), projects_array[curr_index_project].status_list[i].name);
 		for (int j = 0; j < projects_array[curr_index_project].status_list[i].tasks_amount; j++){
-			printf("%d.: %s\n",(j+1), projects_array[curr_index_project].status_list[j].name);
+			printf("%d.: %s\n",(j+1), projects_array[curr_index_project].status_list[i].tasks_list[j]->name);
 		}
 	}
 	int status, task;
-	fscanf("%d", &status);
-	fscanf("%d", &task);
+	scanf("%d", &status);
+	scanf("%d", &task);
 	status--;
 	task--;
 	manage_task( status, task);
@@ -967,6 +951,7 @@ void move_task(int status, int task){
 			projects_array[curr_index_project].status_list[status].tasks_list[j] = temparray[j];
 		}
 		strcpy(projects_array[curr_index_project].status_list[chosenstatus].tasks_list[0][0].status_name, projects_array[curr_index_project].status_list[chosenstatus].name);
+		projects_array[curr_index_project].status_list[chosenstatus].tasks_amount++;
 		free(temparray);
 	}
 	/*end of first task to status*/
@@ -1185,9 +1170,9 @@ void print_project_menu(int project_manager){
 	if (!project_manager){
 		while (1){
 			int choose = 0;
-	printf("Choose What You Want To Do:\n");
-	printf("1.Show Users In Project\n");
-	printf("2.Show Tasks In Project\n");
+			printf("Choose What You Want To Do:\n");
+			printf("1.Show Users In Project\n");
+			printf("2.Show Tasks In Project\n");
 			printf("3.Add new Task\n");
 			printf("4.Add User To Project\n");
 			printf("5.Exit From This Project\n");
@@ -1237,21 +1222,83 @@ void print_project_menu(int project_manager){
 				}//end of case 7
 			}//end of switch
 		}
-	}
+	}//end of menu for member whos not project manager
+	if (project_manager){
+		while (1){
+			int choose = 0;
+			printf("Choose What You Want To Do:\n");
+			printf("1.Show Users In Project\n");
+			printf("2.Show Tasks In Project\n");
+			printf("3.Add new Task\n");
+			printf("4.Add User To Project\n");
+			printf("5.Exit From This Project\n");
+			printf("6.send team message\n");
+			printf("7.return to your main menu\n");
+			printf("8.complete project\n");
+			while (choose <1 || choose > 8){
+				scanf("%d", &choose);
+			}
+			switch (choose){
+			case(1) : {
+						  print_users_project();
+						  int choose_user;
+						  scanf("%d", &choose_user);
+						  choose_user--;
+						  print_chosen_user_menu(choose_user, project_manager);//todo
+						  break;
+
+				}//end of case 1
+			case(2) :/*choose and manage projects tasks*/ {
+						 choose_task();
+						 break;
+
+				}//end of case 2
+			case(3) :/*creat new task*/ {
+						 new_task();
+						 break;
+				}//end of case 3
+			case(4) :/*add user to this project*/ {
+						 add_user_to_project();
+						 break;
+				}//end of case 4
+			case(5) :/*exit from current project will remove user from this project and this project from users projects array*/ {
+						 exit_from_project();
+						 curr_index_project = -1;
+						 return;
+				}//end of case 5
+			case(6) :/*send message to all project members*/ {
+						 printf("pls insert your message\n");
+						 char message[TEMP_SIZE];
+						 fgets(message, TEMP_SIZE, stdin);
+						 send_message_for_all_in_project(users_array[curr_index_user].name, message);
+						 break;
+				}//end of case 6
+			case(7) :/*return to user main menu*/ {
+						 curr_index_project = -1;
+						 return;
+				}//end of case 7
+			case(8) : {
+						  confirm_project();
+						  return;
+				}//end of case 8
+			}//end of switch
+		}
+	}//end of menu for project manager
 }
 void play(){
-	int choose = 0;
 	while (1){
+	int choose = 0;
 	printf("==============================\nWelcome to meister task\n==============================\n");
 	printf("\n\n choose one of the following options:\n\n1. log in\n2.sign up\n3. quit program\n");
 		while (choose <1 || choose >3){
 			scanf("%d", &choose);
+			getchar();
 		}
 		switch (choose){
 		case(1) : {
 					  int sucsses = log_in();//log in returns true if sucssede
 					  if (sucsses){
-						  //next menu
+						  user_main_menu();
 					  }
 					  break;
 			}//end of case 1
@@ -1260,23 +1307,24 @@ void play(){
 					  break;
 			}//end of case 2
 		case(3) : {
-					  print_arrays_to_files();
+					 // print_arrays_to_files();
 					  return 0;
 			}//end of case 3
 		}
 	}
 		
 }
-void user_main_menu(){
-	int choose = 0;
+void user_main_menu(){//after user logs in this menu will appear
 	while (1){
+		int choose = 0;
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
 		while (choose<1 || choose>4){
 			scanf("%d", &choose);
+			getchar();
 		}
 		switch (choose){
 		case(1) : {
-					  print_and_choose_user_projects();
+					  curr_index_project = print_and_choose_user_projects();
 					  int projectmanager = 0;
 					  for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
 						  if (!strcmp(users_array[curr_index_user].name, projects_array[curr_index_project].Manager_list[i])){
@@ -1288,6 +1336,7 @@ void user_main_menu(){
 			}//end of case 1
 		case(2) : {
 					  add_new_project();
+					  getchar();
 					  print_project_menu(1);
 					  break;
 			}//end of case 2
@@ -1328,6 +1377,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 					  return;
 				  }
 				  remove_user_from_project(user_in_global_array);
+				  break;
 		}//end of case 3
 	}
 }
