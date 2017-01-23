@@ -128,6 +128,7 @@ int choose_yes_or_no();
 void add_Wmanager(int index_user, int index_project);
 void change_name();
 void exit_from_project(int project_index,int user_array);
+void message_abute_task();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -139,7 +140,7 @@ int web_messages_amount = 0;//amount of all messages
 Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount = 0;//tasks amount
 int curr_index_user;//the current user after log in
-
+int curr_index_project;
 
 
 
@@ -1176,6 +1177,10 @@ void add_Wmanager(int index_user,int index_project){
 		strcpy(projects_array[index_project].Manager_list[projects_array[index_project].manager_amount - 1], projects_array[index_project].users_list[index_user]);//copy the name to new arry
 		}
 }
+void message_abute_task(int index){
+	send_message_for_all_in_project(users_array[curr_index_user].name, curr_index_project, ("%s open new task", users_array[curr_index_user].name));
+}
+
 
 
 
