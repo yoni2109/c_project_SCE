@@ -113,7 +113,7 @@ void add_user_to_project(int index_project);
 int get_project_index(char*);
 void defult_status_to_new_project();
 void print_users_project(int index_project);
-void new_task(int index_project);
+void new_task();
 void allocate_for_first_task(int index_project, int task_size_details);
 void allocate_for_new_task(int index_project, int task_size_details);
 void print_tasks_array();
@@ -151,20 +151,14 @@ int main()
 
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
-	if (log_in()){
-		//new_task(print_and_choose_user_projects(curr_index_user));
-		exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
-	}
-
-	
-	log_in();
-	//move_task(0, 0, 0);
-	printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
+	curr_index_project = 0;
+	new_task();
+	printf("%s\n", projects_array[0].status_list[0].tasks_list[2]->name);
 	printf("%s\n", tasks_array[1].status_name);
 	//signUp();
 	
 
-	add_Wmanager(1,1);
+//	add_Wmanager(1,1);
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -919,7 +913,7 @@ void print_users_project(int index_project){//func to print the users in project
 		printf("%d. %s\n", (i + 1), projects_array[index_project].users_list[i]);
 	}
 }
-void new_task(int index_project){
+void new_task(){
 	char temp_task[SIZE], details_task[TEMP_SIZE];
 	int size_details;
 	printf("Fill Details:\n");
@@ -930,24 +924,50 @@ void new_task(int index_project){
 	fgets(details_task, TEMP_SIZE, stdin);
 	size_details = strlen(details_task);
 	details_task[strlen(details_task) - 1] = '\0';
-	printf("projects_array[index_project].status_list[0].tasks_amount %d\n", projects_array[index_project].status_list[0].tasks_amount);
-
+//	printf("projects_array[index_project].status_list[0].tasks_amount %d\n", projects_array[index_project].status_list[0].tasks_amount);
+	/*if the first task created*/
 	if (web_tasks_amount == 0){
-		if (web_tasks_amount == 0)
-			web_tasks_amount++;
+		web_tasks_amount++;
 		tasks_array = (Tasks *)malloc(sizeof(Tasks)*web_tasks_amount);
 		strcpy(tasks_array[web_tasks_amount - 1].assign_to,"None");
 		strcpy(tasks_array[0].name, temp_task);
 		tasks_array[0].task_details = (char*)malloc(sizeof(char)*strlen(details_task));
 		strcpy(tasks_array[0].task_details, details_task);
+		strcpy(tasks_array[0].project_name, projects_array[curr_index_project].name);
+		strcpy(tasks_array[0].status_name, projects_array[curr_index_project].status_list[0].name);
+		tasks_array[0].task_progres = 0;
+		projects_array[curr_index_project].status_list[0].tasks_amount++;
+		projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
+		projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[0];
 	}
-	
+	/*end of first task created*/
+	/*if not first task created*/
 	else{
 			web_tasks_amount++;
 			tasks_array = (Tasks *)realloc(tasks_array, sizeof(Tasks)*web_tasks_amount);
-			tasks_array[web_tasks_amount - 1] = *projects_array[index_project].status_list[0].tasks_list[0];
-	}
-
+			strcpy(tasks_array[web_tasks_amount - 1].name,temp_task);
+			tasks_array[web_tasks_amount - 1].task_details = (char*)malloc(sizeof(char)*strlen(details_task));
+			strcpy(tasks_array[web_tasks_amount - 1].task_details, details_task);
+			strcpy(tasks_array[web_tasks_amount - 1].project_name, projects_array[curr_index_project].name);
+			strcpy(tasks_array[web_tasks_amount - 1].status_name, projects_array[curr_index_project].status_list[0].name);
+			tasks_array[web_tasks_amount - 1].task_progres = 0;
+			strcpy(tasks_array[web_tasks_amount - 1].assign_to, "None");
+			/*if first task for project or for status*/
+			if (!projects_array[curr_index_project].status_list[0].tasks_amount){
+				projects_array[curr_index_project].status_list[0].tasks_amount++;
+				projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
+				projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[web_tasks_amount - 1];
+			}
+			/*end of case that firs task for project or status*/
+			/*if not first task created for project or status*/
+			else{
+				projects_array[curr_index_project].status_list[0].tasks_amount++;
+				projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)realloc(projects_array[curr_index_project].status_list[0].tasks_list, sizeof(Tasks*)*projects_array[curr_index_project].status_list[0].tasks_amount);
+				projects_array[curr_index_project].status_list[0].tasks_list[projects_array[curr_index_project].status_list[0].tasks_amount - 1] = &tasks_array[web_tasks_amount - 1];
+			}
+			/*end of case that not first task for project or status*/
+		}
+	/*end of case for bot first task created*/
 
 	}
 
