@@ -128,6 +128,7 @@ void exit_from_project(int user_array);
 void message_abute_task();
 void change_status();
 void remove_user_from_project(int index_to_delete);
+void print_project_menu();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -1154,6 +1155,17 @@ void remove_user_from_project(int index_to_delete){
 			printf("Names After Change:\n");
 			printf("%s\n", projects_array[project_index].users_list[k]);
 		}*/
+}
+void print_project_menu(){
+	printf("Choose What You Want To Do:\n");
+	printf("1.Show Users In Project\n");
+	printf("2.Show Tasks In Project\n");
+	printf("3.Show All Users\n");
+	printf("4.Add new Task\n");
+	printf("5.Add User To Project\n");
+	printf("6.View Messages\n");
+	printf("7.Exit From This Project\n");
+	printf("8.Message To All Team\n");
 }
 
 
