@@ -129,6 +129,7 @@ void add_Wmanager(int index_user, int index_project);
 void change_name();
 void exit_from_project(int project_index,int user_array);
 void message_abute_task();
+void change_status();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -1182,7 +1183,9 @@ void add_Wmanager(int index_user,int index_project){
 void message_abute_task(int index){
 	send_message_for_all_in_project(users_array[curr_index_user].name, curr_index_project, ("%s open new task", users_array[curr_index_user].name));
 }
+void change_status(){
 
+}
 
 
 
