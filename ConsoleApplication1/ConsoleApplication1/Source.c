@@ -130,7 +130,7 @@ void change_name();
 void exit_from_project(int project_index,int user_array);
 void message_abute_task();
 void change_status();
-void remove_user_from_project(int project_index, int index_to_delete);
+void remove_user_from_project(int index_to_delete);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -1184,7 +1184,7 @@ void message_abute_task(int index){
 void change_status(){
 
 }
-void remove_user_from_project(int project_index, int index_to_delete){
+void remove_user_from_project(int index_to_delete){
 	int flag = 0,check_if_manager=0;
 
 	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
