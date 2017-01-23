@@ -128,6 +128,7 @@ void exit_from_project(int user_array);
 void message_abute_task();
 void change_status();
 void remove_user_from_project(int index_to_delete);
+void remove_task(int status, int task);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -146,6 +147,9 @@ int curr_index_project;
 int main()
 {
 	fill_arrays();
+	curr_index_project = 0;
+	remove_task(0, 0);
+	printf("%s", projects_array[0].status_list[0].tasks_list[0]->name);
 	signUp();
 	int curr_index_project, user_in;
 	char a[6] = { "zohar" };
@@ -648,30 +652,6 @@ void change_pass(){
 		strcpy(users_array[curr_index_user].password, temp_pass);
 	}
 }
-/*void send_message_about_new_task(int index_user_array)
-{
-int chosen_project;
-char *temp_message[31] = { "There Is New Task - Check It" };
-char *temp_sender = { "System" };
-print_user_projects(index_user_array);
-printf("Choose Project :\n");
-scanf("%d", &chosen_project);
-//צריכה להיות פונקציה שמדפיסה את כל האפשריות
-print_user_projects(index_user_array);//הדפסה של כל משתמשי הפרויקט
-//printf("Choose user :\n");
-//scanf("%d", &chosen_user);
-//printf("Write Your Message :\n");
-//get(temp_message);
-realloc(messages_array, projects_array[chosen_project].users_amount * sizeof *messages_array);//realloc 1 place for new message
-//realloc(users_array[chosen_user].message_list, 1 * sizeof *messages_array);
-web_messages_amount = projects_array[chosen_project].users_amount+web_messages_amount;
-/*for (int i = projects_array[chosen_project].users_amount; i < web_users_amount; i++){//loop to fill the name,target name,conntent in the last place of array messages
-for (int j = 0; j < 31; j++){
-messages_array[i].sender[j] = temp_sender[j];//update sender in the global messages array
-messages_array[i].target[j] = projects_array[chosen_project].users_list[0].;//update target user in the global messages array
-//messages_array[web_messages_amount].content[i] = temp_message[i];//update contain in the global messages array
-}
-}*/
 void change_name(){
 
 	//func to change user name
@@ -1155,7 +1135,46 @@ void remove_user_from_project(int index_to_delete){
 			printf("%s\n", projects_array[project_index].users_list[k]);
 		}*/
 }
-
+void remove_task(int status, int task){
+	int task_index_global=-1;
+	/*search for task in tasks global array*/
+	for (int i = 0; i < web_tasks_amount; i++){
+		if (!strcmp(projects_array[curr_index_project].status_list[status].tasks_list[task]->project_name, tasks_array[i].project_name)){
+			if (!strcmp(projects_array[curr_index_project].status_list[status].tasks_list[task]->status_name, tasks_array[i].status_name)){
+				if (!strcmp(projects_array[curr_index_project].status_list[status].tasks_list[task]->name, tasks_array[i].name)){
+					task_index_global = i;
+				}
+			}
+		}
+	}
+	/*end of search for task in tasks global array*/
+	if (task_index_global == -1){//if task not found in global array
+		printf("\ntask not found\n");
+		return;
+	}
+	Tasks* temp = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
+	for (int i = 0,k=0; i < web_tasks_amount; i++){
+		if (!(i == task_index_global)){
+			temp[k] = tasks_array[i];
+			k++;
+		}
+	}
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < projects_array[i].status_amount; j++){
+				if (projects_array[i].status_list[j].tasks_amount!=0){
+					free(projects_array[i].status_list[j].tasks_list);
+					projects_array[i].status_list[j].tasks_amount = 0;
+				}
+		}
+	}
+	free(tasks_array);
+	web_tasks_amount--;
+	for (int i = 0; i < web_tasks_amount; i++){
+		tasks_array[i] = temp[i];
+	}
+	sort_tasks_no4();
+	free(temp);
+}
 
 
 
