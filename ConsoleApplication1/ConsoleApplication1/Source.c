@@ -155,7 +155,9 @@ int main()
 		exit_from_project(print_and_choose_user_projects(curr_index_user), curr_index_user);
 	}
 	fill_arrays();
-	move_task(0, 0, 0);
+	
+	log_in();
+	//move_task(0, 0, 0);
 	printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
 	printf("%s\n", tasks_array[1].status_name);
 	//signUp();
