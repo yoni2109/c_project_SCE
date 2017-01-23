@@ -121,7 +121,7 @@ void send_message_by_admin(char *sender, char* message);
 void send_message_by_user(char *sender, char* target, char* message);
 void send_message_for_all_in_project(char *sender, int index_project, char* message);
 void manage_task(int project_index, int status, int task);
-void remove_task(int index_user_array);
+void remove_task();
 void choose_task();
 void remove_user();
 int choose_yes_or_no();
@@ -599,13 +599,10 @@ void print_no4(){
 	fclose(messages_file);
 
 }
-void remove_task(int index_user_array){
-	int proj_to_delete_from;//value for project to delte from the task
-	//print_user_projects(index_user_array);
-	//printf("Choose Project By Number:\n");
-	//scanf("%d", &proj_to_delete_from);//get what user choose
-	print_projects_task(print_and_choose_user_projects(curr_index_user));
-
+void remove_task(){
+	int temp;
+	printf("choose the index of task you want remove");
+	scanf("%d", &temp);
 
 }
 int print_and_choose_user_projects(int index_user_array){
