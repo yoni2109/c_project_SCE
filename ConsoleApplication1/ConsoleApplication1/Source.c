@@ -145,7 +145,7 @@ int curr_index_project;
 int main()
 {
 	fill_arrays();
-
+	signUp();
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
 	curr_index_project = 0;
@@ -187,9 +187,8 @@ void signUp(){
 		}
 		printf("please enter a new member: ");//print to user Guidelines
 		member_Exist = String(member);//get the user name from user
-		member;
 		if (!member_Exist){//if user name is correct get in loop
-			for (int i = 0; i < web_projects_amount && member_Exist == False; i++){//loop for check if user name in system
+			for (int i = 0; i < web_users_amount && member_Exist == False; i++){//loop for check if user name in system
 				if (!strcmp(users_array[i].name, member)){//return true if the user in system
 					printf("this member Exists!\n");
 					member_Exist = True;
@@ -209,9 +208,13 @@ void signUp(){
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
-	users_array = (Users**)realloc(users_array, (web_projects_amount + 1)*sizeof(Users*));
-	strcpy(users_array[web_projects_amount].name, member);
-	strcpy(users_array[web_projects_amount].password, password);
+	users_array = (Users*)realloc(users_array, (web_users_amount + 1)*sizeof(Users));
+	if (users_array == NULL){//if not open quit
+		printf("the arry could not be created\n");
+		exit(1);
+	}
+	strcpy(users_array[web_users_amount].name, member);
+	strcpy(users_array[web_users_amount].password, password);
 }
 void cleanBuffer(){//clean the buffer
 	char buffer;
@@ -278,13 +281,14 @@ int String(char arry[]){//function to get string for user
 	return False;
 }
 int check_member(char user[], char password[]){
-	for (int i = 0; i < web_users_amount; i++)//loop for check if member exist
+	for (int i = 0; i < web_users_amount; i++){//loop for check if member exist
 		if (!strcmp(users_array[i].name, user)){//open function if user exsist check password
 			if (!strcmp(users_array[i].password, password)){//If appropriate password to use
 				curr_index_user = i;
 				return True;
 			}
 		}return False;
+	}
 	return False;
 }
 int choose_yes_or_no(){//function to ask the user if exit to loby/main
