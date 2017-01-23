@@ -212,7 +212,7 @@ void signUp(){
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
-	realloc(users_array, web_projects_amount + 1);
+	users_array = (Users**)realloc(users_array, (web_projects_amount + 1)*sizeof(Users*));
 	strcpy(users_array[web_projects_amount].name, member);
 	strcpy(users_array[web_projects_amount].password, password);
 }
@@ -287,20 +287,8 @@ int check_member(char user[], char password[]){
 				curr_index_user = i;
 				return True;
 			}
-		}
-		return False;
-}
-int compareArrays(char user_from_list[], char user_from_member[]) {//Check for identical strings 
-	int i;
-	for (i = 0; user_from_list[i] != '\0' && user_from_member[i] != '\0'; i++) {
-		if (user_from_list[i] != user_from_member[i])
-			return False;
-		if (user_from_list[i + 1] == '\0' && user_from_member[i + 1] != '\0')
-			return False;
-		if (user_from_list[i + 1] != '\0' && user_from_member[i + 1] == '\0')
-			return False;
-	}
-	return True;
+		}return False;
+	return False;
 }
 int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	char temp = '\0';
