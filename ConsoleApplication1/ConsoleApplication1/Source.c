@@ -146,7 +146,7 @@ int curr_index_project;
 int main()
 {
 	fill_arrays();
-	signUp();
+
 	int curr_index_project, user_in;
 	char a[6] = { "zohar" };
 	char b[] = { "jlkjlklajlkfasfal " };
@@ -305,7 +305,8 @@ int check_member(char user[], char password[]){
 				curr_index_user = i;
 				return True;
 			}
-		}return False;
+			return False;
+		}
 	}
 	return False;
 }
