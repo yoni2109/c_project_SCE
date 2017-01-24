@@ -110,7 +110,7 @@ void send_message_by_user(char *sender, char* target);
 void send_message_by_admin_in_project(char *sender, char* target);
 
 
-WebManager* Wmanager;//will contain the web managet user name
+WebManager * Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
 int web_users_amount = 0;//will contain the amount of users registered to web
 Projects* projects_array;// will contain all web projects
@@ -128,11 +128,12 @@ int main()
 	char a[6] = { "zohar" };
 	char b[4] = { "avi" };
 	fill_arrays();
-	send_message_by_admin(a);
+	send_message_by_user(b,a);
+	printf("%d",web_messages_amount );
 
 	//printf("%s", users_array[1].project_list[1]);
 
-	print_arrays_to_files();
+	//print_arrays_to_files();
 	char member[] = { "zohar" };
 	int enter = 0;
 	//system_massage(member);
@@ -374,6 +375,9 @@ void fill_arrays(){
 
 }
 void scan_no1(){
+	FILE* webmanger = fopen(ADMIN_FILE, "r");
+	Wmanager = (WebManager*)malloc(sizeof(WebManager));
+	fscanf(webmanger, "%s", &Wmanager->name);
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
