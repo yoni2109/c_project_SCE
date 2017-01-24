@@ -316,7 +316,7 @@ int check_member(char user[], char password[]){
 }
 int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	char temp = '\0';
-	printf("you want enter again if so enter Y else enter othe key: ");//massage to user
+	printf("you want enter again if so enter Y else enter other key: ");//massage to user
 	scanf("%c", &temp);//scan flag
 	if (!(temp == 'y' || temp == 'Y')){//if flag = y(yes) continue
 		cleanBuffer();//clean buffer
