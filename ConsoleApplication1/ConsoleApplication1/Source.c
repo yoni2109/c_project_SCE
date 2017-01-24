@@ -1109,35 +1109,44 @@ void change_status(){
 
 }
 void remove_user_from_project(int index_to_delete){
-	int flag = 0,check_if_manager=0;
+	int flag = 0, check_if_manager = 0, check_if_last = 0;;
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//loop to check if we connected as a manger of project
 		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_project].name) == 0)flag = 1;//if yes change the flag to 1
 		}//end of check if project manager
+
+	for (int i = 0; i < projects_array[curr_index_project].users_amount; i++){
+		if (strcmp(projects_array[curr_index_project].users_list[i], users_array[index_to_delete].name) == 0)check_if_last = i;
+	}
+	if (check_if_last != projects_array[curr_index_project].users_amount - 1){
 	if (strcmp(users_array[curr_index_user].name, users_array[index_to_delete].name) == 0)check_if_manager = 1;//check if manager try to delete itself 
-		if (flag == 1 && check_if_manager ==0){
-			for (int i = 0, j = 0; i < projects_array[curr_index_project].users_amount; i++, j++){//loop to run on the project array and find the user that we want to delete
-				if (strcmp(projects_array[curr_index_project].users_list[i], users_array[index_to_delete].name) == 0){//if we found the user
-					projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[i + 1];//we will delete
-					j = i + 1;//increase the j
-				}
-				projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[j];//copy all the other users in 1 place before
-			}//end of loop that removes user from project
-			projects_array[curr_index_project].users_amount--;//decrase the amnout users in project
-			int new_user_amount_in_project;
-			new_user_amount_in_project = projects_array[curr_index_project].users_amount;
-			projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
-			for (int i = 0,j=0; i < users_array[index_to_delete].projects_amount; i++,j++){
-				if (!strcmp(users_array[index_to_delete].project_list[i], projects_array[curr_index_project].name)){
-					users_array[index_to_delete].project_list[i] = users_array[index_to_delete].project_list[i + 1];
-					j = i + 1;
-		}
-				users_array[index_to_delete].project_list[i] = users_array[index_to_delete].project_list[j];
+
+	if (flag == 1 && check_if_manager == 0){
+		for (int i = 0, j = 0; i < projects_array[curr_index_project].users_amount; i++, j++){//loop to run on the project array and find the user that we want to delete
+
+			if (strcmp(projects_array[curr_index_project].users_list[i], users_array[index_to_delete].name) == 0 && i != projects_array[curr_index_project].users_amount - 1){//if we found the user
+				projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[i + 1];//we will delete
+				j = i + 1;//increase the j
 			}
+			projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[j];//copy all the other users in 1 place before
+
+		}//end of loop that removes user from project
+		projects_array[curr_index_project].users_amount--;//decrase the amnout users in project
+		int new_user_amount_in_project;
+		new_user_amount_in_project = projects_array[curr_index_project].users_amount;
+		projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
+		for (int i = 0, j = 0; i < users_array[index_to_delete].projects_amount; i++, j++){
+			if (!strcmp(users_array[index_to_delete].project_list[i], projects_array[curr_index_project].name)){
+				users_array[index_to_delete].project_list[i] = users_array[index_to_delete].project_list[i + 1];
+				j = i + 1;
+			}
+			users_array[index_to_delete].project_list[i] = users_array[index_to_delete].project_list[j];
 		}
-		else {
-			printf("You Are Not A Manager In This Project - Sorry Only Manager Can Remove User From Project\n");
-			printf("Or You Are Manager And you Try To Delete Your Self\n");
-		}
+	}
+
+	else {
+		printf("You Are Not A Manager In This Project - Sorry Only Manager Can Remove User From Project\n");
+		printf("Or You Are Manager And you Try To Delete Your Self\n");
+	}
 
 
 }
