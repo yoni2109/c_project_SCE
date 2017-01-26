@@ -643,10 +643,10 @@ void send_message_for_all_in_project(char *sender, char* message_demand){//פו�
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + projects_array[curr_index_project].users_amount) * sizeof(Messages));//realloc 1 place for new message
 	for (int i = web_messages_amount; i < web_messages_amount + projects_array[curr_index_project].users_amount; i++){
-		messages_array[i - 1].content = (char*)malloc(strlen(message_demand)*sizeof(char));//Opening indicates the size of the array
-		strcpy(messages_array[i - 1].content, message_demand);//העתקות לתוך מערך
-		strcpy(messages_array[i - 1].sender, sender);
-		strcpy(messages_array[i - 1].target, projects_array[curr_index_project].users_list[j]);
+		messages_array[i].content = (char*)malloc(strlen(message_demand)*sizeof(char));//Opening indicates the size of the array
+		strcpy(messages_array[i].content, message_demand);//העתקות לתוך מערך
+		strcpy(messages_array[i].sender, sender);
+		strcpy(messages_array[i].target, projects_array[curr_index_project].users_list[j]);
 		j++;
 	}
 	web_messages_amount += projects_array[curr_index_project].users_amount;
