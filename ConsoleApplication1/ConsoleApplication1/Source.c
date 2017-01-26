@@ -133,7 +133,7 @@ void print_project_menu(int);
 int print_and_choose_user_projects();
 void print_main_menu();
 void add_new_status();
-void print_chosen_user_menu(int, int);
+void print_chosen_user_menu(int,int);
 void user_main_menu();
 int get_user_index(char*username);
 void print_user_messages();
@@ -1220,7 +1220,7 @@ void remove_user_from_project(int index_to_delete){
 	users_array[index_to_delete].project_list = (char **)realloc(users_array[index_to_delete].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
 
 }
-}
+
 void remove_task(int status, int task){
 	int task_index_global=-1;
 	/*search for task in tasks global array*/
@@ -1441,7 +1441,7 @@ void user_main_menu(){//after user logs in this menu will appear
 						  break;
 					  }
 					  curr_index_project = print_and_choose_user_projects();
-					  if (curr_index_project = -1){
+					  if (curr_index_project == -1){
 						  break;
 					  }
 					  int projectmanager = 0;
