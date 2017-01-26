@@ -36,7 +36,7 @@ typedef struct
 	char password[SIZE];
 	char **project_list;
 	int projects_amount;
-	Messages* message_list;
+	Messages** message_list;
 	int messages_amount;
 }Users;
 typedef struct
@@ -136,6 +136,7 @@ void add_new_status();
 void print_chosen_user_menu(int, int);
 void user_main_menu();
 int get_user_index(char*username);
+void print_user_messages();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -487,13 +488,13 @@ void sort_messages_to_users_no7(){
 			if (!strcmp(users_array[i].name, messages_array[j].target)){
 				if (!users_array[i].messages_amount){
 					users_array[i].messages_amount++;
-					users_array[i].message_list = (Messages*)malloc(sizeof(Messages));
-					users_array[i].message_list[0] = messages_array[j];
+					users_array[i].message_list = (Messages**)malloc(sizeof(Messages*));
+					users_array[i].message_list[0] = &messages_array[j];
 				}
 				else{
 					users_array[i].messages_amount++;
-					users_array[i].message_list = (Messages*)realloc(users_array[i].message_list, users_array[i].messages_amount*sizeof(Messages));
-					users_array[i].message_list[users_array[i].messages_amount - 1] = messages_array[j];
+					users_array[i].message_list = (Messages**)realloc(users_array[i].message_list, users_array[i].messages_amount*sizeof(Messages*));
+					users_array[i].message_list[users_array[i].messages_amount - 1] = &messages_array[j];
 				}
 			}
 		}
@@ -572,9 +573,12 @@ int print_and_choose_user_projects(){
 		}
 		printf("\n");
 	}
-	printf("Choose Project By Number:\n");
+	printf("Choose Project By Number:\nchoose 0 to go back\n");
 	scanf("%d", &chosen_proj);
 	getchar();//get the enter
+	if (chosen_proj == 0){
+		return -1;
+	}
 	return get_project_index(users_array[curr_index_user].project_list[chosen_proj - 1]);
 }
 void print_projects_task(){
@@ -604,15 +608,22 @@ int confirm_project(){//func to archived the project *only maneger can do that*
 }
 void send_message_by_user(char *sender, char* target, char *message){
 	web_messages_amount++;
-	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
-	if (messages_array == NULL)
-		exit(1);
+	if (web_messages_amount == 1){
+		messages_array = (Messages*)malloc(sizeof(Messages));
+	}
+	else{
+		messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
+		if (messages_array == NULL)
+			exit(1);
+	}
 	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 	if (messages_array[web_messages_amount - 1].content == NULL)
 		exit(1);
 	strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
 	strcpy(messages_array[web_messages_amount - 1].sender, sender);
 	strcpy(messages_array[web_messages_amount - 1].target, target);
+	sort_messages_to_users_no7();
+	printf("\nMessage succesfully sent\n");
 }
 void send_message_by_admin(char *sender, char *message){
 	int j = 0;
@@ -742,7 +753,7 @@ void add_user_to_project(){//fund to add new user to project
 	}
 	else
 	{
-		users_array[flag].project_list = (char**)realloc(users_array[flag].project_list, sizeof(char*));
+		users_array[flag].project_list = (char**)realloc(users_array[flag].project_list, sizeof(char*)*users_array[flag].projects_amount);
 	}
 	users_array[flag].project_list[users_array[flag].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
 	strcpy(users_array[flag].project_list[users_array[flag].projects_amount - 1], projects_array[curr_index_project].name);
@@ -905,12 +916,18 @@ void choose_task(){//this function will print all project tasks by the following
 	//   1.task name
 	//   2.task name
 	// and so on
+	int flag = 0;
 	printf("pls choose a task from the following tasks:\n\n");
 	for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
 		printf("status %d: %s\n", (i + 1), projects_array[curr_index_project].status_list[i].name);
 		for (int j = 0; j < projects_array[curr_index_project].status_list[i].tasks_amount; j++){
+			flag++;
 			printf("   %d.: %s\n",(j+1), projects_array[curr_index_project].status_list[i].tasks_list[j]->name);
 		}
+	}
+	if (!flag){
+		printf("\nno tasks yet");
+		return;
 	}
 	printf("first chose the status by number\nto choose nothing and return to previous menu choose 0");
 	int status=-1, task=-1;
@@ -926,11 +943,16 @@ void choose_task(){//this function will print all project tasks by the following
 			return;
 		}
 	}
+	status--;
 	printf("chose the task by number\nto choose nothing and return to previous menu choose 0");
 	tryes = 0;
+	if (!projects_array[curr_index_project].status_list[status].tasks_amount){
+		printf("the status you chose has no tasks");
+		return;
+	}
 	while (task<1 || task>projects_array[curr_index_project].status_list[status].tasks_amount){
 		if (tryes){
-			printf("pls choose status again! notice!! taks in ''%s'' are between 1 to %d\n",projects_array[curr_index_project].status_list[status].name, projects_array[curr_index_project].status_list[status].tasks_amount);
+			printf("pls choose task again! notice!! taks in ''%s'' are between 1 to %d\n",projects_array[curr_index_project].status_list[status].name, projects_array[curr_index_project].status_list[status].tasks_amount);
 		}
 		tryes++;
 		scanf("%d", &task);
@@ -939,7 +961,6 @@ void choose_task(){//this function will print all project tasks by the following
 			return;
 		}
 	}
-	status--;
 	task--;
 	manage_task( status, task);
 
@@ -1244,12 +1265,17 @@ void print_project_menu(int project_manager){
 			printf("8.return to your main menu\n");
 			while (choose <1 || choose > 8){
 				scanf("%d", &choose);
+				getchar();
 			}
 			switch (choose){
 			case(1) : {
 						  print_users_project();
 						  int choose_user;
+						  printf("\nchoose 0 to go back");
 						  scanf("%d", &choose_user);
+						  if (!choose_user){
+							  break;
+						  }
 						  choose_user--;
 						  print_chosen_user_menu(choose_user, project_manager);//todo
 						  break;
@@ -1307,6 +1333,7 @@ void print_project_menu(int project_manager){
 			printf("9.complete project\n");
 			while (choose <1 || choose > 9){
 				scanf("%d", &choose);
+				getchar();
 			}
 			switch (choose){
 			case(1) : {
@@ -1381,7 +1408,7 @@ void play(){
 					  break;
 			}//end of case 2
 		case(3) : {
-					 // print_arrays_to_files();
+					  print_arrays_to_files();
 					  return 0;
 			}//end of case 3
 		}
@@ -1403,6 +1430,9 @@ void user_main_menu(){//after user logs in this menu will appear
 						  break;
 					  }
 					  curr_index_project = print_and_choose_user_projects();
+					  if (curr_index_project = -1){
+						  break;
+					  }
 					  int projectmanager = 0;
 					  for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
 						  if (!strcmp(users_array[curr_index_user].name, projects_array[curr_index_project].Manager_list[i])){
@@ -1419,7 +1449,7 @@ void user_main_menu(){//after user logs in this menu will appear
 					  break;
 			}//end of case 2
 		case(3) : {
-					  //to do view user messages
+					  print_user_messages();
 					  break;
 			}//end of case 3
 		case(4) : {
@@ -1435,6 +1465,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 	int choose = 0;
 	while (choose<1 || choose>3){
 		scanf("%d", &choose);
+		getchar();
 	}
 	switch (choose)
 	{
@@ -1442,6 +1473,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  printf("pls insert your message\n");
 				  char message[TEMP_SIZE];
 				  fgets(message, TEMP_SIZE, stdin);
+				  message[strlen(message)-1] = '\0';
 				  send_message_by_user(users_array[curr_index_user].name, projects_array[curr_index_project].users_list[chosen_user], message);
 				  break;
 		}//end of case 1
@@ -1487,7 +1519,15 @@ void add_new_status(){
 	}*/
 	
 }
-
+void print_user_messages(){
+	if (!users_array[curr_index_user].messages_amount){
+		printf("\nno messages to show\n");
+		return;
+	}
+	for (int i = 0; i < users_array[curr_index_user].messages_amount; i++){
+		printf("from: %s\ncontent: %s", users_array[curr_index_user].message_list[i]->sender, users_array[curr_index_user].message_list[i]->content);
+	}
+}
 
 
 
