@@ -350,7 +350,16 @@ void fill_arrays(){
 
 }
 void scan_no1(){
+	FILE* wmanager = fopen(ADMIN_FILE, "r");
+	if (!wmanager){
+		exit(1);
+	}
+	Wmanager = (WebManager*)malloc(sizeof(WebManager));
+	fscanf(wmanager, "%s", &Wmanager->name);
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
+	if (!users_File){
+		return;
+	}
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
@@ -364,7 +373,13 @@ void scan_no1(){
 }
 void scan_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
+	if (!projects_file){
+		return;
+	}
 	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
+	if (!projects_managers_file){
+		return;
+	}
 	fscanf(projects_file, "%d", &web_projects_amount);
 	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
@@ -401,6 +416,9 @@ void scan_no2(){
 }
 void scan_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "r");
+	if (!tasks_file){
+		return;
+	}
 	fscanf(tasks_file, "%d", &web_tasks_amount);
 	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
@@ -417,6 +435,11 @@ void scan_no3(){
 	fclose(tasks_file);
 }
 void sort_tasks_no4(){
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < projects_array[i].status_amount; j++){
+			projects_array[i].status_list[j].tasks_amount = 0;
+		}
+	}
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
 			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
@@ -465,6 +488,9 @@ void sort_projects_to_users_no5(){
 }
 void scan_no6(){
 	FILE* messages_file = fopen(MESSAGE_FILE, "r");
+	if (!messages_file){
+		return;
+	}
 	fscanf(messages_file, "%d", &web_messages_amount);
 	messages_array = (Messages*)malloc(sizeof(Messages)*web_messages_amount);
 	for (int i = 0; i < web_messages_amount; i++){
@@ -876,9 +902,9 @@ void new_task(){
 		strcpy(tasks_array[0].project_name, projects_array[curr_index_project].name);
 		strcpy(tasks_array[0].status_name, projects_array[curr_index_project].status_list[0].name);
 		tasks_array[0].task_progres = 0;
-		projects_array[curr_index_project].status_list[0].tasks_amount++;
-		projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
-		projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[0];
+		//projects_array[curr_index_project].status_list[0].tasks_amount++;
+		//projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
+		//projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[0];
 	}
 	/*end of first task created*/
 	/*if not first task created*/
@@ -892,23 +918,9 @@ void new_task(){
 			strcpy(tasks_array[web_tasks_amount - 1].status_name, projects_array[curr_index_project].status_list[0].name);
 			tasks_array[web_tasks_amount - 1].task_progres = 0;
 			strcpy(tasks_array[web_tasks_amount - 1].assign_to, "None");
-			/*if first task for project or for status*/
-			if (!projects_array[curr_index_project].status_list[0].tasks_amount){
-				projects_array[curr_index_project].status_list[0].tasks_amount++;
-				projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
-				projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[web_tasks_amount - 1];
-			}
-			/*end of case that firs task for project or status*/
-			/*if not first task created for project or status*/
-			else{
-				projects_array[curr_index_project].status_list[0].tasks_amount++;
-				projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)realloc(projects_array[curr_index_project].status_list[0].tasks_list, sizeof(Tasks*)*projects_array[curr_index_project].status_list[0].tasks_amount);
-				projects_array[curr_index_project].status_list[0].tasks_list[projects_array[curr_index_project].status_list[0].tasks_amount - 1] = &tasks_array[web_tasks_amount - 1];
-			}
-			/*end of case that not first task for project or status*/
 		}
 	/*end of case for bot first task created*/
-
+	sort_tasks_no4();
 }
 void confirm_task( int status_index, int task_index){
 	projects_array[curr_index_project].status_list[status_index].tasks_list[task_index]->task_progres = 1;
@@ -1278,6 +1290,7 @@ void remove_task(int status, int task){
 	}
 	free(tasks_array);
 	web_tasks_amount--;
+	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
 		tasks_array[i] = temp[i];
 	}
@@ -1373,7 +1386,11 @@ void print_project_menu(int project_manager){
 			case(1) : {
 						  print_users_project();
 						  int choose_user;
+						  printf("\nchoose 0 to go back");
 						  scanf("%d", &choose_user);
+						  if (!choose_user){
+							  break;
+						  }
 						  choose_user--;
 						  print_chosen_user_menu(choose_user, project_manager);//todo
 						  break;
@@ -1560,7 +1577,7 @@ void print_user_messages(){
 		return;
 	}
 	for (int i = 0; i < users_array[curr_index_user].messages_amount; i++){
-		printf("from: %s\ncontent: %s", users_array[curr_index_user].message_list[i]->sender, users_array[curr_index_user].message_list[i]->content);
+		printf("from: %s\ncontent: %s\n", users_array[curr_index_user].message_list[i]->sender, users_array[curr_index_user].message_list[i]->content);
 	}
 }
 
