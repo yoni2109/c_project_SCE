@@ -1220,7 +1220,6 @@ void remove_user_from_project(int index_to_delete){
 	users_array[index_to_delete].project_list = (char **)realloc(users_array[index_to_delete].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
 
 }
-}
 void remove_task(int status, int task){
 	int task_index_global=-1;
 	/*search for task in tasks global array*/
