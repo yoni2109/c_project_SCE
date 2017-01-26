@@ -693,7 +693,7 @@ void assigned_to(int status, int task){
 	for (int i = 0; i < projects_array[curr_index_project].users_amount; i++){/*print all users in current project*/
 		printf("%d: %s\n", (i + 1), projects_array[curr_index_project].users_list[i]);
 	}
-	fscanf("%d", &chosen_user);/*ask user to choose username*/
+	scanf("%d", &chosen_user);/*ask user to choose username*/
 	/*copy the selected name to selected task at "assigned to" field*/
 	strcpy(projects_array[curr_index_project].status_list[status].tasks_list[task]->assign_to, projects_array[curr_index_project].users_list[chosen_user - 1]);
 }
