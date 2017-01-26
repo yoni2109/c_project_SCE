@@ -137,6 +137,7 @@ void print_chosen_user_menu(int, int);
 void user_main_menu();
 int get_user_index(char*username);
 void print_user_messages();
+int check_if_last_project(int index_project_to_check,int user_to_check);
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -170,6 +171,7 @@ int main()
 
 	//add_Wmanager(1,1);
 //	add_Wmanager(1,1);
+	
 }
 //	char member[] = { "zohar" };
 //	int enter = 0;
@@ -929,7 +931,7 @@ void choose_task(){//this function will print all project tasks by the following
 		printf("\nno tasks yet");
 		return;
 		}
-	printf("first chose the status by number\nto choose nothing and return to previous menu choose 0");
+	printf("first chose the status by number\nto choose nothing and return to previous menu choose 0\n");
 	int status=-1, task=-1;
 	int tryes = 0;
 	while (status<1 || status>projects_array[curr_index_project].status_amount){
@@ -944,7 +946,7 @@ void choose_task(){//this function will print all project tasks by the following
 		}
 	}
 	status--;
-	printf("chose the task by number\nto choose nothing and return to previous menu choose 0");
+	printf("chose the task by number\nto choose nothing and return to previous menu choose 0\n");
 	tryes = 0;
 	if (!projects_array[curr_index_project].status_list[status].tasks_amount){
 		printf("the status you chose has no tasks");
@@ -1168,7 +1170,8 @@ void change_status(){
 
 }
 void remove_user_from_project(int index_to_delete){
-	int flag = 0, check_if_manager = 0, check_if_last = 0;
+	int flag = 0, check_if_manager = 0, check_if_last = 0,succes=0;
+	int check_if_last_projectt = 0;
 
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//loop to check if we connected as a manger of project
 		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_project].name) == 0)flag = 1;//if yes change the flag to 1
@@ -1187,6 +1190,7 @@ void remove_user_from_project(int index_to_delete){
 			int new_user_amount_in_project;
 			new_user_amount_in_project = projects_array[curr_index_project].users_amount;
 			projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
+		succes = 1;
 		}
 
 		if (flag == 1 && check_if_manager == 0 && check_if_last == 0){
@@ -1202,9 +1206,17 @@ void remove_user_from_project(int index_to_delete){
 		int new_user_amount_in_project;
 		new_user_amount_in_project = projects_array[curr_index_project].users_amount;
 		projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
-		
+		succes = 1;
 	}
-
+	if (succes == 1){//if we delete succesfully user from project ,we need delete the project from user projects 
+		check_if_last_projectt = check_if_last_project(curr_index_project, index_to_delete);
+		if (check_if_last_projectt == 1){
+			users_array[index_to_delete].projects_amount--;//decrease the amount projects of user
+			int new_project_amount_in_users;
+			new_project_amount_in_users = users_array[index_to_delete].projects_amount;
+			users_array[index_to_delete].project_list = (char **)realloc(users_array[index_to_delete].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
+	}
+		if (check_if_last_projectt != 1){
 	for (int i = 0, j = 0; i < users_array[index_to_delete].projects_amount; i++, j++){//loop to run on the users array and find the project that we want to delete
 		if (strcmp(users_array[index_to_delete].project_list[i], projects_array[curr_index_project].name) == 0){//if we found the project
 			users_array[index_to_delete].project_list[i] = users_array[curr_index_user].project_list[i + 1];//we will delete
@@ -1218,7 +1230,19 @@ void remove_user_from_project(int index_to_delete){
 	int new_project_amount_in_users;
 	new_project_amount_in_users = users_array[index_to_delete].projects_amount;
 	users_array[index_to_delete].project_list = (char **)realloc(users_array[index_to_delete].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
+		}
+	}
+	if (flag == 0)printf("You Are Not Manager - You Can't Remove User From This Project\n");
+	if (check_if_manager == 1)printf("You Are Try To Delete Your Self - You Can't Do That\n");
 
+}
+int check_if_last_project(int index_project_to_check, int user_to_check){
+	for (int i = 0; i < users_array[user_to_check].projects_amount; i++){//check if we try to delete the last
+		if (strcmp(users_array[user_to_check].project_list[i], projects_array[index_project_to_check].name) == 0){
+			if (i == users_array[user_to_check].projects_amount - 1) return 1;
+			else return 0;
+		}
+	}
 }
 void remove_task(int status, int task){
 	int task_index_global=-1;
@@ -1440,7 +1464,7 @@ void user_main_menu(){//after user logs in this menu will appear
 						  break;
 					  }
 					  curr_index_project = print_and_choose_user_projects();
-					  if (curr_index_project = -1){
+					  if (curr_index_project == -1){
 						  break;
 					  }
 					  int projectmanager = 0;
@@ -1523,6 +1547,7 @@ void add_new_status(){
 	int status_amount_new = projects_array[curr_index_project].status_amount;
 	projects_array[curr_index_project].status_list = (Status *)realloc(projects_array[curr_index_project].status_list, sizeof(Status)*status_amount_new);//realloc the status array
 	strcpy(projects_array[curr_index_project].status_list[status_amount_new-1].name,temp_status);//copy to the end of the status list the new status
+	projects_array[curr_index_project].status_list[status_amount_new - 1].tasks_amount = 0;	//intilize the amount of tasks to 0
 	/*print the array of status*/
 	/*for (int i = 0; i<projects_array[curr_index_project].status_amount; i++){
 		printf("%d.%s\n", (i + 1), projects_array[curr_index_project].status_list[i].name);
