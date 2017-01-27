@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <string.h>
 
+
 #define TEMP_SIZE 1024
 #define SIZE 25
 #define MODEOUT "w"
@@ -153,6 +154,7 @@ int curr_index_project;
 
 int main()
 {
+	Driver();
 	fill_arrays();
 	play();
 	

@@ -78,7 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Downloads\Driver2.c" />
+    <ClCompile Include="..\..\..\..\..\Downloads\tets.c" />
     <ClCompile Include="Source.c" />
   </ItemGroup>
   <ItemGroup>
