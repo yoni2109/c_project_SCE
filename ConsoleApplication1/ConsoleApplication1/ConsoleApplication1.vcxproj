@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Downloads\Tests.c" />
     <ClCompile Include="Source.c" />
   </ItemGroup>
   <ItemGroup>

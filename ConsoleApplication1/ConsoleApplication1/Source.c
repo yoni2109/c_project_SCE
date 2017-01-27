@@ -72,14 +72,14 @@ void move_task(int status, int task);
 char *new_project_name();
 void confirm_task();
 void change_name();
-void scan_no1();
-void scan_no2();
-void scan_no3();
-void sort_tasks_no4();
-void sort_projects_to_users_no5();
-void scan_no6();
+bool scan_no1();
+bool scan_no2();
+bool scan_no3();
+bool sort_tasks_no4();
+bool sort_projects_to_users_no5();
+bool scan_no6();
 void print_arrays_to_files();
-void sort_messages_to_users_no7();
+bool sort_messages_to_users_no7();
 void print_no1();
 void print_no2();
 void print_no3();
@@ -99,7 +99,7 @@ void print_projects_task();
 void print_web_users();
 int check_admin(char * name);
 int confirm_project();
-void fill_arrays();
+bool fill_arrays();
 void send_message(char *sender, char* target, char* message);
 char * func_to_get_message();
 void allocate_messages();
@@ -156,7 +156,7 @@ int curr_index_project;
 
 int main()
 {
-	Driver();
+	Unit_tests();
 	fill_arrays();
 	play();
 	
@@ -327,7 +327,7 @@ int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	return False;
 }
 /*reading files and arrays sorting functions*/
-void fill_arrays(){
+bool fill_arrays(){
 	/*1. scans user names and passwords into users array*/
 	scan_no1();
 	/*end of 1.*/
@@ -350,17 +350,22 @@ void fill_arrays(){
 	sort_messages_to_users_no7();
 	/*end of 7.*/
 
+	return True;
 }
-void scan_no1(){
+
+bool scan_no1()
+{
 	FILE* wmanager = fopen(ADMIN_FILE, "r");
-	if (!wmanager){
-		exit(1);
+	if (!wmanager)
+	{
+		return False;
 	}
 	Wmanager = (WebManager*)malloc(sizeof(WebManager));
 	fscanf(wmanager, "%s", &Wmanager->name);
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
-	if (!users_File){
-		return;
+	if (!users_File)
+	{
+		return False;
 	}
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
@@ -372,15 +377,21 @@ void scan_no1(){
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
 	fclose(users_File);
+
+	return True;
 }
-void scan_no2(){
+
+bool scan_no2()
+{
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
-	if (!projects_file){
-		return;
+	if (!projects_file)
+	{
+		return False;
 	}
 	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
-	if (!projects_managers_file){
-		return;
+	if (!projects_managers_file)
+	{
+		return False;
 	}
 	fscanf(projects_file, "%d", &web_projects_amount);
 	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
@@ -415,11 +426,15 @@ void scan_no2(){
 	}
 	fclose(projects_file);
 	fclose(projects_managers_file);
+
+	return True;
 }
-void scan_no3(){
+
+bool scan_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "r");
-	if (!tasks_file){
-		return;
+	if (!tasks_file)
+	{
+		return False;
 	}
 	fscanf(tasks_file, "%d", &web_tasks_amount);
 	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
@@ -435,8 +450,11 @@ void scan_no3(){
 		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
 	}
 	fclose(tasks_file);
+
+	return True;
 }
-void sort_tasks_no4(){
+
+bool sort_tasks_no4(){
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < projects_array[i].status_amount; j++){
 			projects_array[i].status_list[j].tasks_amount = 0;
@@ -465,8 +483,11 @@ void sort_tasks_no4(){
 		}
 
 	}
+
+	return True;
 }
-void sort_projects_to_users_no5(){
+
+bool sort_projects_to_users_no5(){
 	for (int i = 0; i < web_users_amount; i++){
 		for (int j = 0; j < web_projects_amount; j++){
 			for (int k = 0; k < projects_array[j].users_amount; k++){
@@ -487,11 +508,15 @@ void sort_projects_to_users_no5(){
 			}
 		}
 	}
+
+	return True;
 }
-void scan_no6(){
+
+bool scan_no6(){
 	FILE* messages_file = fopen(MESSAGE_FILE, "r");
-	if (!messages_file){
-		return;
+	if (!messages_file)
+	{
+		return False;
 	}
 	fscanf(messages_file, "%d", &web_messages_amount);
 	messages_array = (Messages*)malloc(sizeof(Messages)*web_messages_amount);
@@ -511,8 +536,11 @@ void scan_no6(){
 	}
 	fclose(messages_file);
 
+	return True;
 }
-void sort_messages_to_users_no7(){
+
+bool sort_messages_to_users_no7()
+{
 	for (int i = 0; i < web_users_amount; i++){
 		for (int j = 0; j < web_messages_amount; j++){
 			if (!strcmp(users_array[i].name, messages_array[j].target)){
@@ -529,6 +557,8 @@ void sort_messages_to_users_no7(){
 			}
 		}
 	}
+
+	return True;
 }
 /*end of reading files and arrays sorting functions */
 /*print arrays to files functions*/
@@ -1439,8 +1469,10 @@ void print_project_menu(int project_manager){
 		}
 	}//end of menu for project manager
 }
-void play(){
-	while (1){
+void play()
+{
+	while (1)
+	{
 	int choose = 0;
 	printf("==============================\nWelcome to meister task\n==============================\n");
 	printf("\n\n choose one of the following options:\n\n1. log in\n2.sign up\n3. quit program\n");
