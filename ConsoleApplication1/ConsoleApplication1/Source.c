@@ -78,17 +78,17 @@ bool scan_no3();
 bool sort_tasks_no4();
 bool sort_projects_to_users_no5();
 bool scan_no6();
-void print_arrays_to_files();
+bool print_arrays_to_files();
 bool sort_messages_to_users_no7();
-void print_no1();
-void print_no2();
-void print_no3();
-void print_no4();
-void add_new_project();
+bool print_no1();
+bool print_no2();
+bool print_no3();
+bool print_no4();
+bool add_new_project();
 void print_user_projects();
 void signUp();
 void cleanBuffer();
-int log_in();
+bool log_in();
 int String(char arry[]);
 void cleanString(char arry[]);
 int check_member(char user[], char password[]);
@@ -247,7 +247,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 		arry[i] = '\0';
 	}
 }
-int log_in(){
+bool log_in(){
 	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
 	char password[SIZE], member[SIZE];//open string
 	do{
@@ -562,7 +562,7 @@ bool sort_messages_to_users_no7()
 }
 /*end of reading files and arrays sorting functions */
 /*print arrays to files functions*/
-void print_arrays_to_files(){
+bool print_arrays_to_files(){
 	/*1. prints users array*/
 	print_no1();
 	/*end of 1.*/
@@ -574,18 +574,33 @@ void print_arrays_to_files(){
 	/*4. print messages to file*/
 	print_no4();
 	/*end of 4.*/
+	return True;
 }
-void print_no1(){
-	FILE *users_file = fopen(USER_FILE_NAME, "w");
+bool print_no1(){
+	FILE* users_file = fopen(USER_FILE_NAME, "w");
+	if (users_file == NULL)
+	{
+		return False;
+	}
 	fprintf(users_file, "%d\n", web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
 		fprintf(users_file, "%s\n%s\n", users_array[i].name, users_array[i].password);
 	}
 	fclose(users_file);
+
+	return True;
 }
-void print_no2(){
+bool print_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "w");
+	if (projects_file == NULL)
+	{
+		return False;
+	}
 	FILE* project_managers = fopen(PROJECT_MANAGERS_FILE, "w");
+	if (project_managers == NULL)
+	{
+		return False;
+	}
 	fprintf(projects_file, "%d\n", web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
 		fprintf(projects_file, "%s\n%d\n", projects_array[i].name, projects_array[i].users_amount);
@@ -604,23 +619,36 @@ void print_no2(){
 	}
 	fclose(projects_file);
 	fclose(project_managers);
+
+	return True;
 }
-void print_no3(){
+bool print_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "w");
+	if (tasks_file == NULL)
+	{
+		return False;
+	}
 	fprintf(tasks_file, "%d\n", web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
 		fprintf(tasks_file, "%s\n%s\n%s\n%s\n%d\n%s\n", tasks_array[i].project_name, tasks_array[i].status_name, tasks_array[i].name, tasks_array[i].task_details, tasks_array[i].task_progres, tasks_array[i].assign_to);
 	}
 	fclose(tasks_file);
+
+	return True;
 }
-void print_no4(){
-	FILE * messages_file = fopen(MESSAGE_FILE, "w");
+bool print_no4(){
+	FILE* messages_file = fopen(MESSAGE_FILE, "w");
+	if (messages_file == NULL)
+	{
+		return False;
+	}
 	fprintf(messages_file, "%d\n", web_messages_amount);
 	for (int i = 0; i < web_messages_amount; i++){
 		fprintf(messages_file, "%s\n%s\n%s\n", messages_array[i].sender, messages_array[i].target, messages_array[i].content);
 	}
 	fclose(messages_file);
 
+	return True;
 }
 /*end of print arrays to files functions*/
 int print_and_choose_user_projects(){
@@ -860,19 +888,31 @@ char* new_project_name(){
 	temp[strlen(temp1)] = '\0';
 	return temp;
 }
-void add_new_project(){
+bool add_new_project(){
 	/**/
 	char *temp = (char*)malloc(sizeof(char)*SIZE);
+	if (*temp == NULL)
+	{
+		return False;
+	}
 	strcpy(temp, new_project_name());
 	getchar();
 	/**/
 	if (!web_projects_amount){
 		web_projects_amount++;
 		projects_array = (Projects*)malloc(sizeof(Projects));
+		if (projects_array == NULL)
+		{
+			return False;
+		}
 	}
 	else{
 		web_projects_amount++;
 		projects_array = (Projects*)realloc(projects_array, sizeof(Projects)* web_projects_amount);
+		if (projects_array == NULL)
+		{
+			return False;
+		}
 	}
 	strcpy(projects_array[web_projects_amount - 1].name, temp);
 	projects_array[web_projects_amount - 1].users_amount = 1;
@@ -899,6 +939,7 @@ void add_new_project(){
 	//temp[SIZE - 1] = '\0';
 	curr_index_project = web_projects_amount - 1;
 
+	return True;
 }
 int get_project_index(char* project_name){
 	for (int i = 0; i < web_projects_amount; i++){
