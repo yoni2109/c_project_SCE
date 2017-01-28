@@ -42,7 +42,13 @@ MU_TEST(test_sort_messages_to_users_no7)
 {
 	mu_check(sort_messages_to_users_no7() == True);
 }
+MU_TEST(test_check_admin){
+	mu_check(check_admin("zohar") == True);
+}
+MU_TEST(test_print_all_messages){
+	mu_check(print_all_messages());
 
+}
 MU_TEST_SUITE(test_suite_fill_arrays)
 {
 	MU_SUITE_CONFIGURE(NULL, NULL);
@@ -56,10 +62,14 @@ MU_TEST_SUITE(test_suite_fill_arrays)
 	MU_RUN_TEST(test_sort_messages_to_users_no7);
 	MU_REPORT_SUITE();
 }
-
+MU_TEST_SUITE(test_suite_checking_functions){
+	MU_RUN_TEST(test_check_admin);
+	MU_RUN_TEST(test_print_all_messages);
+}
 int Unit_tests(int argc, char *argv[]) 
 {
 	MU_RUN_SUITE(test_suite_fill_arrays);
+	MU_RUN_SUITE(test_suite_checking_functions);
 	MU_REPORT();
 	return 0;
 }
