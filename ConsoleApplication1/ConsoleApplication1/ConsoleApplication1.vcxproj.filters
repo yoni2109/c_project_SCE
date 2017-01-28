@@ -18,7 +18,7 @@
     <ClCompile Include="Source.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Downloads\Tests.c">
+    <ClCompile Include="Tests.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,7 +45,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Downloads\MinUnit.h">
+    <ClInclude Include="MinUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
