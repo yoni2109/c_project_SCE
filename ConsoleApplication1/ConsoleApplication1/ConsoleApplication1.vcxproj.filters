@@ -45,7 +45,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Downloads\MinUnit.h">
+    <ClInclude Include="MinUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
