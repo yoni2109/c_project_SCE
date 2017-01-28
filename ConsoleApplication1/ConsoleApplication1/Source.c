@@ -67,9 +67,10 @@ typedef struct
 	int archived;
 
 }Projects;
+void insert_details_for_signup();
 char* new_user_name();
 void move_task(int status, int task);
-char *new_project_name();
+void new_project_name();
 void confirm_task();
 void change_name();
 bool scan_no1();
@@ -86,7 +87,7 @@ bool print_no3();
 bool print_no4();
 bool add_new_project();
 void print_user_projects();
-void signUp();
+bool signUp(char*,char*);
 void cleanBuffer();
 bool log_in();
 int String(char arry[]);
@@ -110,7 +111,7 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
-void add_user_to_project();
+bool add_user_to_project(int,char*);
 int get_project_index(char*);
 void defult_status_to_new_project();
 void print_users_project();
@@ -139,6 +140,7 @@ void user_main_menu();
 int get_user_index(char*username);
 void print_user_messages();
 int check_if_last_project(int index_project_to_check,int user_to_check);
+void insert_username_to_add();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -153,48 +155,38 @@ int curr_index_user;//the current user after log in
 int curr_index_project;
 
 
-
 int main()
 {
-	Unit_tests();
+	int choose = 0;
+	scanf("%d", &choose);
+	getchar();
+	//todo p[rint and while loop over cases
+	switch (choose){
+	case(1) : {
+				  fill_arrays();
+				  play();
+				  break;
+		}
+	case(2) : {
+				  Unit_tests();
+				  web_messages_amount = 0;
+				  web_users_amount = 0;
+				  web_tasks_amount = 0;
+				  web_projects_amount = 0;
+				  free(messages_array);
+				  free(users_array);
+				  free(projects_array);
+				  free(tasks_array);
+				  break;
+		}
+	}
 	fill_arrays();
 	play();
-	
-	//log_in();
-	//move_task(0, 0, 0);
-	//printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
-	//printf("%s\n", tasks_array[1].status_name);
-	//curr_index_project = 0;
-	//new_task();
-	//printf("%s\n", projects_array[0].status_list[0].tasks_list[2]->name);
-	//printf("%s\n", tasks_array[1].status_name);
-	//signUp();
-	
 
-	//add_Wmanager(1,1);
-//	add_Wmanager(1,1);
-	
 }
-//	char member[] = { "zohar" };
-//	int enter = 0;
-//	//system_massage(member);
-//	
-//	
-//	do
-//	{
-//		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
-//		scanf("%d", &enter);
-//		cleanBuffer();
-//		if (enter == 1)
-//			log_in(member);
-//		if (enter == 2){
-//			signUp();
-//		}
-//		enter = 0;
-//	} while (True);
-//	return 0;		
+
 /*sign up*/
-void signUp(){
+void insert_details_for_signup(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
 	do//loop for sign up
@@ -227,16 +219,20 @@ void signUp(){
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
+	return signUp(member, password);
+}
+bool signUp(char* member,char* password){
+
 	users_array = (Users*)realloc(users_array, (web_users_amount + 1)*sizeof(Users));
 	if (users_array == NULL){//if not open quit
-		printf("the arry could not be created\n");
-		exit(1);
+		return False; 
 	}
 	web_users_amount++;
 	strcpy(users_array[web_users_amount-1].name, member);
 	strcpy(users_array[web_users_amount-1].password, password);
 	users_array[web_users_amount - 1].messages_amount = 0;
 	users_array[web_users_amount - 1].projects_amount = 0;
+	return True;
 }
 void cleanBuffer(){//clean the buffer
 	char buffer;
@@ -311,7 +307,7 @@ int check_member(char user[], char password[]){
 				return True;
 			}
 			return False;
-	}
+		}
 	}
 	return False;
 }
@@ -808,19 +804,7 @@ void print_all_messages()
 		printf("Content : %s\n", messages_array[i].content);
 	}
 }
-void print_login_singup(){
-	int enter;
-	printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
-	scanf("%d", &enter);
-	cleanBuffer();
-	if (enter == 1)
-		log_in();
-	if (enter == 2){
-		signUp();
-		//printf("%s", projects_array[1].Manager_list[0]);
-	}
-}
-void add_user_to_project(){//fund to add new user to project
+void insert_username_to_add(){
 	char temp_user[SIZE];
 	int flag = -1, index_try = 0;
 	while (flag == -1){//loop to get the name of user that we want add - if there is no exist this user - again
@@ -831,6 +815,14 @@ void add_user_to_project(){//fund to add new user to project
 			if (strcmp(temp_user, users_array[i].name) == 0) flag = i;
 		}
 	}
+	return add_user_to_project(flag, temp_user);
+}
+bool add_user_to_project(int flag,char* temp_user){//fund to add new user to project
+	if (flag == -1){
+		return False;
+
+	}
+
 	projects_array[curr_index_project].users_amount++;//increase the amount of users in the project
 	projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*projects_array[curr_index_project].users_amount);//increas by one the users list
 	projects_array[curr_index_project].users_list[projects_array[curr_index_project].users_amount - 1] = (char*)malloc(sizeof(char)* 25);//allocate new memory 
@@ -845,6 +837,7 @@ void add_user_to_project(){//fund to add new user to project
 	}
 	users_array[flag].project_list[users_array[flag].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
 	strcpy(users_array[flag].project_list[users_array[flag].projects_amount - 1], projects_array[curr_index_project].name);
+	return True;
 }
 void defult_status_to_new_project(){
 	projects_array[web_projects_amount - 1].status_amount = 4;
@@ -858,7 +851,7 @@ void defult_status_to_new_project(){
 	projects_array[web_projects_amount - 1].status_list[2].tasks_amount = 0;
 	projects_array[web_projects_amount - 1].status_list[3].tasks_amount = 0;
 }
-char* new_project_name(){
+void new_project_name(){
 	int flag = 0;
 	printf("\nInsert your Project Name:(projects name must be up to 25 characters)\n");
 	char temp1[1024], *temp;
@@ -886,17 +879,9 @@ char* new_project_name(){
 		temp[i] = temp1[i];
 	}
 	temp[strlen(temp1)] = '\0';
-	return temp;
+	return add_new_project( temp);
 }
-bool add_new_project(){
-	/**/
-	char *temp = (char*)malloc(sizeof(char)*SIZE);
-	if (*temp == NULL)
-	{
-		return False;
-	}
-	strcpy(temp, new_project_name());
-	getchar();
+bool add_new_project(char* temp){
 	/**/
 	if (!web_projects_amount){
 		web_projects_amount++;
@@ -1415,7 +1400,7 @@ void print_project_menu(int project_manager){
 						  break;
 				}//end of case 4
 			case(5) :/*add user to this project*/ {
-						  add_user_to_project();
+						  insert_username_to_add();
 						  break;
 				}//end of case 5
 			case(6) :/*exit from current project will remove user from this project and this project from users projects array*/ {
@@ -1483,7 +1468,7 @@ void print_project_menu(int project_manager){
 						  break;
 			}//end of case 4
 			case(5) :/*add user to this project*/ {
-						 add_user_to_project();
+						 insert_username_to_add();
 						 break;
 				}//end of case 5
 			case(6) :/*exit from current project will remove user from this project and this project from users projects array*/ {
@@ -1530,13 +1515,14 @@ void play()
 					  break;
 			}//end of case 1
 		case(2) : {
-					  signUp();
+					  insert_details_for_signup();
 					  break;
 			}//end of case 2
 		case(3) : {
 					  print_arrays_to_files();
 					  return 0;
 			}//end of case 3
+
 		}
 	}
 		
@@ -1545,6 +1531,7 @@ void user_main_menu(){//after user logs in this menu will appear
 	while (1){
 		int choose = 0;
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
+		//TODO web managers menu
 		while (choose<1 || choose>4){
 			scanf("%d", &choose);
 			getchar();
@@ -1569,7 +1556,7 @@ void user_main_menu(){//after user logs in this menu will appear
 					  break;
 			}//end of case 1
 		case(2) : {
-					  add_new_project();
+					  new_project_name();
 					  getchar();
 					  print_project_menu(1);
 					  break;
@@ -1589,6 +1576,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 	printf("your chosen user is: %s\n", projects_array[curr_index_project].users_list[chosen_user]);
 	printf("choose one of the following options:\n1.send message to this user\n2.do nothing\n3.remove this user (can be executed only by project manager)\n");
 	int choose = 0;
+	//TODO add project manager assignment
 	while (choose<1 || choose>3){
 		scanf("%d", &choose);
 		getchar();

@@ -13,7 +13,7 @@ do abcd
 None
 projectname
 elicitation
-do acc
-to do acc ccc dsaa
-0
-None
+do
+acc
+-842150451
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍýýýý
