@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <string.h>
 
+
 #define TEMP_SIZE 1024
 #define SIZE 25
 #define MODEOUT "w"
@@ -66,28 +67,30 @@ typedef struct
 	int archived;
 
 }Projects;
+void choose_user_to_remove();
+void insert_details_for_signup();
 char* new_user_name();
 void move_task(int status, int task);
-char *new_project_name();
-void confirm_task();
+void new_project_name();
+bool confirm_task(int,int);
 void change_name();
-void scan_no1();
-void scan_no2();
-void scan_no3();
-void sort_tasks_no4();
-void sort_projects_to_users_no5();
-void scan_no6();
-void print_arrays_to_files();
-void sort_messages_to_users_no7();
-void print_no1();
-void print_no2();
-void print_no3();
-void print_no4();
-void add_new_project();
+bool scan_no1();
+bool scan_no2();
+bool scan_no3();
+bool sort_tasks_no4();
+bool sort_projects_to_users_no5();
+bool scan_no6();
+bool print_arrays_to_files();
+bool sort_messages_to_users_no7();
+bool print_no1();
+bool print_no2();
+bool print_no3();
+bool print_no4();
+bool add_new_project();
 void print_user_projects();
-void signUp();
+bool signUp(char*,char*);
 void cleanBuffer();
-int log_in();
+bool log_in();
 int String(char arry[]);
 void cleanString(char arry[]);
 int check_member(char user[], char password[]);
@@ -98,7 +101,7 @@ void print_projects_task();
 void print_web_users();
 int check_admin(char * name);
 int confirm_project();
-void fill_arrays();
+bool fill_arrays();
 void send_message(char *sender, char* target, char* message);
 char * func_to_get_message();
 void allocate_messages();
@@ -109,35 +112,39 @@ void print_users();
 void print_all_messages();
 void print_login_singup();
 int get_user_index_by_name();
-void add_user_to_project();
+bool add_user_to_project(int,char*);
 int get_project_index(char*);
 void defult_status_to_new_project();
 void print_users_project();
-void new_task();
+bool new_task(char*,char*);
 void print_tasks_array();
-void send_message_by_admin(char *sender, char* message);
-void send_message_by_user(char *sender, char* target, char* message);
-void send_message_for_all_in_project(char *sender, char* message);
+bool send_message_by_admin(char* message);
+bool send_message_by_user(char *sender, char* target, char* message);
+bool send_message_for_all_in_project(char *sender, char* message);
 void manage_task(int status, int task);
 void choose_task();
-void remove_user();
+bool remove_user(int);
 int choose_yes_or_no();
 void add_Wmanager(int index_user);
 void change_name();
-void exit_from_project(int user_array);
+bool exit_from_project();
 void message_abute_task();
 void change_status();
-void remove_user_from_project(int index_to_delete);
-void remove_task(int status, int task);
+bool remove_user_from_project(int index_to_delete);
+bool remove_task(int status, int task);
 void print_project_menu(int);
 int print_and_choose_user_projects();
 void print_main_menu();
-void add_new_status();
+bool add_new_status(char*);
 void print_chosen_user_menu(int, int);
 void user_main_menu();
 int get_user_index(char*username);
 void print_user_messages();
 int check_if_last_project(int index_project_to_check,int user_to_check);
+void insert_username_to_add();
+void manager_menu();
+void delete_user_from_project_by_index_users_and_prpject(int project,int user);
+void get_status_name();
 
 WebManager* Wmanager;//will contain the web managet user name
 Users* users_array;// will contain all web users
@@ -150,49 +157,40 @@ Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount = 0;//tasks amount
 int curr_index_user;//the current user after log in
 int curr_index_project;
-
+bool prmotoe_user_to_manger(int user_to_promote);
 
 
 int main()
 {
-	fill_arrays();
-	play();
-	
-	//log_in();
-	//move_task(0, 0, 0);
-	//printf("%s\n", projects_array[0].status_list[0].tasks_list[0]->status_name);
-	//printf("%s\n", tasks_array[1].status_name);
-	//curr_index_project = 0;
-	//new_task();
-	//printf("%s\n", projects_array[0].status_list[0].tasks_list[2]->name);
-	//printf("%s\n", tasks_array[1].status_name);
-	//signUp();
-	
-
-	//add_Wmanager(1,1);
-//	add_Wmanager(1,1);
-	
+	int choose = 0;
+	printf("choose 1 to play program or 2 to run tests\n");
+	while (choose<1 || choose>2){
+		scanf("%d", &choose);
+		getchar();
+	}
+	switch (choose){
+	case(1) : {
+				  fill_arrays();
+				  play();
+				  break;
+		}
+	case(2) : {
+				  Unit_tests();
+				  web_messages_amount = 0;
+				  web_users_amount = 0;
+				  web_tasks_amount = 0;
+				  web_projects_amount = 0;
+				  free(messages_array);
+				  free(users_array);
+				  free(projects_array);
+				  free(tasks_array);
+				  break;
+		}
+	}
 }
-//	char member[] = { "zohar" };
-//	int enter = 0;
-//	//system_massage(member);
-//	
-//	
-//	do
-//	{
-//		printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
-//		scanf("%d", &enter);
-//		cleanBuffer();
-//		if (enter == 1)
-//			log_in(member);
-//		if (enter == 2){
-//			signUp();
-//		}
-//		enter = 0;
-//	} while (True);
-//	return 0;		
+
 /*sign up*/
-void signUp(){
+void insert_details_for_signup(){
 	int member_Exist = False;
 	char member[SIZE], password[SIZE];//open arry
 	do//loop for sign up
@@ -225,16 +223,20 @@ void signUp(){
 		}
 		member_Exist = String(password);//get password from user
 	} while (member_Exist);
+	return signUp(member, password);
+}
+bool signUp(char* member,char* password){
+
 	users_array = (Users*)realloc(users_array, (web_users_amount + 1)*sizeof(Users));
 	if (users_array == NULL){//if not open quit
-		printf("the arry could not be created\n");
-		exit(1);
+		return False; 
 	}
 	web_users_amount++;
 	strcpy(users_array[web_users_amount-1].name, member);
 	strcpy(users_array[web_users_amount-1].password, password);
 	users_array[web_users_amount - 1].messages_amount = 0;
 	users_array[web_users_amount - 1].projects_amount = 0;
+	return True;
 }
 void cleanBuffer(){//clean the buffer
 	char buffer;
@@ -245,7 +247,7 @@ void cleanString(char arry[]){//If there are more letters than the size of the s
 		arry[i] = '\0';
 	}
 }
-int log_in(){
+bool log_in(){
 	int Not_Valid_Pass = False, Not_Valid_Name = False, Not_Member = True;
 	char password[SIZE], member[SIZE];//open string
 	do{
@@ -309,7 +311,7 @@ int check_member(char user[], char password[]){
 				return True;
 			}
 			return False;
-	}
+		}
 	}
 	return False;
 }
@@ -325,7 +327,7 @@ int choose_yes_or_no(){//function to ask the user if exit to loby/main
 	return False;
 }
 /*reading files and arrays sorting functions*/
-void fill_arrays(){
+bool fill_arrays(){
 	/*1. scans user names and passwords into users array*/
 	scan_no1();
 	/*end of 1.*/
@@ -348,9 +350,23 @@ void fill_arrays(){
 	sort_messages_to_users_no7();
 	/*end of 7.*/
 
+	return True;
 }
-void scan_no1(){
+
+bool scan_no1()
+{
+	FILE* wmanager = fopen(ADMIN_FILE, "r");
+	if (!wmanager)
+	{
+		return False;
+	}
+	Wmanager = (WebManager*)malloc(sizeof(WebManager));
+	fscanf(wmanager, "%s", &Wmanager->name);
 	FILE* users_File = fopen(USER_FILE_NAME, "r");
+	if (!users_File)
+	{
+		return False;
+	}
 	fscanf(users_File, "%d", &web_users_amount);
 	users_array = (Users*)malloc(sizeof(Users)*web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
@@ -361,10 +377,22 @@ void scan_no1(){
 		fscanf(users_File, "%s", &users_array[i].password);
 	}
 	fclose(users_File);
+
+	return True;
 }
-void scan_no2(){
+
+bool scan_no2()
+{
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "r");
+	if (!projects_file)
+	{
+		return False;
+	}
 	FILE* projects_managers_file = fopen(PROJECT_MANAGERS_FILE, "r");
+	if (!projects_managers_file)
+	{
+		return False;
+	}
 	fscanf(projects_file, "%d", &web_projects_amount);
 	projects_array = (Projects*)malloc(sizeof(Projects)*web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
@@ -377,7 +405,7 @@ void scan_no2(){
 			fscanf(projects_file, "%s", &temp);
 			strcpy(projects_array[i].users_list[j], temp);
 		}
-		char temp[20];
+		char temp[SIZE];
 		fscanf(projects_managers_file, "%s", &temp);
 		fscanf(projects_managers_file, "%d", &projects_array[i].manager_amount);
 		projects_array[i].Manager_list = (char**)malloc(sizeof(char*)*projects_array[i].manager_amount);
@@ -398,9 +426,16 @@ void scan_no2(){
 	}
 	fclose(projects_file);
 	fclose(projects_managers_file);
+
+	return True;
 }
-void scan_no3(){
+
+bool scan_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "r");
+	if (!tasks_file)
+	{
+		return False;
+	}
 	fscanf(tasks_file, "%d", &web_tasks_amount);
 	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
@@ -415,8 +450,16 @@ void scan_no3(){
 		fscanf(tasks_file, "%d %s", &tasks_array[i].task_progres, &tasks_array[i].assign_to);
 	}
 	fclose(tasks_file);
+
+	return True;
 }
-void sort_tasks_no4(){
+
+bool sort_tasks_no4(){
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < projects_array[i].status_amount; j++){
+			projects_array[i].status_list[j].tasks_amount = 0;
+		}
+	}
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < web_tasks_amount; j++){
 			if (!strcmp(projects_array[i].name, tasks_array[j].project_name)){
@@ -440,8 +483,11 @@ void sort_tasks_no4(){
 		}
 
 	}
+
+	return True;
 }
-void sort_projects_to_users_no5(){
+
+bool sort_projects_to_users_no5(){
 	for (int i = 0; i < web_users_amount; i++){
 		for (int j = 0; j < web_projects_amount; j++){
 			for (int k = 0; k < projects_array[j].users_amount; k++){
@@ -462,9 +508,16 @@ void sort_projects_to_users_no5(){
 			}
 		}
 	}
+
+	return True;
 }
-void scan_no6(){
+
+bool scan_no6(){
 	FILE* messages_file = fopen(MESSAGE_FILE, "r");
+	if (!messages_file)
+	{
+		return False;
+	}
 	fscanf(messages_file, "%d", &web_messages_amount);
 	messages_array = (Messages*)malloc(sizeof(Messages)*web_messages_amount);
 	for (int i = 0; i < web_messages_amount; i++){
@@ -483,8 +536,11 @@ void scan_no6(){
 	}
 	fclose(messages_file);
 
+	return True;
 }
-void sort_messages_to_users_no7(){
+
+bool sort_messages_to_users_no7()
+{
 	for (int i = 0; i < web_users_amount; i++){
 		for (int j = 0; j < web_messages_amount; j++){
 			if (!strcmp(users_array[i].name, messages_array[j].target)){
@@ -501,10 +557,12 @@ void sort_messages_to_users_no7(){
 			}
 		}
 	}
+
+	return True;
 }
 /*end of reading files and arrays sorting functions */
 /*print arrays to files functions*/
-void print_arrays_to_files(){
+bool print_arrays_to_files(){
 	/*1. prints users array*/
 	print_no1();
 	/*end of 1.*/
@@ -516,18 +574,33 @@ void print_arrays_to_files(){
 	/*4. print messages to file*/
 	print_no4();
 	/*end of 4.*/
+	return True;
 }
-void print_no1(){
-	FILE *users_file = fopen(USER_FILE_NAME, "w");
+bool print_no1(){
+	FILE* users_file = fopen(USER_FILE_NAME, "w");
+	if (users_file == NULL)
+	{
+		return False;
+	}
 	fprintf(users_file, "%d\n", web_users_amount);
 	for (int i = 0; i < web_users_amount; i++){
 		fprintf(users_file, "%s\n%s\n", users_array[i].name, users_array[i].password);
 	}
 	fclose(users_file);
+
+	return True;
 }
-void print_no2(){
+bool print_no2(){
 	FILE* projects_file = fopen(PROJECTS_FILE_NAME, "w");
+	if (projects_file == NULL)
+	{
+		return False;
+	}
 	FILE* project_managers = fopen(PROJECT_MANAGERS_FILE, "w");
+	if (project_managers == NULL)
+	{
+		return False;
+	}
 	fprintf(projects_file, "%d\n", web_projects_amount);
 	for (int i = 0; i < web_projects_amount; i++){
 		fprintf(projects_file, "%s\n%d\n", projects_array[i].name, projects_array[i].users_amount);
@@ -546,23 +619,36 @@ void print_no2(){
 	}
 	fclose(projects_file);
 	fclose(project_managers);
+
+	return True;
 }
-void print_no3(){
+bool print_no3(){
 	FILE* tasks_file = fopen(TASKS_FILE, "w");
+	if (tasks_file == NULL)
+	{
+		return False;
+	}
 	fprintf(tasks_file, "%d\n", web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
 		fprintf(tasks_file, "%s\n%s\n%s\n%s\n%d\n%s\n", tasks_array[i].project_name, tasks_array[i].status_name, tasks_array[i].name, tasks_array[i].task_details, tasks_array[i].task_progres, tasks_array[i].assign_to);
 	}
 	fclose(tasks_file);
+
+	return True;
 }
-void print_no4(){
-	FILE * messages_file = fopen(MESSAGE_FILE, "w");
+bool print_no4(){
+	FILE* messages_file = fopen(MESSAGE_FILE, "w");
+	if (messages_file == NULL)
+	{
+		return False;
+	}
 	fprintf(messages_file, "%d\n", web_messages_amount);
 	for (int i = 0; i < web_messages_amount; i++){
 		fprintf(messages_file, "%s\n%s\n%s\n", messages_array[i].sender, messages_array[i].target, messages_array[i].content);
 	}
 	fclose(messages_file);
 
+	return True;
 }
 /*end of print arrays to files functions*/
 int print_and_choose_user_projects(){
@@ -596,7 +682,7 @@ int check_admin(char * name){
 void print_web_users(){
 	printf("Those All Site Members:\n");
 	for (int i = 0; i < web_users_amount; i++){//loop to print all users
-		printf("%d,%s\n", (i + 1), users_array[i].name);
+		printf("%d.%s\n", (i + 1), users_array[i].name);
 	}
 }
 int confirm_project(){//func to archived the project *only maneger can do that*
@@ -608,7 +694,7 @@ int confirm_project(){//func to archived the project *only maneger can do that*
 	}
 	return -1;
 }
-void send_message_by_user(char *sender, char* target, char *message){
+bool send_message_by_user(char *sender, char* target, char *message){
 	web_messages_amount++;
 	if (web_messages_amount == 1){
 		messages_array = (Messages*)malloc(sizeof(Messages));
@@ -616,21 +702,27 @@ void send_message_by_user(char *sender, char* target, char *message){
 	else{
 	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
 	if (messages_array == NULL)
-		exit(1);
+		return False;
 	}
 	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 	if (messages_array[web_messages_amount - 1].content == NULL)
-		exit(1);
+		return False;
 	strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
 	strcpy(messages_array[web_messages_amount - 1].sender, sender);
 	strcpy(messages_array[web_messages_amount - 1].target, target);
 	sort_messages_to_users_no7();
-	printf("\nMessage succesfully sent\n");
+	if (strcmp(message, "test")){
+		printf("\nMessage succesfully sent\n");
+	}
+	return True;
 }
-void send_message_by_admin(char *sender, char *message){
+bool send_message_by_admin(char *message){
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
-	for (int i = web_users_amount; i < web_users_amount + web_users_amount; i++){
+	if (!messages_array){
+		return False;
+	}
+	for (int i = web_messages_amount; i < web_users_amount + web_users_amount; i++){
 		messages_array[i - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 		strcpy(messages_array[i - 1].content, message);//העתקות לתוך מערך
 		strcpy(messages_array[i - 1].sender, "ADMIN");
@@ -638,10 +730,18 @@ void send_message_by_admin(char *sender, char *message){
 		j++;
 	}
 	web_messages_amount += web_users_amount;
+	sort_messages_to_users_no7();
+	if (strcmp(message, "test")){
+		printf("\nMessage succesfully sent\n");
+	}
+	return True;
 }
-void send_message_for_all_in_project(char *sender, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
+bool send_message_for_all_in_project(char *sender, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + projects_array[curr_index_project].users_amount) * sizeof(Messages));//realloc 1 place for new message
+	if (!messages_array){
+		return False;
+	}
 	for (int i = web_messages_amount; i < web_messages_amount + projects_array[curr_index_project].users_amount; i++){
 		messages_array[i].content = (char*)malloc(strlen(message_demand)*sizeof(char));//Opening indicates the size of the array
 		strcpy(messages_array[i].content, message_demand);//העתקות לתוך מערך
@@ -650,6 +750,11 @@ void send_message_for_all_in_project(char *sender, char* message_demand){//פו�
 		j++;
 	}
 	web_messages_amount += projects_array[curr_index_project].users_amount;
+	sort_messages_to_users_no7();
+	if (strcmp(message_demand, "test")){
+		printf("\nMessage succesfully sent\n");
+	}
+	return True;
 }
 void change_pass(){
 	char temp_pass[SIZE];
@@ -693,7 +798,7 @@ void assigned_to(int status, int task){
 	for (int i = 0; i < projects_array[curr_index_project].users_amount; i++){/*print all users in current project*/
 		printf("%d: %s\n", (i + 1), projects_array[curr_index_project].users_list[i]);
 	}
-	fscanf("%d", &chosen_user);/*ask user to choose username*/
+	scanf("%d", &chosen_user);/*ask user to choose username*/
 	/*copy the selected name to selected task at "assigned to" field*/
 	strcpy(projects_array[curr_index_project].status_list[status].tasks_list[task]->assign_to, projects_array[curr_index_project].users_list[chosen_user - 1]);
 }
@@ -722,19 +827,7 @@ void print_all_messages()
 		printf("Content : %s\n", messages_array[i].content);
 	}
 }
-void print_login_singup(){
-	int enter;
-	printf("1.log in\n2.sign up\nplease enter you chooic: ");//זמנית בנתיים עד שנראה איך מריצים דרך פונקציה play
-	scanf("%d", &enter);
-	cleanBuffer();
-	if (enter == 1)
-		log_in();
-	if (enter == 2){
-		signUp();
-		//printf("%s", projects_array[1].Manager_list[0]);
-	}
-}
-void add_user_to_project(){//fund to add new user to project
+void insert_username_to_add(){
 	char temp_user[SIZE];
 	int flag = -1, index_try = 0;
 	while (flag == -1){//loop to get the name of user that we want add - if there is no exist this user - again
@@ -745,6 +838,14 @@ void add_user_to_project(){//fund to add new user to project
 			if (strcmp(temp_user, users_array[i].name) == 0) flag = i;
 		}
 	}
+	return add_user_to_project(flag, temp_user);
+}
+bool add_user_to_project(int flag,char* temp_user){//fund to add new user to project
+	if (flag == -1){
+		return False;
+
+	}
+
 	projects_array[curr_index_project].users_amount++;//increase the amount of users in the project
 	projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*projects_array[curr_index_project].users_amount);//increas by one the users list
 	projects_array[curr_index_project].users_list[projects_array[curr_index_project].users_amount - 1] = (char*)malloc(sizeof(char)* 25);//allocate new memory 
@@ -759,6 +860,7 @@ void add_user_to_project(){//fund to add new user to project
 	}
 	users_array[flag].project_list[users_array[flag].projects_amount - 1] = (char*)malloc(sizeof(char)*SIZE);
 	strcpy(users_array[flag].project_list[users_array[flag].projects_amount - 1], projects_array[curr_index_project].name);
+	return True;
 }
 void defult_status_to_new_project(){
 	projects_array[web_projects_amount - 1].status_amount = 4;
@@ -772,7 +874,7 @@ void defult_status_to_new_project(){
 	projects_array[web_projects_amount - 1].status_list[2].tasks_amount = 0;
 	projects_array[web_projects_amount - 1].status_list[3].tasks_amount = 0;
 }
-char* new_project_name(){
+void new_project_name(){
 	int flag = 0;
 	printf("\nInsert your Project Name:(projects name must be up to 25 characters)\n");
 	char temp1[1024], *temp;
@@ -800,21 +902,25 @@ char* new_project_name(){
 		temp[i] = temp1[i];
 	}
 	temp[strlen(temp1)] = '\0';
-	return temp;
+	return add_new_project( temp);
 }
-void add_new_project(){
-	/**/
-	char *temp = (char*)malloc(sizeof(char)*SIZE);
-	strcpy(temp, new_project_name());
-	getchar();
+bool add_new_project(char* temp){
 	/**/
 	if (!web_projects_amount){
 		web_projects_amount++;
 		projects_array = (Projects*)malloc(sizeof(Projects));
+		if (projects_array == NULL)
+		{
+			return False;
+		}
 	}
 	else{
 		web_projects_amount++;
 		projects_array = (Projects*)realloc(projects_array, sizeof(Projects)* web_projects_amount);
+		if (projects_array == NULL)
+		{
+			return False;
+		}
 	}
 	strcpy(projects_array[web_projects_amount - 1].name, temp);
 	projects_array[web_projects_amount - 1].users_amount = 1;
@@ -841,6 +947,7 @@ void add_new_project(){
 	//temp[SIZE - 1] = '\0';
 	curr_index_project = web_projects_amount - 1;
 
+	return True;
 }
 int get_project_index(char* project_name){
 	for (int i = 0; i < web_projects_amount; i++){
@@ -856,7 +963,7 @@ void print_users_project(){//func to print the users in project
 		printf("%d. %s\n", (i + 1), projects_array[curr_index_project].users_list[i]);
 	}
 }
-void new_task(){
+void get_task_details(){
 	char temp_task[SIZE], details_task[TEMP_SIZE];//temprory strings to get status name and details from user
 	printf("Fill Details:\n");
 	printf("Enter Name:");
@@ -865,6 +972,10 @@ void new_task(){
 	printf("Enter Details:");
 	fgets(details_task, TEMP_SIZE, stdin);
 	details_task[strlen(details_task) - 1] = '\0';
+	return new_task(temp_task, details_task);
+}
+bool new_task(char* temp_task,char* details_task){
+
 	/*if the first task created*/
 	if (web_tasks_amount == 0){
 		web_tasks_amount++;
@@ -876,9 +987,6 @@ void new_task(){
 		strcpy(tasks_array[0].project_name, projects_array[curr_index_project].name);
 		strcpy(tasks_array[0].status_name, projects_array[curr_index_project].status_list[0].name);
 		tasks_array[0].task_progres = 0;
-		projects_array[curr_index_project].status_list[0].tasks_amount++;
-		projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
-		projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[0];
 	}
 	/*end of first task created*/
 	/*if not first task created*/
@@ -892,26 +1000,21 @@ void new_task(){
 			strcpy(tasks_array[web_tasks_amount - 1].status_name, projects_array[curr_index_project].status_list[0].name);
 			tasks_array[web_tasks_amount - 1].task_progres = 0;
 			strcpy(tasks_array[web_tasks_amount - 1].assign_to, "None");
-			/*if first task for project or for status*/
-			if (!projects_array[curr_index_project].status_list[0].tasks_amount){
-				projects_array[curr_index_project].status_list[0].tasks_amount++;
-				projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
-				projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[web_tasks_amount - 1];
-			}
-			/*end of case that firs task for project or status*/
-			/*if not first task created for project or status*/
-			else{
-				projects_array[curr_index_project].status_list[0].tasks_amount++;
-				projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)realloc(projects_array[curr_index_project].status_list[0].tasks_list, sizeof(Tasks*)*projects_array[curr_index_project].status_list[0].tasks_amount);
-				projects_array[curr_index_project].status_list[0].tasks_list[projects_array[curr_index_project].status_list[0].tasks_amount - 1] = &tasks_array[web_tasks_amount - 1];
-			}
-			/*end of case that not first task for project or status*/
 		}
+	if (strcmp(details_task, "test")){
+		send_message_for_all_in_project(projects_array[curr_index_project].name, "a new task was added to project");
+	}
 	/*end of case for bot first task created*/
-
+	sort_tasks_no4();
+	return True;
 }
-void confirm_task( int status_index, int task_index){
+bool confirm_task( int status_index, int task_index){
 	projects_array[curr_index_project].status_list[status_index].tasks_list[task_index]->task_progres = 1;
+	if (projects_array[curr_index_project].status_list[status_index].tasks_list[task_index]->task_progres){
+		return True;
+	}
+	return False;
+
 }
 void choose_task(){//this function will print all project tasks by the following order:
 	//1. STATUS NAME
@@ -1084,31 +1187,22 @@ char *new_user_name(){
 	temp[strlen(temp1)] = '\0';
 	return temp;
 }
-void exit_from_project(){
-	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
-		printf("Names Before Change:\n");
-		printf("%s\n", projects_array[project_index].users_list[k]);
-		}*/
+bool exit_from_project(){
+
 	for (int i = 0, j = 0; i < projects_array[curr_index_project].users_amount; i++, j++){//loop to run on the project array and find the user that we want to delete
 		if (strcmp(projects_array[curr_index_project].users_list[i], users_array[curr_index_user].name) == 0){//if we found the user
 			projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[i + 1];//we will delete
 			j = i + 1;//increase the j
 	}
 		projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[j];//copy all the other users in 1 place before
-}
+	}
 	projects_array[curr_index_project].users_amount--;//decrase the amnout users in project
 	int new_user_amount_in_project;
 	new_user_amount_in_project = projects_array[curr_index_project].users_amount;
 	projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
-	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
-		printf("Names After Change:\n");
-		printf("%s\n", projects_array[project_index].users_list[k]);
-		}*/
 
-	/*printf("Projects Before Change:\n");
-	for (int k = 0; k < users_array[curr_index_user].projects_amount; k++){
-		printf("%s\n", users_array[curr_index_user].project_list[k]);
-	}*/
+
+
 	for (int i = 0, j = 0; i < users_array[curr_index_user].projects_amount; i++, j++){//loop to run on the users array and find the project that we want to delete
 		if (strcmp(users_array[curr_index_user].project_list[i], projects_array[curr_index_project].name) == 0){//if we found the project
 			users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[i + 1];//we will delete
@@ -1120,39 +1214,95 @@ void exit_from_project(){
 	int new_project_amount_in_users;
 	new_project_amount_in_users = users_array[curr_index_user].projects_amount;
 	users_array[curr_index_user].project_list = (char **)realloc(users_array[curr_index_user].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
-	/*printf("Projects After Change:\n");
-	for (int k = 0; k < users_array[curr_index_user].projects_amount; k++){
-		printf("%s\n", users_array[curr_index_user].project_list[k]);
-	}*/
+	if (new_project_amount_in_users){
+		if (users_array[curr_index_user].project_list[new_project_amount_in_users - 1])
+		{
+			return False;
+		}
+	}
+	return True;
 
 }
-void remove_user(){
-	int i, notvalid = False;
-	print_web_users();
-	printf("choose member for remove for site enter the number between 1-%d: ", web_users_amount);
-
-	do
-	{
-		if (notvalid){
-			printf("wrong key");
-			if (choose_yes_or_no())
-				return;
-			printf("enter key again");
-			notvalid = False;
+void delete_user_from_project_by_index_users_and_prpject(int project, int user){
+	char ** temp_users = (char **)malloc(sizeof(char*)*projects_array[project].users_amount);
+	for (int i = 0; i < projects_array[project].users_amount; i++){
+		temp_users[i] = (char*)malloc(sizeof(char)*SIZE);
+	}
+	int user_ind = get_user_index(projects_array[project].users_list[user]);
+	for (int i = 0, j = 0; i < projects_array[project].users_amount; i++){
+		if (strcmp(projects_array[project].users_list[j], users_array[user_ind].name) != 0){
+			//temp_users[j] = projects_array[project].users_list[i];
+			strcpy(temp_users[j],projects_array[project].users_list[i]);
+			j++;
 		}
-		scanf("%d", &i);
-		if (i<1 || i>web_users_amount + 1)
-			notvalid = True;
-	} while (notvalid);
-	printf("you want to remove %s from the site ", users_array[i - 1].name);
-	if (choose_yes_or_no()){
-		for (i -= 1; i < web_users_amount - 1; i++){
-			strcpy(users_array[i].name, users_array[i + 1].name);
-			strcpy(users_array[i].password, users_array[i + 1].password);
+	}
+	//free(projects_array[project].users_list);
+	projects_array[project].users_amount--;
+	projects_array[project].users_list = (char**) realloc(projects_array[project].users_list, sizeof(char*)*projects_array[project].users_amount);
+	for (int i = 0, j = 0; i < projects_array[project].users_amount; j++, i++){
+		//if (strcmp(projects_array[project].users_list[j], users_array[user].name) == 0)j++;
+		strcpy(projects_array[project].users_list[i], temp_users[i]);
+		//projects_array[project].users_list[i] = temp_users[i];
+	}
+
+	//projects_array[project].users_amount--;
+	free(temp_users);
+	//print_arrays_to_files();
+	//fill_arrays();
+}
+void choose_user_to_remove(){
+	int user_to_remove, temp;
+	printf("choose member to remove from site \nenter the number between 1-%d:\nchoose 0 to return\n ", web_users_amount);
+	print_web_users();
+	scanf("%d", &temp);
+	getchar();
+	if (temp == 0){
+		return;
+	}
+	user_to_remove = temp - 1;
+	return remove_user(user_to_remove);
+}
+bool remove_user(int user_to_remove){
+
+	for (int i = 0; i < web_projects_amount; i++){
+		for (int j = 0; j < projects_array[i].users_amount; j++){
+			if (strcmp(projects_array[i].users_list[j], users_array[user_to_remove].name) == 0){
+				delete_user_from_project_by_index_users_and_prpject(i,j);
+			}
+		}
+	}
+	if (strcmp(users_array[user_to_remove].name, users_array[web_users_amount-1].name) == 0){//if the user that we want delete is the last
+		web_users_amount--;
+		users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));//we will do realloc and just delete the last one
+	}
+	else{
+		int flag = 0;
+		for (int i = 0, j = 0; i < web_users_amount-1; j++, i++){//loop to run on the user array to find the user that we delete
+			if (strcmp(users_array[i].name, users_array[user_to_remove].name) == 0){ flag = 1; }//if we find the user
+			if(flag==1){
+				strcpy(users_array[i].name, users_array[i + 1].name);//we will copy the next one to the place that we want to delete
+				strcpy(users_array[i].password, users_array[i + 1].password);
+				users_array[i].messages_amount = users_array[i + 1].messages_amount;
+				users_array[i].message_list = (Messages**)malloc(sizeof(Messages*)*users_array[i].messages_amount);
+				for (int k = 0; k < users_array[i].messages_amount; k++){
+					users_array[i].message_list[k] = users_array[i + 1].message_list[k];
+				}
+				users_array[i].projects_amount = users_array[i + 1].projects_amount;
+				users_array[i].project_list = (char**)malloc(sizeof(char*)*users_array[i].projects_amount);
+				for (int k = 0; k < users_array[i].projects_amount; k++){
+					users_array[i].project_list[k] = (char*)malloc(sizeof(char)*SIZE);
+					strcpy(users_array[i].project_list[k], users_array[i + 1].project_list[k]);
+				}
+				//j = i + 1;
+			}
+			//strcpy(users_array[i].name, users_array[j].name);//we will continue to copy the next 
 		}
 		web_users_amount--;
+		users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));//we will do realloc and just delete the last one
 	}
-	users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));
+
+
+
 }
 void add_Wmanager(int index_user){
 	printf("you want to make %s manger in this project", projects_array[curr_index_project].users_list[index_user]);//print to user 
@@ -1169,18 +1319,18 @@ void message_abute_task(int index){
 void change_status(){
 
 }
-void remove_user_from_project(int index_to_delete){
+bool remove_user_from_project(int index_to_delete){
 	int flag = 0, check_if_manager = 0, check_if_last = 0,succes=0;
 	int check_if_last_projectt = 0;
 
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//loop to check if we connected as a manger of project
-		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_project].name) == 0)flag = 1;//if yes change the flag to 1
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_user].name) == 0)flag = 1;//if yes change the flag to 1
 		}//end of check if project manager
 
 	for (int i = 0; i < projects_array[curr_index_project].users_amount; i++){//check if we try to delete the last
 		if (strcmp(projects_array[curr_index_project].users_list[i], users_array[index_to_delete].name) == 0){
 			if (i == projects_array[curr_index_project].users_amount - 1) check_if_last = 1;
-	}
+		}
 	}//end loop check if lest
 
 	if (strcmp(users_array[curr_index_user].name, users_array[index_to_delete].name) == 0)check_if_manager = 1;//check if manager try to delete itself 
@@ -1232,9 +1382,15 @@ void remove_user_from_project(int index_to_delete){
 	users_array[index_to_delete].project_list = (char **)realloc(users_array[index_to_delete].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
 		}
 	}
-	if (flag == 0)printf("You Are Not Manager - You Can't Remove User From This Project\n");
-	if (check_if_manager == 1)printf("You Are Try To Delete Your Self - You Can't Do That\n");
-
+	if (flag == 0){
+		printf("You Are Not Manager - You Can't Remove User From This Project\n");
+		return False;
+	}
+	if (check_if_manager == 1){
+		printf("You Are Try To Delete Your Self - You Can't Do That\n");
+		return False;
+	}
+	return True;
 }
 int check_if_last_project(int index_project_to_check, int user_to_check){
 	for (int i = 0; i < users_array[user_to_check].projects_amount; i++){//check if we try to delete the last
@@ -1244,7 +1400,7 @@ int check_if_last_project(int index_project_to_check, int user_to_check){
 		}
 	}
 }
-void remove_task(int status, int task){
+bool remove_task(int status, int task){
 	int task_index_global=-1;
 	/*search for task in tasks global array*/
 	for (int i = 0; i < web_tasks_amount; i++){
@@ -1259,7 +1415,7 @@ void remove_task(int status, int task){
 	/*end of search for task in tasks global array*/
 	if (task_index_global == -1){//if task not found in global array
 		printf("\ntask not found\n");
-		return;
+		return False;
 	}
 	Tasks* temp = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
 	for (int i = 0,k=0; i < web_tasks_amount; i++){
@@ -1278,11 +1434,13 @@ void remove_task(int status, int task){
 	}
 	free(tasks_array);
 	web_tasks_amount--;
+	tasks_array = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
 	for (int i = 0; i < web_tasks_amount; i++){
 		tasks_array[i] = temp[i];
 	}
 	sort_tasks_no4();
 	free(temp);
+	return True;
 }
 void print_project_menu(int project_manager){
 	if (!project_manager){
@@ -1321,15 +1479,15 @@ void print_project_menu(int project_manager){
 
 				}//end of case 2
 			case(3) :/*creat new task*/ {
-						  new_task();
+						  get_task_details();
 						  break;
 				}//end of case 3
 			case(4) : {
-						  add_new_status();
+						  get_status_name();
 						  break;
 				}//end of case 4
 			case(5) :/*add user to this project*/ {
-						  add_user_to_project();
+						  insert_username_to_add();
 						  break;
 				}//end of case 5
 			case(6) :/*exit from current project will remove user from this project and this project from users projects array*/ {
@@ -1373,7 +1531,11 @@ void print_project_menu(int project_manager){
 			case(1) : {
 						  print_users_project();
 						  int choose_user;
+						  printf("\nchoose 0 to go back");
 						  scanf("%d", &choose_user);
+						  if (!choose_user){
+							  break;
+						  }
 						  choose_user--;
 						  print_chosen_user_menu(choose_user, project_manager);//todo
 						  break;
@@ -1385,15 +1547,15 @@ void print_project_menu(int project_manager){
 
 				}//end of case 2
 			case(3) :/*creat new task*/ {
-						 new_task();
+						 get_task_details();
 						 break;
 				}//end of case 3
 			case(4) : {
-						  add_new_status();
+						  get_status_name();
 						  break;
 			}//end of case 4
 			case(5) :/*add user to this project*/ {
-						 add_user_to_project();
+						 insert_username_to_add();
 						 break;
 				}//end of case 5
 			case(6) :/*exit from current project will remove user from this project and this project from users projects array*/ {
@@ -1420,8 +1582,10 @@ void print_project_menu(int project_manager){
 		}
 	}//end of menu for project manager
 }
-void play(){
-	while (1){
+void play()
+{
+	while (1)
+	{
 	int choose = 0;
 	printf("==============================\nWelcome to meister task\n==============================\n");
 	printf("\n\n choose one of the following options:\n\n1. log in\n2.sign up\n3. quit program\n");
@@ -1438,21 +1602,27 @@ void play(){
 					  break;
 			}//end of case 1
 		case(2) : {
-					  signUp();
+					  insert_details_for_signup();
 					  break;
 			}//end of case 2
 		case(3) : {
 					  print_arrays_to_files();
-					  return 0;
+					  return;
 			}//end of case 3
+
 		}
 	}
 		
 }
 void user_main_menu(){//after user logs in this menu will appear
+	if (!strcmp(users_array[curr_index_user].name, Wmanager->name)){
+		manager_menu();
+		return;
+	}
 	while (1){
 		int choose = 0;
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
+		//TODO web managers menu
 		while (choose<1 || choose>4){
 			scanf("%d", &choose);
 			getchar();
@@ -1477,7 +1647,7 @@ void user_main_menu(){//after user logs in this menu will appear
 					  break;
 			}//end of case 1
 		case(2) : {
-					  add_new_project();
+					  new_project_name();
 					  getchar();
 					  print_project_menu(1);
 					  break;
@@ -1495,11 +1665,18 @@ void user_main_menu(){//after user logs in this menu will appear
 }
 void print_chosen_user_menu(int chosen_user,int projectmanager){
 	printf("your chosen user is: %s\n", projects_array[curr_index_project].users_list[chosen_user]);
-	printf("choose one of the following options:\n1.send message to this user\n2.do nothing\n3.remove this user (can be executed only by project manager)\n");
+	printf("choose one of the following options:\n1.send message to this user\n2.do nothing\n");
+	if (projectmanager)printf("\n3.remove this user (can be executed only by project manager)\n4.Promote User To Project Manager(can be executed only by project manager)\n");
 	int choose = 0;
-	while (choose<1 || choose>3){
+	//TODO add project manager assignment
+	while (choose<1 || choose>4){
 		scanf("%d", &choose);
 		getchar();
+		if ((choose == 3 || choose == 4) && !projectmanager){
+			choose = -1;
+			printf("You Can't Choose That You Are Not User Manager\n.");
+		}
+
 	}
 	switch (choose)
 	{
@@ -1523,6 +1700,11 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  remove_user_from_project(user_in_global_array);//calls side function that recives the user index in the global array and removing user from project and project from user
 				  break;
 		}//end of case 3
+	case(4) : {
+				  prmotoe_user_to_manger(chosen_user);
+				  break;
+
+	}
 	}
 }
 int get_user_index(char*username){
@@ -1534,25 +1716,24 @@ int get_user_index(char*username){
 	return -1;
 
 }
-void add_new_status(){
+void get_status_name(){
 	char temp_status[SIZE];
-	
-	/*for (int i = 0; i<projects_array[curr_index_project].status_amount; i++){//loop to print the status
-		printf("%d.%s\n",(i+1),projects_array[curr_index_project].status_list[i].name);
-	}*/
 	printf("Enter Status Name:");
 	fgets(temp_status, SIZE, stdin);//get the status name
 	temp_status[strlen(temp_status) - 1] = '\0';//put in the end \0
+	return add_new_status(temp_status);
+}
+bool add_new_status(char* temp_status){
 	projects_array[curr_index_project].status_amount++;//increase the the amount of status in the project
 	int status_amount_new = projects_array[curr_index_project].status_amount;
 	projects_array[curr_index_project].status_list = (Status *)realloc(projects_array[curr_index_project].status_list, sizeof(Status)*status_amount_new);//realloc the status array
+	if (!projects_array[curr_index_project].status_list){
+		projects_array[curr_index_project].status_amount--;
+		return False;
+	}
 	strcpy(projects_array[curr_index_project].status_list[status_amount_new-1].name,temp_status);//copy to the end of the status list the new status
 	projects_array[curr_index_project].status_list[status_amount_new - 1].tasks_amount = 0;	//intilize the amount of tasks to 0
-	/*print the array of status*/
-	/*for (int i = 0; i<projects_array[curr_index_project].status_amount; i++){
-		printf("%d.%s\n", (i + 1), projects_array[curr_index_project].status_list[i].name);
-	}*/
-	
+	return True;
 }
 void print_user_messages(){
 	if (!users_array[curr_index_user].messages_amount){
@@ -1560,8 +1741,92 @@ void print_user_messages(){
 		return;
 	}
 	for (int i = 0; i < users_array[curr_index_user].messages_amount; i++){
-		printf("from: %s\ncontent: %s", users_array[curr_index_user].message_list[i]->sender, users_array[curr_index_user].message_list[i]->content);
+		printf("from: %s\ncontent: %s\n", users_array[curr_index_user].message_list[i]->sender, users_array[curr_index_user].message_list[i]->content);
 	}
+}
+void manager_menu(){
+	while (1){
+		int choose = 0;
+		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
+		printf("5. send system message\n6. remove user from web\n7.view users in web\n");
+		while (choose<1 || choose>7){
+			scanf("%d", &choose);
+			getchar();
+		}
+		switch (choose){
+		case(1) : {
+					  if (!users_array[curr_index_user].projects_amount){
+						  printf("you have no projects!\n");
+						  break;
+					  }
+					  curr_index_project = print_and_choose_user_projects();
+					  if (curr_index_project == -1){
+						  break;
+					  }
+					  int projectmanager = 0;
+					  for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+						  if (!strcmp(users_array[curr_index_user].name, projects_array[curr_index_project].Manager_list[i])){
+							  projectmanager = 1;
+						  }
+					  }
+					  print_project_menu(projectmanager);
+					  break;
+		}//end of case 1
+		case(2) : {
+					  new_project_name();
+					  getchar();
+					  print_project_menu(1);
+					  break;
+		}//end of case 2
+		case(3) : {
+					  print_user_messages();
+					  break;
+		}//end of case 3
+		case(4) : {
+					  curr_index_user = -1;
+					  return;
+		}//end of case 4
+		case(5) : {
+					  //send_message_by_admin(sender,message);
+					  break;
+		}//end case 5
+		case(6) : {
+					  choose_user_to_remove();
+					  break;
+		}//end case 6
+		case(7) : {
+					  print_web_users();
+
+			}//end of case 7
+		}
+	}
+	
+}
+bool prmotoe_user_to_manger(int user_to_promote){
+	int flag = 0;
+	//printf("\nmanager list before promote\n");
+	//for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+	//	printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+	//}
+	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//checks if we trys to promote ourself
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[user_to_promote].name) == 0)flag = 1;
+	}
+	if (flag == 0){
+		projects_array[curr_index_project].manager_amount++;
+		projects_array[curr_index_project].Manager_list = (char**)realloc(projects_array[curr_index_project].Manager_list, sizeof(char*)*projects_array[curr_index_project].manager_amount);
+		projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);
+		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1], users_array[user_to_promote].name);
+	}
+	else {
+		//printf("You cant promote your self");
+		return False;
+
+	}
+	return True;
+//	printf("\nmanager list after promote\n");
+//	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+//		printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+//	}
 }
 
 

@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source.c" />
+    <ClCompile Include="Tests.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="projects.txt" />
@@ -91,7 +92,7 @@
     <Text Include="web_manager.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Downloads\MinUnit.h" />
+    <ClInclude Include="MinUnit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
