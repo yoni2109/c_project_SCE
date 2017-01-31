@@ -1,8 +1,7 @@
 4
 projectname
-2
+1
 mark
-idan
 2
 elicitation
 vandv

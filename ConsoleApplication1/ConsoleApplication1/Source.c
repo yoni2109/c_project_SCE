@@ -1229,8 +1229,9 @@ void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 	for (int i = 0; i < projects_array[project].users_amount; i++){
 		temp_users[i] = (char*)malloc(sizeof(char)*SIZE);
 	}
+	int user_ind = get_user_index(projects_array[project].users_list[user]);
 	for (int i = 0, j = 0; i < projects_array[project].users_amount; i++){
-		if (strcmp(projects_array[project].users_list[j], users_array[user].name) != 0){
+		if (strcmp(projects_array[project].users_list[j], users_array[user_ind].name) != 0){
 			//temp_users[j] = projects_array[project].users_list[i];
 			strcpy(temp_users[j],projects_array[project].users_list[i]);
 			j++;
@@ -1247,40 +1248,15 @@ void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 
 	//projects_array[project].users_amount--;
 	free(temp_users);
+	print_arrays_to_files();
+	fill_arrays();
 }
 void remove_user(){
 	int user_to_remove,temp;
-	//מרשימת משתמשים באתר
-	//מכל  הפרוקיטים
-	/*int i, notvalid = False;
-	print_web_users();
-	printf("choose member for remove for site enter the number between 1-%d: ", web_users_amount);
-
-	do
-	{
-	if (notvalid){
-	printf("wrong key");
-	if (choose_yes_or_no())
-	return;
-	printf("enter key again");
-	notvalid = False;
-	}
-	scanf("%d", &i);
-	if (i<1 || i>web_users_amount + 1)
-	notvalid = True;
-	} while (notvalid);
-	printf("you want to remove %s from the site ", users_array[i - 1].name);
-	if (choose_yes_or_no()){
-	for (i -= 1; i < web_users_amount - 1; i++){
-	strcpy(users_array[i].name, users_array[i + 1].name);
-	strcpy(users_array[i].password, users_array[i + 1].password);
-	}
-	web_users_amount--;
-	}
-	users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));*/
 	printf("choose member to remove from site \nenter the number between 1-%d: ", web_users_amount);
 	print_web_users();
 	scanf("%d", &temp);
+	getchar();
 	user_to_remove = temp - 1;
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < projects_array[i].users_amount; j++){
@@ -1289,17 +1265,31 @@ void remove_user(){
 			}
 		}
 	}
-	if (strcmp(users_array[user_to_remove].name, users_array[web_users_amount].name) == 0){//if the user that we want delete is the last
+	if (strcmp(users_array[user_to_remove].name, users_array[web_users_amount-1].name) == 0){//if the user that we want delete is the last
 		web_users_amount--;
 		users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));//we will do realloc and just delete the last one
 	}
 	else{
-		for (int i = 0, j = 0; i < web_users_amount; j++, i++){//loop to run on the user array to find the user that we delete
-			if (strcmp(users_array[i].name, users_array[user_to_remove].name) == 0){//if we find the user
+		int flag = 0;
+		for (int i = 0, j = 0; i < web_users_amount-1; j++, i++){//loop to run on the user array to find the user that we delete
+			if (strcmp(users_array[i].name, users_array[user_to_remove].name) == 0){ flag = 1; }//if we find the user
+			if(flag==1){
 				strcpy(users_array[i].name, users_array[i + 1].name);//we will copy the next one to the place that we want to delete
-				j = i + 1;
+				strcpy(users_array[i].password, users_array[i + 1].password);
+				users_array[i].messages_amount = users_array[i + 1].messages_amount;
+				users_array[i].message_list = (Messages**)malloc(sizeof(Messages*)*users_array[i].messages_amount);
+				for (int k = 0; k < users_array[i].messages_amount; k++){
+					users_array[i].message_list[k] = users_array[i + 1].message_list[k];
+				}
+				users_array[i].projects_amount = users_array[i + 1].projects_amount;
+				users_array[i].project_list = (char**)malloc(sizeof(char*)*users_array[i].projects_amount);
+				for (int k = 0; k < users_array[i].projects_amount; k++){
+					users_array[i].project_list[k] = (char*)malloc(sizeof(char)*SIZE);
+					strcpy(users_array[i].project_list[k], users_array[i + 1].project_list[k]);
+				}
+				//j = i + 1;
 			}
-			strcpy(users_array[i].name, users_array[j].name);//we will continue to copy the next 
+			//strcpy(users_array[i].name, users_array[j].name);//we will continue to copy the next 
 		}
 		web_users_amount--;
 		users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));//we will do realloc and just delete the last one
