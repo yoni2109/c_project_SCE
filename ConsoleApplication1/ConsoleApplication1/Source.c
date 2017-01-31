@@ -67,6 +67,7 @@ typedef struct
 	int archived;
 
 }Projects;
+void choose_user_to_remove();
 void insert_details_for_signup();
 char* new_user_name();
 void move_task(int status, int task);
@@ -126,7 +127,7 @@ bool remove_user(int);
 int choose_yes_or_no();
 void add_Wmanager(int index_user);
 void change_name();
-void exit_from_project(int user_array);
+bool exit_from_project();
 void message_abute_task();
 void change_status();
 bool remove_user_from_project(int index_to_delete);
@@ -400,7 +401,7 @@ bool scan_no2()
 			fscanf(projects_file, "%s", &temp);
 			strcpy(projects_array[i].users_list[j], temp);
 		}
-		char temp[20];
+		char temp[SIZE];
 		fscanf(projects_managers_file, "%s", &temp);
 		fscanf(projects_managers_file, "%d", &projects_array[i].manager_amount);
 		projects_array[i].Manager_list = (char**)malloc(sizeof(char*)*projects_array[i].manager_amount);
@@ -1182,31 +1183,22 @@ char *new_user_name(){
 	temp[strlen(temp1)] = '\0';
 	return temp;
 }
-void exit_from_project(){
-	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
-		printf("Names Before Change:\n");
-		printf("%s\n", projects_array[project_index].users_list[k]);
-		}*/
+bool exit_from_project(){
+
 	for (int i = 0, j = 0; i < projects_array[curr_index_project].users_amount; i++, j++){//loop to run on the project array and find the user that we want to delete
 		if (strcmp(projects_array[curr_index_project].users_list[i], users_array[curr_index_user].name) == 0){//if we found the user
 			projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[i + 1];//we will delete
 			j = i + 1;//increase the j
 	}
 		projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[j];//copy all the other users in 1 place before
-}
+	}
 	projects_array[curr_index_project].users_amount--;//decrase the amnout users in project
 	int new_user_amount_in_project;
 	new_user_amount_in_project = projects_array[curr_index_project].users_amount;
 	projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
-	/*for (int k = 0; k < projects_array[project_index].users_amount; k++){
-		printf("Names After Change:\n");
-		printf("%s\n", projects_array[project_index].users_list[k]);
-		}*/
 
-	/*printf("Projects Before Change:\n");
-	for (int k = 0; k < users_array[curr_index_user].projects_amount; k++){
-		printf("%s\n", users_array[curr_index_user].project_list[k]);
-	}*/
+
+
 	for (int i = 0, j = 0; i < users_array[curr_index_user].projects_amount; i++, j++){//loop to run on the users array and find the project that we want to delete
 		if (strcmp(users_array[curr_index_user].project_list[i], projects_array[curr_index_project].name) == 0){//if we found the project
 			users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[i + 1];//we will delete
@@ -1218,10 +1210,11 @@ void exit_from_project(){
 	int new_project_amount_in_users;
 	new_project_amount_in_users = users_array[curr_index_user].projects_amount;
 	users_array[curr_index_user].project_list = (char **)realloc(users_array[curr_index_user].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
-	/*printf("Projects After Change:\n");
-	for (int k = 0; k < users_array[curr_index_user].projects_amount; k++){
-		printf("%s\n", users_array[curr_index_user].project_list[k]);
-	}*/
+	if (users_array[curr_index_user].project_list==NULL)
+	{
+		return False;
+	}
+	return True;
 
 }
 void delete_user_from_project_by_index_users_and_prpject(int project, int user){
@@ -1248,8 +1241,8 @@ void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 
 	//projects_array[project].users_amount--;
 	free(temp_users);
-	print_arrays_to_files();
-	fill_arrays();
+	//print_arrays_to_files();
+	//fill_arrays();
 }
 void choose_user_to_remove(){
 	int user_to_remove, temp;
@@ -1257,7 +1250,7 @@ void choose_user_to_remove(){
 	print_web_users();
 	scanf("%d", &temp);
 	getchar();
-	if (temp = 0){
+	if (temp == 0){
 		return;
 	}
 	user_to_remove = temp - 1;
