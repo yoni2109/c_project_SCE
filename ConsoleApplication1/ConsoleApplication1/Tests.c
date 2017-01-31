@@ -3,7 +3,9 @@
 
 typedef enum{ False = 0, True = 1 } bool;
 
-
+MU_TEST(test_fill_arrays){
+	mu_check(fill_arrays());
+}
 MU_TEST(test_scan_no1)
 {
 	mu_check(scan_no1() == True);
@@ -97,6 +99,9 @@ MU_TEST(test_remove_user_from_web){
 MU_TEST(test_exit_from_project){
 	mu_check(exit_from_project());
 }
+MU_TEST(test_user_promotion){
+	mu_check(!prmotoe_user_to_manger(get_user_index("test")));
+}
 MU_TEST_SUITE(test_suite_print_arrays_to_files)
 {
 	MU_SUITE_CONFIGURE(NULL, NULL);
@@ -110,6 +115,7 @@ MU_TEST_SUITE(test_suite_print_arrays_to_files)
 MU_TEST_SUITE(test_suite_fill_arrays)
 {
 	MU_SUITE_CONFIGURE(NULL, NULL);
+	MU_RUN_TEST(test_fill_arrays);
 	MU_RUN_TEST(test_scan_no1);
 	MU_RUN_TEST(test_scan_no2);
 	MU_RUN_TEST(test_scan_no3);
@@ -134,6 +140,7 @@ MU_TEST_SUITE(test_suite_checking_functions){
 	MU_RUN_TEST(test_send_system_message);
 	MU_RUN_TEST(test_send_message_in_project);
 	MU_RUN_TEST(test_remove_user_from_project);
+	MU_RUN_TEST(test_user_promotion);
 	MU_RUN_TEST(test_exit_from_project);
 	MU_RUN_TEST(test_remove_user_from_web);
 	MU_REPORT_SUITE();

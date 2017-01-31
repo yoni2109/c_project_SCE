@@ -156,7 +156,7 @@ Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount = 0;//tasks amount
 int curr_index_user;//the current user after log in
 int curr_index_project;
-void prmotoe_user_to_manger(int user_to_promote);
+bool prmotoe_user_to_manger(int user_to_promote);
 
 
 int main()
@@ -1211,9 +1211,11 @@ bool exit_from_project(){
 	int new_project_amount_in_users;
 	new_project_amount_in_users = users_array[curr_index_user].projects_amount;
 	users_array[curr_index_user].project_list = (char **)realloc(users_array[curr_index_user].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
-	if (users_array[curr_index_user].project_list==NULL)
-	{
-		return False;
+	if (new_project_amount_in_users){
+		if (users_array[curr_index_user].project_list[new_project_amount_in_users - 1])
+		{
+			return False;
+		}
 	}
 	return True;
 
@@ -1798,13 +1800,13 @@ void manager_menu(){
 	}
 	
 }
-void prmotoe_user_to_manger(int user_to_promote){
+bool prmotoe_user_to_manger(int user_to_promote){
 	int flag = 0;
-	printf("\nmanager list before promote\n");
-	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
-		printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
-	}
-	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+	//printf("\nmanager list before promote\n");
+	//for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+	//	printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+	//}
+	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//checks if we trys to promote ourself
 		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[user_to_promote].name) == 0)flag = 1;
 	}
 	if (flag == 0){
@@ -1813,11 +1815,16 @@ void prmotoe_user_to_manger(int user_to_promote){
 		projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);
 		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1], users_array[user_to_promote].name);
 	}
-	else printf("You cant promote your self");
-	printf("\nmanager list after promote\n");
-	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
-		printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+	else {
+		//printf("You cant promote your self");
+		return False;
+
 	}
+	return True;
+//	printf("\nmanager list after promote\n");
+//	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+//		printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+//	}
 }
 
 
