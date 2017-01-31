@@ -122,7 +122,7 @@ bool send_message_by_user(char *sender, char* target, char* message);
 bool send_message_for_all_in_project(char *sender, char* message);
 void manage_task(int status, int task);
 void choose_task();
-void remove_user();
+bool remove_user(int);
 int choose_yes_or_no();
 void add_Wmanager(int index_user);
 void change_name();
@@ -1251,13 +1251,20 @@ void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 	print_arrays_to_files();
 	fill_arrays();
 }
-void remove_user(){
-	int user_to_remove,temp;
-	printf("choose member to remove from site \nenter the number between 1-%d: ", web_users_amount);
+void choose_user_to_remove(){
+	int user_to_remove, temp;
+	printf("choose member to remove from site \nenter the number between 1-%d:\nchoose 0 to return\n ", web_users_amount);
 	print_web_users();
 	scanf("%d", &temp);
 	getchar();
+	if (temp = 0){
+		return;
+	}
 	user_to_remove = temp - 1;
+	return remove_user(user_to_remove);
+}
+bool remove_user(int user_to_remove){
+
 	for (int i = 0; i < web_projects_amount; i++){
 		for (int j = 0; j < projects_array[i].users_amount; j++){
 			if (strcmp(projects_array[i].users_list[j], users_array[user_to_remove].name) == 0){
@@ -1775,13 +1782,13 @@ void manager_menu(){
 					  break;
 		}//end case 5
 		case(6) : {
-					  remove_user();
+					  choose_user_to_remove();
 					  break;
 		}//end case 6
 		case(7) : {
 					  print_web_users();
 
-		}
+			}//end of case 7
 		}
 	}
 	
