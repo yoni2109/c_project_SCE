@@ -1588,6 +1588,10 @@ void play()
 		
 }
 void user_main_menu(){//after user logs in this menu will appear
+	if (strcmp(users_array[curr_index_user].name, Wmanager->name){
+		manager_menu();
+		return;
+	}
 	while (1){
 		int choose = 0;
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
