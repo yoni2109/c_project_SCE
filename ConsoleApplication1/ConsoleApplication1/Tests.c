@@ -102,6 +102,9 @@ MU_TEST(test_exit_from_project){
 MU_TEST(test_user_promotion){
 	mu_check(!prmotoe_user_to_manger(get_user_index("test")));
 }
+MU_TEST(test_add_new_status){
+	mu_check(add_new_status("testing"));
+}
 MU_TEST_SUITE(test_suite_print_arrays_to_files)
 {
 	MU_SUITE_CONFIGURE(NULL, NULL);
@@ -141,6 +144,7 @@ MU_TEST_SUITE(test_suite_checking_functions){
 	MU_RUN_TEST(test_send_message_in_project);
 	MU_RUN_TEST(test_remove_user_from_project);
 	MU_RUN_TEST(test_user_promotion);
+	MU_RUN_TEST(test_add_new_status);
 	MU_RUN_TEST(test_exit_from_project);
 	MU_RUN_TEST(test_remove_user_from_web);
 	MU_REPORT_SUITE();
