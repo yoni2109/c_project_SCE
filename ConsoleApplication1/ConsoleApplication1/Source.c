@@ -71,7 +71,7 @@ void insert_details_for_signup();
 char* new_user_name();
 void move_task(int status, int task);
 void new_project_name();
-void confirm_task();
+bool confirm_task(int,int);
 void change_name();
 bool scan_no1();
 bool scan_no2();
@@ -119,7 +119,7 @@ bool new_task(char*,char*);
 void print_tasks_array();
 bool send_message_by_admin(char* message);
 bool send_message_by_user(char *sender, char* target, char* message);
-void send_message_for_all_in_project(char *sender, char* message);
+bool send_message_for_all_in_project(char *sender, char* message);
 void manage_task(int status, int task);
 void choose_task();
 void remove_user();
@@ -129,7 +129,7 @@ void change_name();
 void exit_from_project(int user_array);
 void message_abute_task();
 void change_status();
-void remove_user_from_project(int index_to_delete);
+bool remove_user_from_project(int index_to_delete);
 bool remove_task(int status, int task);
 void print_project_menu(int);
 int print_and_choose_user_projects();
@@ -725,11 +725,18 @@ bool send_message_by_admin(char *message){
 		j++;
 	}
 	web_messages_amount += web_users_amount;
+	sort_messages_to_users_no7();
+	if (strcmp(message, "test")){
+		printf("\nMessage succesfully sent\n");
+	}
 	return True;
 }
-void send_message_for_all_in_project(char *sender, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
+bool send_message_for_all_in_project(char *sender, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + projects_array[curr_index_project].users_amount) * sizeof(Messages));//realloc 1 place for new message
+	if (!messages_array){
+		return False;
+	}
 	for (int i = web_messages_amount; i < web_messages_amount + projects_array[curr_index_project].users_amount; i++){
 		messages_array[i].content = (char*)malloc(strlen(message_demand)*sizeof(char));//Opening indicates the size of the array
 		strcpy(messages_array[i].content, message_demand);//העתקות לתוך מערך
@@ -738,6 +745,11 @@ void send_message_for_all_in_project(char *sender, char* message_demand){//פו�
 		j++;
 	}
 	web_messages_amount += projects_array[curr_index_project].users_amount;
+	sort_messages_to_users_no7();
+	if (strcmp(message_demand, "test")){
+		printf("\nMessage succesfully sent\n");
+	}
+	return True;
 }
 void change_pass(){
 	char temp_pass[SIZE];
@@ -984,12 +996,20 @@ bool new_task(char* temp_task,char* details_task){
 			tasks_array[web_tasks_amount - 1].task_progres = 0;
 			strcpy(tasks_array[web_tasks_amount - 1].assign_to, "None");
 		}
+	if (strcmp(details_task, "test")){
+		send_message_for_all_in_project(projects_array[curr_index_project].name, "a new task was added to project");
+	}
 	/*end of case for bot first task created*/
 	sort_tasks_no4();
 	return True;
 }
-void confirm_task( int status_index, int task_index){
+bool confirm_task( int status_index, int task_index){
 	projects_array[curr_index_project].status_list[status_index].tasks_list[task_index]->task_progres = 1;
+	if (projects_array[curr_index_project].status_list[status_index].tasks_list[task_index]->task_progres){
+		return True;
+	}
+	return False;
+
 }
 void choose_task(){//this function will print all project tasks by the following order:
 	//1. STATUS NAME
@@ -1298,18 +1318,18 @@ void message_abute_task(int index){
 void change_status(){
 
 }
-void remove_user_from_project(int index_to_delete){
+bool remove_user_from_project(int index_to_delete){
 	int flag = 0, check_if_manager = 0, check_if_last = 0,succes=0;
 	int check_if_last_projectt = 0;
 
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//loop to check if we connected as a manger of project
-		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_project].name) == 0)flag = 1;//if yes change the flag to 1
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[curr_index_user].name) == 0)flag = 1;//if yes change the flag to 1
 		}//end of check if project manager
 
 	for (int i = 0; i < projects_array[curr_index_project].users_amount; i++){//check if we try to delete the last
 		if (strcmp(projects_array[curr_index_project].users_list[i], users_array[index_to_delete].name) == 0){
 			if (i == projects_array[curr_index_project].users_amount - 1) check_if_last = 1;
-	}
+		}
 	}//end loop check if lest
 
 	if (strcmp(users_array[curr_index_user].name, users_array[index_to_delete].name) == 0)check_if_manager = 1;//check if manager try to delete itself 
@@ -1361,9 +1381,15 @@ void remove_user_from_project(int index_to_delete){
 	users_array[index_to_delete].project_list = (char **)realloc(users_array[index_to_delete].project_list, sizeof(char*)*new_project_amount_in_users);//allocate new array of projects
 		}
 	}
-	if (flag == 0)printf("You Are Not Manager - You Can't Remove User From This Project\n");
-	if (check_if_manager == 1)printf("You Are Try To Delete Your Self - You Can't Do That\n");
-
+	if (flag == 0){
+		printf("You Are Not Manager - You Can't Remove User From This Project\n");
+		return False;
+	}
+	if (check_if_manager == 1){
+		printf("You Are Try To Delete Your Self - You Can't Do That\n");
+		return False;
+	}
+	return True;
 }
 int check_if_last_project(int index_project_to_check, int user_to_check){
 	for (int i = 0; i < users_array[user_to_check].projects_amount; i++){//check if we try to delete the last
