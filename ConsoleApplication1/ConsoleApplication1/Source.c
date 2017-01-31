@@ -155,6 +155,7 @@ Tasks* tasks_array;//will contain all tasks in web
 int web_tasks_amount = 0;//tasks amount
 int curr_index_user;//the current user after log in
 int curr_index_project;
+void prmotoe_user_to_manger(int user_to_promote);
 
 
 int main()
@@ -1666,12 +1667,18 @@ void user_main_menu(){//after user logs in this menu will appear
 }
 void print_chosen_user_menu(int chosen_user,int projectmanager){
 	printf("your chosen user is: %s\n", projects_array[curr_index_project].users_list[chosen_user]);
-	printf("choose one of the following options:\n1.send message to this user\n2.do nothing\n3.remove this user (can be executed only by project manager)\n");
+	printf("choose one of the following options:\n1.send message to this user\n2.do nothing\n");
+	if (projectmanager)printf("\n3.remove this user (can be executed only by project manager)\n4.Promote User To Project Manager(can be executed only by project manager)\n");
 	int choose = 0;
 	//TODO add project manager assignment
-	while (choose<1 || choose>3){
+	while (choose<1 || choose>4){
 		scanf("%d", &choose);
 		getchar();
+		if ((choose == 3 || choose == 4) && !projectmanager){
+			choose = -1;
+			printf("You Can't Choose That You Are Not User Manager\n.");
+		}
+
 	}
 	switch (choose)
 	{
@@ -1695,6 +1702,11 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  remove_user_from_project(user_in_global_array);//calls side function that recives the user index in the global array and removing user from project and project from user
 				  break;
 		}//end of case 3
+	case(4) : {
+				  prmotoe_user_to_manger(chosen_user);
+				  break;
+
+	}
 	}
 }
 int get_user_index(char*username){
@@ -1792,6 +1804,27 @@ void manager_menu(){
 		}
 	}
 	
+}
+void prmotoe_user_to_manger(int user_to_promote){
+	int flag = 0;
+	printf("\nmanager list before promote\n");
+	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+		printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+	}
+	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[user_to_promote].name) == 0)flag = 1;
+	}
+	if (flag == 0){
+		projects_array[curr_index_project].manager_amount++;
+		projects_array[curr_index_project].Manager_list = (char**)realloc(projects_array[curr_index_project].Manager_list, sizeof(char*)*projects_array[curr_index_project].manager_amount);
+		projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);
+		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1], users_array[user_to_promote].name);
+	}
+	else printf("You cant promote your self");
+	printf("\nmanager list after promote\n");
+	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
+		printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
+	}
 }
 
 
