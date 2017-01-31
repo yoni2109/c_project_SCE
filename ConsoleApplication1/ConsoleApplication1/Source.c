@@ -164,8 +164,10 @@ int main()
 {
 	int choose = 0;
 	printf("choose 1 to play program or 2 to run tests\n");
-	scanf("%d", &choose);
-	getchar();
+	while (choose<1 || choose>2){
+		scanf("%d", &choose);
+		getchar();
+	}
 	switch (choose){
 	case(1) : {
 				  fill_arrays();
