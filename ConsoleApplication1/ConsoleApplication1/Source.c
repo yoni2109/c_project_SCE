@@ -1588,7 +1588,7 @@ void play()
 		
 }
 void user_main_menu(){//after user logs in this menu will appear
-	if (strcmp(users_array[curr_index_user].name, Wmanager->name){
+	if (!strcmp(users_array[curr_index_user].name, Wmanager->name)){
 		manager_menu();
 		return;
 	}
