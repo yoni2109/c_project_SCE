@@ -677,7 +677,7 @@ int check_admin(char * name){
 void print_web_users(){
 	printf("Those All Site Members:\n");
 	for (int i = 0; i < web_users_amount; i++){//loop to print all users
-		printf("%d,%s\n", (i + 1), users_array[i].name);
+		printf("%d.%s\n", (i + 1), users_array[i].name);
 	}
 }
 int confirm_project(){//func to archived the project *only maneger can do that*
@@ -1206,12 +1206,13 @@ void exit_from_project(){
 }
 void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 	char ** temp_users = (char **)malloc(sizeof(char*)*projects_array[project].users_amount);
-	//for (int i = 0; i < projects_array[project].users_amount; i++){
-	//	projects_array[project].users_list[i] = (char*)malloc(sizeof(char)*SIZE);
-	//}
+	for (int i = 0; i < projects_array[project].users_amount; i++){
+		temp_users[i] = (char*)malloc(sizeof(char)*SIZE);
+	}
 	for (int i = 0, j = 0; i < projects_array[project].users_amount; i++){
 		if (strcmp(projects_array[project].users_list[j], users_array[user].name) != 0){
-			temp_users[j] = projects_array[project].users_list[i];
+			//temp_users[j] = projects_array[project].users_list[i];
+			strcpy(temp_users[j],projects_array[project].users_list[i]);
 			j++;
 		}
 	}
@@ -1220,12 +1221,15 @@ void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 	projects_array[project].users_list = (char**) realloc(projects_array[project].users_list, sizeof(char*)*projects_array[project].users_amount);
 	for (int i = 0, j = 0; i < projects_array[project].users_amount; j++, i++){
 		//if (strcmp(projects_array[project].users_list[j], users_array[user].name) == 0)j++;
-		projects_array[project].users_list[i] = temp_users[i];
+		strcpy(projects_array[project].users_list[i], temp_users[i]);
+		//projects_array[project].users_list[i] = temp_users[i];
 	}
+
+	//projects_array[project].users_amount--;
 	free(temp_users);
 }
 void remove_user(){
-	int user_to_remove;
+	int user_to_remove,temp;
 	//מרשימת משתמשים באתר
 	//מכל  הפרוקיטים
 	/*int i, notvalid = False;
@@ -1254,12 +1258,13 @@ void remove_user(){
 	web_users_amount--;
 	}
 	users_array = (Users*)realloc(users_array, (web_users_amount)* sizeof(Users));*/
-	printf("choose member for remove for site enter the number between 1-%d: ", web_users_amount);
+	printf("choose member to remove from site \nenter the number between 1-%d: ", web_users_amount);
 	print_web_users();
-	scanf("%d", &user_to_remove);
+	scanf("%d", &temp);
+	user_to_remove = temp - 1;
 	for (int i = 0; i < web_projects_amount; i++){
-		for (int j = 0; i < projects_array[i].users_amount; j++){
-			if (strcpy(projects_array[i].users_list[j], users_array[user_to_remove].name == 0)){
+		for (int j = 0; j < projects_array[i].users_amount; j++){
+			if (strcmp(projects_array[i].users_list[j], users_array[user_to_remove].name) == 0){
 				delete_user_from_project_by_index_users_and_prpject(i,j);
 			}
 		}
@@ -1711,8 +1716,8 @@ void manager_menu(){
 	while (1){
 		int choose = 0;
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
-		printf("\n5. send system message\n6. remove user from web");
-		while (choose<1 || choose>4){
+		printf("5. send system message\n6. remove user from web\n7.view users in web\n");
+		while (choose<1 || choose>7){
 			scanf("%d", &choose);
 			getchar();
 		}
@@ -1752,11 +1757,15 @@ void manager_menu(){
 		case(5) : {
 					  //send_message_by_admin(sender,message);
 					  break;
-		}//end case 4
+		}//end case 5
 		case(6) : {
 					  remove_user();
 					  break;
-		}//end case 4
+		}//end case 6
+		case(7) : {
+					  print_web_users();
+
+		}
 		}
 	}
 	
