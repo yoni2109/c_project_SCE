@@ -115,10 +115,10 @@ bool add_user_to_project(int,char*);
 int get_project_index(char*);
 void defult_status_to_new_project();
 void print_users_project();
-void new_task();
+bool new_task(char*,char*);
 void print_tasks_array();
-void send_message_by_admin(char *sender, char* message);
-void send_message_by_user(char *sender, char* target, char* message);
+bool send_message_by_admin(char* message);
+bool send_message_by_user(char *sender, char* target, char* message);
 void send_message_for_all_in_project(char *sender, char* message);
 void manage_task(int status, int task);
 void choose_task();
@@ -130,7 +130,7 @@ void exit_from_project(int user_array);
 void message_abute_task();
 void change_status();
 void remove_user_from_project(int index_to_delete);
-void remove_task(int status, int task);
+bool remove_task(int status, int task);
 void print_project_menu(int);
 int print_and_choose_user_projects();
 void print_main_menu();
@@ -158,9 +158,9 @@ int curr_index_project;
 int main()
 {
 	int choose = 0;
+	printf("choose 1 to play program or 2 to run tests\n");
 	scanf("%d", &choose);
 	getchar();
-	//todo p[rint and while loop over cases
 	switch (choose){
 	case(1) : {
 				  fill_arrays();
@@ -180,9 +180,6 @@ int main()
 				  break;
 		}
 	}
-	fill_arrays();
-	play();
-
 }
 
 /*sign up*/
@@ -690,7 +687,7 @@ int confirm_project(){//func to archived the project *only maneger can do that*
 	}
 	return -1;
 }
-void send_message_by_user(char *sender, char* target, char *message){
+bool send_message_by_user(char *sender, char* target, char *message){
 	web_messages_amount++;
 	if (web_messages_amount == 1){
 		messages_array = (Messages*)malloc(sizeof(Messages));
@@ -698,21 +695,27 @@ void send_message_by_user(char *sender, char* target, char *message){
 	else{
 	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
 	if (messages_array == NULL)
-		exit(1);
+		return False;
 	}
 	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 	if (messages_array[web_messages_amount - 1].content == NULL)
-		exit(1);
+		return False;
 	strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
 	strcpy(messages_array[web_messages_amount - 1].sender, sender);
 	strcpy(messages_array[web_messages_amount - 1].target, target);
 	sort_messages_to_users_no7();
-	printf("\nMessage succesfully sent\n");
+	if (strcmp(message, "test")){
+		printf("\nMessage succesfully sent\n");
+	}
+	return True;
 }
-void send_message_by_admin(char *sender, char *message){
+bool send_message_by_admin(char *message){
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
-	for (int i = web_users_amount; i < web_users_amount + web_users_amount; i++){
+	if (!messages_array){
+		return False;
+	}
+	for (int i = web_messages_amount; i < web_users_amount + web_users_amount; i++){
 		messages_array[i - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 		strcpy(messages_array[i - 1].content, message);//העתקות לתוך מערך
 		strcpy(messages_array[i - 1].sender, "ADMIN");
@@ -720,6 +723,7 @@ void send_message_by_admin(char *sender, char *message){
 		j++;
 	}
 	web_messages_amount += web_users_amount;
+	return True;
 }
 void send_message_for_all_in_project(char *sender, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
 	int j = 0;
@@ -940,7 +944,7 @@ void print_users_project(){//func to print the users in project
 		printf("%d. %s\n", (i + 1), projects_array[curr_index_project].users_list[i]);
 	}
 }
-void new_task(){
+void get_task_details(){
 	char temp_task[SIZE], details_task[TEMP_SIZE];//temprory strings to get status name and details from user
 	printf("Fill Details:\n");
 	printf("Enter Name:");
@@ -949,6 +953,10 @@ void new_task(){
 	printf("Enter Details:");
 	fgets(details_task, TEMP_SIZE, stdin);
 	details_task[strlen(details_task) - 1] = '\0';
+	return new_task(temp_task, details_task);
+}
+bool new_task(char* temp_task,char* details_task){
+
 	/*if the first task created*/
 	if (web_tasks_amount == 0){
 		web_tasks_amount++;
@@ -960,9 +968,6 @@ void new_task(){
 		strcpy(tasks_array[0].project_name, projects_array[curr_index_project].name);
 		strcpy(tasks_array[0].status_name, projects_array[curr_index_project].status_list[0].name);
 		tasks_array[0].task_progres = 0;
-		//projects_array[curr_index_project].status_list[0].tasks_amount++;
-		//projects_array[curr_index_project].status_list[0].tasks_list = (Tasks**)malloc(sizeof(Tasks*));
-		//projects_array[curr_index_project].status_list[0].tasks_list[0] = &tasks_array[0];
 	}
 	/*end of first task created*/
 	/*if not first task created*/
@@ -979,6 +984,7 @@ void new_task(){
 		}
 	/*end of case for bot first task created*/
 	sort_tasks_no4();
+	return True;
 }
 void confirm_task( int status_index, int task_index){
 	projects_array[curr_index_project].status_list[status_index].tasks_list[task_index]->task_progres = 1;
@@ -1314,7 +1320,7 @@ int check_if_last_project(int index_project_to_check, int user_to_check){
 		}
 	}
 }
-void remove_task(int status, int task){
+bool remove_task(int status, int task){
 	int task_index_global=-1;
 	/*search for task in tasks global array*/
 	for (int i = 0; i < web_tasks_amount; i++){
@@ -1329,7 +1335,7 @@ void remove_task(int status, int task){
 	/*end of search for task in tasks global array*/
 	if (task_index_global == -1){//if task not found in global array
 		printf("\ntask not found\n");
-		return;
+		return False;
 	}
 	Tasks* temp = (Tasks*)malloc(sizeof(Tasks)*web_tasks_amount);
 	for (int i = 0,k=0; i < web_tasks_amount; i++){
@@ -1354,6 +1360,7 @@ void remove_task(int status, int task){
 	}
 	sort_tasks_no4();
 	free(temp);
+	return True;
 }
 void print_project_menu(int project_manager){
 	if (!project_manager){
@@ -1392,7 +1399,7 @@ void print_project_menu(int project_manager){
 
 				}//end of case 2
 			case(3) :/*creat new task*/ {
-						  new_task();
+						  get_task_details();
 						  break;
 				}//end of case 3
 			case(4) : {
@@ -1460,7 +1467,7 @@ void print_project_menu(int project_manager){
 
 				}//end of case 2
 			case(3) :/*creat new task*/ {
-						 new_task();
+						 get_task_details();
 						 break;
 				}//end of case 3
 			case(4) : {
@@ -1520,7 +1527,7 @@ void play()
 			}//end of case 2
 		case(3) : {
 					  print_arrays_to_files();
-					  return 0;
+					  return;
 			}//end of case 3
 
 		}

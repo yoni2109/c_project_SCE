@@ -46,6 +46,9 @@ MU_TEST(test_print_no1)
 {
 	mu_check(print_no1() == True);
 }
+MU_TEST(test_print_no2){
+	mu_check(print_no2());
+}
 MU_TEST(test_print_no3)
 {
 	mu_check(print_no3() == True);
@@ -61,11 +64,26 @@ MU_TEST(test_sign_up){
 MU_TEST(test_log_in){
 	mu_check(check_member("zohar", "1234"));
 }
+MU_TEST(test_get_project_index){
+	mu_check(get_project_index("test project") != -1);
+}
 MU_TEST(test_add_new_project){
-	mu_check(add_new_project("project 123"));
+	mu_check(add_new_project("test project"));
 }
 MU_TEST(test_add_user_to_project){
 	mu_check(add_user_to_project(0, "yoni"));
+}
+MU_TEST(test_remove_task){
+	mu_check(remove_task(0,0));
+}
+MU_TEST(test_new_task){
+	mu_check(new_task("test", "test"));
+}
+MU_TEST(test_send_message){
+	mu_check(send_message_by_user("mark", "mark", "test"));
+}
+MU_TEST(test_send_system_message){
+	mu_check(send_message_by_admin("test"));
 }
 MU_TEST_SUITE(test_suite_print_arrays_to_files)
 {
@@ -91,17 +109,23 @@ MU_TEST_SUITE(test_suite_fill_arrays)
 	MU_REPORT_SUITE();
 }
 MU_TEST_SUITE(test_suite_checking_functions){
+	MU_SUITE_CONFIGURE(NULL, NULL);
 	MU_RUN_TEST(test_check_admin);
 	MU_RUN_TEST(test_sign_up);
 	MU_RUN_TEST(test_log_in);
 	MU_RUN_TEST(test_add_new_project);
 	MU_RUN_TEST(test_add_user_to_project);
+	MU_RUN_TEST(test_get_project_index);
+	MU_RUN_TEST(test_new_task);
+	MU_RUN_TEST(test_remove_task);
+	MU_RUN_TEST(test_send_message);
+	MU_RUN_TEST(test_send_system_message);
+	MU_REPORT_SUITE();
 }
 int Unit_tests(int argc, char *argv[]) 
 {
 	MU_RUN_SUITE(test_suite_fill_arrays);
-	MU_RUN_SUITE(test_print_arrays_to_files);
-
+	MU_RUN_SUITE(test_suite_print_arrays_to_files);
 	MU_RUN_SUITE(test_suite_checking_functions);
 	MU_REPORT();
 	return 0;
