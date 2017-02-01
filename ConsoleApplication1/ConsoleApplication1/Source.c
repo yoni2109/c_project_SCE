@@ -1885,7 +1885,10 @@ bool prmotoe_user_to_manger(int user_to_promote){
 	//	printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
 	//}
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//checks if we trys to promote ourself
-		if (strcmp(projects_array[curr_index_project].Manager_list[i], projects_array[curr_index_project].users_list[user_to_promote]) == 0)flag = 1;
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], projects_array[curr_index_project].users_list[user_to_promote]) == 0)
+		{
+			flag = 1;
+		}
 	}
 	if (flag == 0){
 		projects_array[curr_index_project].manager_amount++;

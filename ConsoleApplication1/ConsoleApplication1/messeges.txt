@@ -29,15 +29,12 @@ a new task was added to project
 mosh
 mosh
 hello and wellcome to my first project!
-
 mosh
 zohar
 hello and wellcome to my first project!
-
 mosh
 mark
 hello and wellcome to my first project!
-
 my_first
 mosh
 a new task was added to project
