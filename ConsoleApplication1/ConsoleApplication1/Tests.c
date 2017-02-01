@@ -100,7 +100,7 @@ MU_TEST(test_exit_from_project){
 	mu_check(exit_from_project());
 }
 MU_TEST(test_user_promotion){
-	mu_check(!prmotoe_user_to_manger(get_user_index("test")));
+	mu_check(!prmotoe_user_to_manger(0));
 }
 MU_TEST(test_add_new_status){
 	mu_check(add_new_status("testing"));
