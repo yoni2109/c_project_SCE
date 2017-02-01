@@ -782,24 +782,25 @@ bool send_message_by_user(char *sender, char* target, char *message){
 		}
 	}
 	else{
-	messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
-	if (messages_array == NULL)
-	{
-		return False;
+		messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
+		if (messages_array == NULL)
+		{
+			return False;
+		}
+		messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
+		if (messages_array[web_messages_amount - 1].content == NULL)
+		{
+			return False;
+		}
+		strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
+		strcpy(messages_array[web_messages_amount - 1].sender, sender);
+		strcpy(messages_array[web_messages_amount - 1].target, target);
+		sort_messages_to_users_no7();
+		if (strcmp(message, "test")){
+			printf("\nMessage succesfully sent\n");
+		}
+		return True;
 	}
-	messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
-	if (messages_array[web_messages_amount - 1].content == NULL)
-	{
-		return False;
-	}
-	strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
-	strcpy(messages_array[web_messages_amount - 1].sender, sender);
-	strcpy(messages_array[web_messages_amount - 1].target, target);
-	sort_messages_to_users_no7();
-	if (strcmp(message, "test")){
-		printf("\nMessage succesfully sent\n");
-	}
-	return True;
 }
 bool send_message_by_admin(char *message){
 	int j = 0;
