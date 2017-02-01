@@ -158,7 +158,7 @@ int web_tasks_amount = 0;//tasks amount
 int curr_index_user;//the current user after log in
 int curr_index_project;
 bool prmotoe_user_to_manger(int user_to_promote);
-
+void archived_project_menu();
 
 int main()
 {
@@ -172,6 +172,10 @@ int main()
 	case(1) : {
 				  fill_arrays();
 				  play();
+				  free(messages_array);
+				  free(users_array);
+				  free(projects_array);
+				  free(tasks_array);
 				  break;
 		}
 	case(2) : {
@@ -1442,7 +1446,48 @@ bool remove_task(int status, int task){
 	free(temp);
 	return True;
 }
+void archived_project_menu(){
+	while (1){
+		int choose = 0;
+		printf("Choose What You Want To Do:\n");
+		printf("1.Show Users In Project\n");
+		printf("2.Show Tasks In Project\n");
+		printf("3.return to your main menu\n");
+		while (choose <1 || choose > 3){
+			scanf("%d", &choose);
+			getchar();
+		}
+		switch (choose){
+		case(1) : {
+					  print_users_project();
+					  break;
+
+		}//end of case 1
+		case(2) :/*choose and manage projects tasks*/ {
+					 for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
+						 printf("status: %s\ntasks:\n", projects_array[curr_index_project].status_list[i].name);
+						 for (int j = 0; j < projects_array[curr_index_project].status_list[i].tasks_amount; j++){
+							 printf("task name: %s\ntask details: %s\nperformed by: %s\n", projects_array[curr_index_project].status_list[i].tasks_list[j]->name, projects_array[curr_index_project].status_list[i].tasks_list[j]->task_details, projects_array[curr_index_project].status_list[i].tasks_list[j]->assign_to);
+						 }
+					 }
+					 break;
+
+		}//end of case 2
+		case(3) :/*return to user main menu*/ {
+					 curr_index_project = -1;
+					 return;
+		}//end of case 3
+
+		}
+	}
+}
+
+
 void print_project_menu(int project_manager){
+	if (projects_array[curr_index_project].archived){
+		archived_project_menu();
+		return;
+	}
 	if (!project_manager){
 		while (1){
 			int choose = 0;
@@ -1665,16 +1710,16 @@ void user_main_menu(){//after user logs in this menu will appear
 }
 void print_chosen_user_menu(int chosen_user,int projectmanager){
 	printf("your chosen user is: %s\n", projects_array[curr_index_project].users_list[chosen_user]);
-	printf("choose one of the following options:\n1.send message to this user\n2.do nothing\n");
-	if (projectmanager)printf("\n3.remove this user (can be executed only by project manager)\n4.Promote User To Project Manager(can be executed only by project manager)\n");
+	printf("choose one of the following options:\n1.send message to this user\n2. view tasks assigned to %s\n3.do nothing\n", projects_array[curr_index_project].users_list[chosen_user]);
+	if (projectmanager)printf("\n4.remove this user (can be executed only by project manager)\n5.Promote User To Project Manager(can be executed only by project manager)\n");
 	int choose = 0;
 	//TODO add project manager assignment
-	while (choose<1 || choose>4){
+	while (choose<1 || choose>5){
 		scanf("%d", &choose);
 		getchar();
-		if ((choose == 3 || choose == 4) && !projectmanager){
+		if ((choose == 4 || choose == 5) && !projectmanager){
 			choose = -1;
-			printf("You Can't Choose That You Are Not User Manager\n.");
+			printf("You Can't Choose That You Are Not project Manager\n.");
 		}
 
 	}
@@ -1689,9 +1734,34 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  break;
 		}//end of case 1
 	case(2) : {
-				  return;
-		}//end of case 2
+				  int flag = 0;
+				  printf("==================================================\n==================================================\n");
+				  for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
+					  for (int j = 0; j < projects_array[curr_index_project].status_list[i].tasks_amount; j++){
+						  if (!strcmp(projects_array[curr_index_project].users_list[chosen_user], projects_array[curr_index_project].status_list[i].tasks_list[j]->assign_to)){
+							  if (!flag) printf("status: %s\ntasks:\n", projects_array[curr_index_project].status_list[i].name);
+							  flag++;
+							  printf("task name: %s\ntask details: %s\n", projects_array[curr_index_project].status_list[i].tasks_list[j]->name, projects_array[curr_index_project].status_list[i].tasks_list[j]->task_details);
+							  if (!projects_array[curr_index_project].status_list[i].tasks_list[j]->task_progres){
+								  printf("task in progress\n");
+							  }
+							  else
+							  {
+								  printf("task completed\n");
+							  }
+							  printf("==================================================\n");
+						  }
+
+
+					  }
+					  if(flag--) printf("==================================================\n==================================================\n");
+
+				  }
+	}
 	case(3) : {
+				  return;
+		}//end of case 3
+	case(4) : {
 				  int user_in_global_array = get_user_index(projects_array[curr_index_project].users_list[chosen_user]);//gets the chosen user index in the global array
 				  if (user_in_global_array == -1){//if the function returns -1 means user has not been found in the global
 					  printf("user not found\n");
@@ -1699,8 +1769,8 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  }
 				  remove_user_from_project(user_in_global_array);//calls side function that recives the user index in the global array and removing user from project and project from user
 				  break;
-		}//end of case 3
-	case(4) : {
+		}//end of case 4
+	case(5) : {
 				  prmotoe_user_to_manger(chosen_user);
 				  break;
 
@@ -1748,7 +1818,7 @@ void manager_menu(){
 	while (1){
 		int choose = 0;
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
-		printf("5. send system message\n6. remove user from web\n7.view users in web\n");
+		printf("5. send system message\n6. remove user from web\n7. view users in web\n");
 		while (choose<1 || choose>7){
 			scanf("%d", &choose);
 			getchar();
@@ -1787,7 +1857,13 @@ void manager_menu(){
 					  return;
 		}//end of case 4
 		case(5) : {
-					  //send_message_by_admin(sender,message);
+					  char temp[TEMP_SIZE];
+					  printf("pls write down your message\nNotice: that message will be sent to all web users\ninsert 0 to go back to menu\n");
+					  fgets(temp, TEMP_SIZE, stdin);
+					  if (temp[0] == 0){
+						  break;
+					  }
+					  send_message_by_admin(temp);
 					  break;
 		}//end case 5
 		case(6) : {
@@ -1809,13 +1885,13 @@ bool prmotoe_user_to_manger(int user_to_promote){
 	//	printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
 	//}
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//checks if we trys to promote ourself
-		if (strcmp(projects_array[curr_index_project].Manager_list[i], users_array[user_to_promote].name) == 0)flag = 1;
+		if (strcmp(projects_array[curr_index_project].Manager_list[i], projects_array[curr_index_project].users_list[user_to_promote]) == 0)flag = 1;
 	}
 	if (flag == 0){
 		projects_array[curr_index_project].manager_amount++;
 		projects_array[curr_index_project].Manager_list = (char**)realloc(projects_array[curr_index_project].Manager_list, sizeof(char*)*projects_array[curr_index_project].manager_amount);
 		projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1] = (char*)malloc(sizeof(char)*SIZE);
-		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount-1], users_array[user_to_promote].name);
+		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount - 1], projects_array[curr_index_project].users_list[user_to_promote]);
 	}
 	else {
 		//printf("You cant promote your self");
