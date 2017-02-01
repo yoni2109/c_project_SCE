@@ -1406,20 +1406,29 @@ bool exit_from_project(){
 	}
 		projects_array[curr_index_project].users_list[i] = projects_array[curr_index_project].users_list[j];//copy all the other users in 1 place before
 	}
+	
 	projects_array[curr_index_project].users_amount--;//decrase the amnout users in project
 	int new_user_amount_in_project;
 	new_user_amount_in_project = projects_array[curr_index_project].users_amount;
 	projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
-	if (projects_array[curr_index_project].users_list == NULL)
+	if (projects_array[curr_index_project].users_list == NULL&&projects_array[curr_index_project].users_amount !=0)
 	{
 		return False;
 	}
-	for (int i = 0, j = 0; i < users_array[curr_index_user].projects_amount; i++, j++){//loop to run on the users array and find the project that we want to delete
+	if (strcmp(users_array[curr_index_user].project_list[users_array[curr_index_user].projects_amount - 1], projects_array[curr_index_project].name) == 0){
+		users_array[curr_index_user].projects_amount--;
+		users_array[curr_index_user].project_list = (char**)realloc(users_array[curr_index_user].project_list, sizeof(char*)*users_array[curr_index_user].projects_amount);
+		return True;
+
+	}
+	for (int i = 0, j = 0; i < users_array[curr_index_user].projects_amount-1; i++){//loop to run on the users array and find the project that we want to delete
 		if (strcmp(users_array[curr_index_user].project_list[i], projects_array[curr_index_project].name) == 0){//if we found the project
-			users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[i + 1];//we will delete
-			j = i + 1;//increase the j
+			j = 1;//increase the j
 		}
-		users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[j];//copy all the other projects in 1 place before
+		if (j){
+			users_array[curr_index_user].project_list[i] = users_array[curr_index_user].project_list[i + 1];//we will delete
+		}
+		
 	}
 	users_array[curr_index_user].projects_amount--;//decrease the amount projects of user
 	int new_project_amount_in_users;
