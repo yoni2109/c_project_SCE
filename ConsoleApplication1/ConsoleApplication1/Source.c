@@ -2202,7 +2202,7 @@ bool prmotoe_user_to_manger(int user_to_promote){
 		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount - 1], projects_array[curr_index_project].users_list[user_to_promote]);
 	}
 	else {
-		printf("the user you try to promote is allready a manager or You try promote your self\n");
+		if (strcmp(projects_array[curr_index_project].users_list[user_to_promote],"test"))printf("the user you try to promote is allready a manager or You try promote your self\n");
 		return False;
 
 	}
