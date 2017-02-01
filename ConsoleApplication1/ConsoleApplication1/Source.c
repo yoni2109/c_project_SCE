@@ -1435,8 +1435,8 @@ bool exit_from_project(){
 			return False;
 		}
 	}
-	return True;
 
+	return True;
 }
 void delete_user_from_project_by_index_users_and_prpject(int project, int user){
 	char ** temp_users = (char **)malloc(sizeof(char*)*projects_array[project].users_amount);
@@ -1970,7 +1970,6 @@ void user_main_menu(){//after user logs in this menu will appear
 			}//end of case 1
 		case(2) : {
 					  new_project_name();
-					  getchar();
 					  print_project_menu(1);
 					  break;
 			}//end of case 2
