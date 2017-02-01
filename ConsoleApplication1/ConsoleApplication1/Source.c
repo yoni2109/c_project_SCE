@@ -934,9 +934,20 @@ void insert_username_to_add(){
 		printf("Enter user name that You want add to project [20 chars] : \n");
 		fgets(temp_user, SIZE, stdin);
 		temp_user[strlen(temp_user) - 1] = '\0';
+		index_try++;
+		for (int i = 0; i < projects_array[curr_index_project].users_amount; i++){
+			if (!strcmp(projects_array[curr_index_project].status_list[i].name, temp_user)){
+				printf("this user is already a member in this project");
+				return;
+			}
+		}
 		for (int i = 0; i < web_users_amount; i++){//loop to find the user in web array users
 			if (strcmp(temp_user, users_array[i].name) == 0) flag = i;
 		}
+		if (index_try == 3){
+			return;
+		}
+		
 	}
 	return add_user_to_project(flag, temp_user);
 }
@@ -2169,10 +2180,7 @@ void manager_menu(){
 }
 bool prmotoe_user_to_manger(int user_to_promote){
 	int flag = 0;
-	//printf("\nmanager list before promote\n");
-	//for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){
-	//	printf("%d.%s",i, projects_array[curr_index_project].Manager_list[i]);
-	//}
+
 	for (int i = 0; i < projects_array[curr_index_project].manager_amount; i++){//checks if we trys to promote ourself
 		if (strcmp(projects_array[curr_index_project].Manager_list[i], projects_array[curr_index_project].users_list[user_to_promote]) == 0)
 		{
@@ -2194,7 +2202,7 @@ bool prmotoe_user_to_manger(int user_to_promote){
 		strcpy(projects_array[curr_index_project].Manager_list[projects_array[curr_index_project].manager_amount - 1], projects_array[curr_index_project].users_list[user_to_promote]);
 	}
 	else {
-		//printf("You cant promote your self");
+		printf("the user you try to promote is allready a manager or You try promote your self\n");
 		return False;
 
 	}
