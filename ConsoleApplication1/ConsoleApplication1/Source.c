@@ -731,6 +731,7 @@ bool print_no4(){
 /*end of print arrays to files functions*/
 int print_and_choose_user_projects(){
 	int chosen_proj;
+	system("cls");
 	printf("Those Your projects:\n");
 	for (int i = 0; i < users_array[curr_index_user].projects_amount; i++){
 		printf("%d. %s", (i + 1), users_array[curr_index_user].project_list[i]);
@@ -1208,6 +1209,7 @@ void choose_task(){//this function will print all project tasks by the following
 	//   2.task name
 	// and so on
 	int flag = 0;
+	system("cls");
 	printf("pls choose a task from the following tasks:\n\n");
 	for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
 		printf("status %d: %s\n", (i + 1), projects_array[curr_index_project].status_list[i].name);
@@ -1217,7 +1219,7 @@ void choose_task(){//this function will print all project tasks by the following
 		}
 	}
 	if (!flag){
-		printf("\nno tasks yet");
+		printf("\nno tasks yet\n");
 		return;
 		}
 	printf("first chose the status by number\nto choose nothing and return to previous menu choose 0\n");
@@ -1257,6 +1259,7 @@ void choose_task(){//this function will print all project tasks by the following
 
 }
 void manage_task(int status, int task){
+	system("cls");
 	printf("\n this is the task you chose:\ntask name: %s\n", projects_array[curr_index_project].status_list[status].tasks_list[task]->name);
 	printf("status: %s\n", projects_array[curr_index_project].status_list[status].tasks_list[task]->status_name);
 	printf("details: %s\n", projects_array[curr_index_project].status_list[status].tasks_list[task]->task_details);
@@ -1291,6 +1294,7 @@ void manage_task(int status, int task){
 
 }
 void move_task(int status, int task){
+	system("cls");
 	printf("\nchoose status to move task to:\n");
 	for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
 		printf("%d: %s\n", (i + 1), projects_array[curr_index_project].status_list[i].name);
@@ -1741,6 +1745,7 @@ bool remove_task(int status, int task){
 	}
 	sort_tasks_no4();
 	free(temp);
+	printf("\ntask was removesd succesfully\n");
 	return True;
 }
 void archived_project_menu(){
@@ -1778,8 +1783,6 @@ void archived_project_menu(){
 		}
 	}
 }
-
-
 void print_project_menu(int project_manager){
 	if (projects_array[curr_index_project].archived){
 		archived_project_menu();
@@ -1788,6 +1791,7 @@ void print_project_menu(int project_manager){
 	if (!project_manager){
 		while (1){
 			int choose = 0;
+			system("cls");
 			printf("Choose What You Want To Do:\n");
 			printf("1.Show Users In Project\n");
 			printf("2.Show Tasks In Project\n");
@@ -1817,6 +1821,7 @@ void print_project_menu(int project_manager){
 				}//end of case 1
 			case(2) :/*choose and manage projects tasks*/ {
 						  choose_task();
+						  system("pause");
 						  break;
 
 				}//end of case 2
@@ -1855,6 +1860,7 @@ void print_project_menu(int project_manager){
 	if (project_manager){
 		while (1){
 			int choose = 0;
+			system("cls");
 			printf("Choose What You Want To Do:\n");
 			printf("1.Show Users In Project\n");
 			printf("2.Show Tasks In Project\n");
@@ -1885,6 +1891,7 @@ void print_project_menu(int project_manager){
 				}//end of case 1
 			case(2) :/*choose and manage projects tasks*/ {
 						 choose_task();
+						 system("pause");
 						 break;
 
 				}//end of case 2
@@ -1929,6 +1936,7 @@ void play()
 	while (1)
 	{
 	int choose = 0;
+	system("cls");
 	printf("==============================\nWelcome to meister task\n==============================\n");
 	printf("\n\n choose one of the following options:\n\n1. log in\n2.sign up\n3. quit program\n");
 		while (choose <1 || choose >3){
@@ -1963,6 +1971,7 @@ void user_main_menu(){//after user logs in this menu will appear
 	}
 	while (1){
 		int choose = 0;
+		system("cls");
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
 		//TODO web managers menu
 		while (choose<1 || choose>4){
@@ -2005,6 +2014,7 @@ void user_main_menu(){//after user logs in this menu will appear
 	}
 }
 void print_chosen_user_menu(int chosen_user,int projectmanager){
+	system("cls");
 	printf("your chosen user is: %s\n", projects_array[curr_index_project].users_list[chosen_user]);
 	printf("choose one of the following options:\n1.send message to this user\n2. view tasks assigned to %s\n3.do nothing\n", projects_array[curr_index_project].users_list[chosen_user]);
 	if (projectmanager)printf("\n4.remove this user (can be executed only by project manager)\n5.Promote User To Project Manager(can be executed only by project manager)\n");
@@ -2022,6 +2032,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 	switch (choose)
 	{
 	case(1) : {
+				  system("cls");
 				  printf("pls insert your message\n");
 				  char message[TEMP_SIZE];
 				  fgets(message, TEMP_SIZE, stdin);
@@ -2030,6 +2041,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  break;
 		}//end of case 1
 	case(2) : {
+				  system("cls");
 				  int flag = 0;
 				  printf("==================================================\n==================================================\n");
 				  for (int i = 0; i < projects_array[curr_index_project].status_amount; i++){
@@ -2055,9 +2067,11 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  }
 	}
 	case(3) : {
+				  system("cls");
 				  return;
 		}//end of case 3
 	case(4) : {
+				  system("cls");
 				  int user_in_global_array = get_user_index(projects_array[curr_index_project].users_list[chosen_user]);//gets the chosen user index in the global array
 				  if (user_in_global_array == -1){//if the function returns -1 means user has not been found in the global
 					  printf("user not found\n");
@@ -2067,6 +2081,7 @@ void print_chosen_user_menu(int chosen_user,int projectmanager){
 				  break;
 		}//end of case 4
 	case(5) : {
+				  system("cls");
 				  prmotoe_user_to_manger(chosen_user);
 				  break;
 
@@ -2084,6 +2099,7 @@ int get_user_index(char*username){
 }
 void get_status_name(){
 	char temp_status[SIZE];
+	system("cls");
 	printf("Enter Status Name:");
 	fgets(temp_status, SIZE, stdin);//get the status name
 	temp_status[strlen(temp_status) - 1] = '\0';//put in the end \0
@@ -2106,6 +2122,7 @@ bool add_new_status(char* temp_status){
 	return True;
 }
 void print_user_messages(){
+	system("cls");
 	if (!users_array[curr_index_user].messages_amount){
 		printf("\nno messages to show\n");
 		return;
@@ -2113,10 +2130,13 @@ void print_user_messages(){
 	for (int i = 0; i < users_array[curr_index_user].messages_amount; i++){
 		printf("from: %s\ncontent: %s\n", users_array[curr_index_user].message_list[i]->sender, users_array[curr_index_user].message_list[i]->content);
 	}
+	printf("\npress any key to return\n");
+	system("pause");
 }
 void manager_menu(){
 	while (1){
 		int choose = 0;
+		system("cls");
 		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
 		printf("5. send system message\n6. remove user from web\n7. view users in web\n");
 		while (choose<1 || choose>7){
@@ -2158,6 +2178,7 @@ void manager_menu(){
 		}//end of case 4
 		case(5) : {
 					  char temp[TEMP_SIZE];
+					  system("cls");
 					  printf("pls write down your message\nNotice: that message will be sent to all web users\ninsert 0 to go back to menu\n");
 					  fgets(temp, TEMP_SIZE, stdin);
 					  if (temp[0] == 0){
@@ -2172,6 +2193,8 @@ void manager_menu(){
 		}//end case 6
 		case(7) : {
 					  print_web_users();
+					  system("pause");
+					  break;
 
 			}//end of case 7
 		}
