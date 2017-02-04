@@ -99,7 +99,7 @@ void play();
 void system_massage();
 void print_projects_task();
 void print_web_users();
-int check_admin(char * name);
+bool check_admin(char * name);
 int confirm_project();
 bool fill_arrays();
 void send_message(char *sender, char* target, char* message);
@@ -753,7 +753,7 @@ void print_projects_task(){
 		printf("%d. %s", (i + 1), (projects_array[curr_index_project].status_list[0]).tasks_list[i]->name);
 	}
 }
-int check_admin(char * name){
+bool check_admin(char * name){
 	if (!strcmp(name, Wmanager->name)) return True;//check if the name that func get is the same name as web manager
 	else return False;
 }
@@ -956,7 +956,6 @@ bool add_user_to_project(int flag,char* temp_user){//fund to add new user to pro
 		return False;
 
 	}
-
 	projects_array[curr_index_project].users_amount++;//increase the amount of users in the project
 	projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*projects_array[curr_index_project].users_amount);//increas by one the users list
 	if (projects_array[curr_index_project].users_list == NULL)
