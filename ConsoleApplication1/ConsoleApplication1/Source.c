@@ -865,11 +865,6 @@ void change_name(){
 			if (!strcmp(users_array[curr_index_user].name, projects_array[i].users_list[j])){
 				free(projects_array[i].users_list[j]);
 				projects_array[i].users_list[j] = (char*)malloc(sizeof(char)*SIZE);
-				if (projects_array[i].users_list[j] == NULL)
-				{
-					printf("error ellocation");
-					exit(1);
-				}
 				strcpy(projects_array[i].users_list[j], temp_name);
 			}
 		}
@@ -877,11 +872,6 @@ void change_name(){
 			if (!strcmp(users_array[curr_index_user].name, projects_array[i].Manager_list[j])){
 				free(projects_array[i].Manager_list[j]);
 				projects_array[i].Manager_list[j] = (char*)malloc(sizeof(char)*SIZE);
-				if (projects_array[i].Manager_list[j] == NULL)
-				{
-					printf("error ellocation");
-					exit(1);
-				}
 				strcpy(projects_array[i].Manager_list[j], temp_name);
 			}
 		}
@@ -1973,9 +1963,9 @@ void user_main_menu(){//after user logs in this menu will appear
 	while (1){
 		int choose = 0;
 		system("cls");
-		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n");
+		printf("\nchoose one of the following options:\n1. view your projects\n2. add new project\n3. view your messages\n4. sign out\n5. change your user name\n6. change your password\n");
 		//TODO web managers menu
-		while (choose<1 || choose>4){
+		while (choose<1 || choose>6){
 			scanf("%d", &choose);
 			getchar();
 		}
@@ -2012,6 +2002,14 @@ void user_main_menu(){//after user logs in this menu will appear
 					  curr_index_user = -1;
 					  return;
 		}//end of case 4
+		case(5) : {
+					  change_name();
+					  break;
+		}
+		case(6) : {
+					  change_pass();
+					  break;
+		}
 		}
 	}
 }
