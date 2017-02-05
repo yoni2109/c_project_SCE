@@ -1593,10 +1593,7 @@ bool remove_user_from_project(int index_to_delete){
 		int new_user_amount_in_project;
 		new_user_amount_in_project = projects_array[curr_index_project].users_amount;
 		projects_array[curr_index_project].users_list = (char **)realloc(projects_array[curr_index_project].users_list, sizeof(char*)*new_user_amount_in_project);//realloc the users array 
-		if (projects_array[curr_index_project].users_list == NULL)
-		{
-			return False;
-		}
+
 		succes = 1;
 	}
 
