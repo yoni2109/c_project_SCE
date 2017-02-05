@@ -2065,6 +2065,7 @@ void print_chosen_user_menu(int chosen_user, int projectmanager){
 					  if (flag--) printf("==================================================\n==================================================\n");
 
 				  }
+				  system("pause");
 	}
 	case(3) : {
 				  system("cls");
