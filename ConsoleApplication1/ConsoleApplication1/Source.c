@@ -188,6 +188,7 @@ int main()
 				  free(users_array);
 				  free(projects_array);
 				  free(tasks_array);
+				  system("pause");
 				  break;
 	}
 	}
@@ -582,10 +583,7 @@ bool scan_no6(){
 	}
 	fscanf(messages_file, "%d", &web_messages_amount);
 	messages_array = (Messages*)malloc(sizeof(Messages)*web_messages_amount);
-	if (messages_array == NULL)
-	{
-		return False;
-	}
+
 	for (int i = 0; i < web_messages_amount; i++){
 		fscanf(messages_file, "%s", &messages_array[i].sender);
 		fscanf(messages_file, "%s", &messages_array[i].target);
@@ -595,10 +593,7 @@ bool scan_no6(){
 		while ((temp[j++] = fgetc(messages_file)) != '\n');
 		temp[j - 1] = '\0';
 		messages_array[i].content = (char*)malloc(sizeof(char)*strlen(temp));
-		if (messages_array[i].content == NULL)
-		{
-			return False;
-		}
+
 		for (j = 0; j < strlen(temp); j++){
 			messages_array[i].content[j] = temp[j];
 		}
@@ -611,6 +606,9 @@ bool scan_no6(){
 
 bool sort_messages_to_users_no7()
 {
+	for (int i = 0; i < web_users_amount; i++){
+		users_array[i].messages_amount = 0;
+	}
 	for (int i = 0; i < web_users_amount; i++){
 		for (int j = 0; j < web_messages_amount; j++){
 			if (!strcmp(users_array[i].name, messages_array[j].target)){
@@ -777,22 +775,13 @@ bool send_message_by_user(char *sender, char* target, char *message){
 	web_messages_amount++;
 	if (web_messages_amount == 1){
 		messages_array = (Messages*)malloc(sizeof(Messages));
-		if (messages_array == NULL)
-		{
-			return False;
-		}
+
 	}
 	else{
 		messages_array = (Messages*)realloc(messages_array, web_messages_amount * sizeof(Messages));//realloc 1 place for new message
-		if (messages_array == NULL)
-		{
-			return False;
-		}
+	
 		messages_array[web_messages_amount - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
-		if (messages_array[web_messages_amount - 1].content == NULL)
-		{
-			return False;
-		}
+	
 		strcpy(messages_array[web_messages_amount - 1].content, message);//העתקות לתוך מערך
 		strcpy(messages_array[web_messages_amount - 1].sender, sender);
 		strcpy(messages_array[web_messages_amount - 1].target, target);
@@ -806,10 +795,8 @@ bool send_message_by_user(char *sender, char* target, char *message){
 bool send_message_by_admin(char *message){
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + web_users_amount) * sizeof(Messages));//realloc 1 place for new message
-	if (!messages_array){
-		return False;
-	}
-	for (int i = web_messages_amount; i < web_users_amount + web_users_amount; i++){
+
+	for (int i = web_messages_amount; i < web_messages_amount + web_users_amount; i++){
 		messages_array[i - 1].content = (char*)malloc(strlen(message)*sizeof(char));//Opening indicates the size of the array
 		strcpy(messages_array[i - 1].content, message);//העתקות לתוך מערך
 		strcpy(messages_array[i - 1].sender, "ADMIN");
@@ -826,15 +813,10 @@ bool send_message_by_admin(char *message){
 bool send_message_for_all_in_project(char *sender, char* message_demand){//פונקציה לשליחת הודעה לחברי הפרויקט מקבלת שולח אינדקס פרויקט והודעה
 	int j = 0;
 	messages_array = (Messages*)realloc(messages_array, (web_messages_amount + projects_array[curr_index_project].users_amount) * sizeof(Messages));//realloc 1 place for new message
-	if (!messages_array){
-		return False;
-	}
+
 	for (int i = web_messages_amount; i < web_messages_amount + projects_array[curr_index_project].users_amount; i++){
 		messages_array[i].content = (char*)malloc(strlen(message_demand)*sizeof(char));//Opening indicates the size of the array
-		if (messages_array[i].content == NULL)
-		{
-			return False;
-		}
+
 		strcpy(messages_array[i].content, message_demand);//העתקות לתוך מערך
 		strcpy(messages_array[i].sender, sender);
 		strcpy(messages_array[i].target, projects_array[curr_index_project].users_list[j]);
